@@ -190,7 +190,7 @@ val result = kafkaDataSets.map(content => {
     val flatMap = new JsonFlattener(content).withFlattenMode(FlattenMode.KEEP_ARRAYS).flattenAsMap()
     val value = JSON.toJSONString(flatMap, SerializerFeature.PrettyFormat)
     var topic = productTopic1
-    val (classValue, categoryValue) = (flatMap.get("data.type"), flatMap.get("data.needValue"))
+    val (classValue, categoryValue) = (flatMap.get("data.type"), flatMap.get("data.neededValue"))
     (classValue, categoryValue) match {
       case ("app_log", _) => topic = productTopic1
       case ("app_event", "needed1") => topic = productTopic2
