@@ -21,14 +21,17 @@ date: 2015-11-09 15:12:49
 然后再在浮动小人的js中将这个div调取并输出。
 实现代码如下
 
-```java<script src="http://api.lwl12.com/hitokoto/?encode=js&amp;charset=utf-8" type="text/javascript"></script>
+```java
+<script src="http://api.lwl12.com/hitokoto/?encode=js&amp;charset=utf-8" type="text/javascript"></script>
 ```
 
 上面的代码放在footer.php中，
 在浮动小人说话的地方加入
 
-```java    msgs = [$("#lwlhitokoto").text().replace("lwlhitokoto()","")];
+```java
+msgs = [$("#lwlhitokoto").text().replace("lwlhitokoto()","")];
 ```
+
 即可输出一句话。
 （api使用了lwl修改的纯净版一言）
 这个方向总的来说是正确的，不过因为div中只能保存一句话，小人不断的吐槽，就会变成不停重复一句话的复读机。
@@ -64,7 +67,8 @@ date: 2015-11-09 15:12:49
 
 输出只要将之前的msgs[]更改为
 
-```javamsgs = ["<iframe id="\" src="\" width="5" height="5" frameborder="\" scrolling="\"></iframe>"];
+```java
+msgs = ["<iframe id="\" src="\" width="5" height="5" frameborder="\" scrolling="\"></iframe>"];
 ```
 
 即可
@@ -81,7 +85,8 @@ date: 2015-11-09 15:12:49
 
 这个时候我又想到了lwl的纯净版api，也就是蛋炒饭也给我那个解决方案，因为只能保存一句话而被我打入冷宫。
 
-<del datetime="2015-11-09T07:12:12+00:00">15号晚上的时候找lwl要源码准备修改一下，看看能不能实现多条语句保存或者更改字号之类的功能，可是悲剧的被拒绝了TAT</del>
+<del>15号晚上的时候找lwl要源码准备修改一下，看看能不能实现多条语句保存或者更改字号之类的功能，可是悲剧的被拒绝了TAT</del>
+
 LWL迷途知返，将代码开源了，可喜可贺 ：）
 
 http://blog.lwl12.com/read/hitokoto-api.html

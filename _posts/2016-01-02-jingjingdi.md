@@ -6,8 +6,6 @@ category: 随笔
 date: 2016-01-02 20:56:08
 ---
 
-![77ed6ec96ceef428e141eecc10edef9b](http://7xlkoc.com1.z0.glb.clouddn.com/wp-content/uploads/2016/01/2016010212552995.jpeg)
-
 每次到节假日，总能看到拥挤的人潮去旅游。大多数人也只是拍张照片而已。旅行、旅游，虽一字之差，却天壤之别。
 
 我只想静静地，弹一曲琴，它可以不美妙，但充满真诚；

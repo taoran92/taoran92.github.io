@@ -6,7 +6,9 @@ category: 爱情
 date: 2015-09-13 18:15:50
 ---
 
-![](http://7xlkoc.com1.z0.glb.clouddn.com/9-13-01.jpg)
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/9-13-01.jpg" />
+</div>
 
 你必须明白：要走的人你留不住。装睡的人你叫不醒，不爱你的人你感动不了。
 
@@ -24,7 +26,9 @@ date: 2015-09-13 18:15:50
 
 如果主动跟你分手的人，在短时间里找到了新人，不是因为他们真那么好，而只是因为早有目标。所以才把你当旧鞋一样甩掉。
 
-![](http://7xlkoc.com1.z0.glb.clouddn.com/9-13-02.png)
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/9-13-02.png" />
+</div>
 
 什么不想拖累，什么不适合，都是骗人的。无非就是喜新厌旧而已。真正相爱的人，有再多借口也不会分手。因为永远都是正爱着，而是不是爱过。
 

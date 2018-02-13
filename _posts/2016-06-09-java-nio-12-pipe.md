@@ -53,7 +53,7 @@ int bytesRead = sourceChannel.read(buf);
 ```
 read()方法返回的int值会告诉我们多少字节被读进了缓冲区。
 
-Next: [Java-NIO-13-NIO-AND-IO](http://taoxiaoran.top/2016/06/09/java-nio-13-nio-and-io.html)
+Next: [Java-NIO-13-NIO-AND-IO](http://rannn.cc/2016/06/09/java-nio-13-nio-and-io.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

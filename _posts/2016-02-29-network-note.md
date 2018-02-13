@@ -107,7 +107,6 @@ CRC只能表示以接近1的概率认为它没有差错。但不能做到可靠�
 
 ppp帧格式
 
-![net2](http://7xlkoc.com1.z0.glb.clouddn.com/201602291346279.jpg)
 注：当协议字段为0x0021时，信息字段为IP数据报，不超过1500字节
 
 字节填充：转义符为0x7D
@@ -469,7 +468,9 @@ RSA公开密钥密码体制
 
 防火墙：是由软件硬件构成的系统，用来在两个网络之间实施接入控制策略。
 
-完，作者：Campanulaceae [微博](http://weibo.com/u/1662536394)
+完，作者：、insomnia
+
+[微博@梦回少年rannn](http://weibo.com/u/1662536394)
 
 To Be Continued...
 

@@ -189,8 +189,6 @@
 
   /2015/12/29/lumanman.html
 
-  /2015/12/29/japan-2015-tv-comic-rank.html
-
   /2015/12/24/java-serializable.html
 
   /2015/12/23/import-jar-maven.html

@@ -48,7 +48,7 @@ date: 2016-01-12 21:02:54
 
 上午在花间堂的猫的天空书店，看到了一张明信片。上面那段话我很喜欢：
 
-**在远方 这是一种诗意的距离
+**在远方 这是一种诗意的距离**
 
 海子说“远在远方的风比远方更远”
 
@@ -66,10 +66,8 @@ date: 2016-01-12 21:02:54
 
 承诺是最远的一条路 因为有太多要逃避的路口**
 
-```
 图片｜澳大利亚 Pink Lake
 摄影｜N74photography Mr.Cheese
-```
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

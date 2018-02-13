@@ -9,16 +9,16 @@ Selector（选择器）是Java NIO中能够检测一到多个NIO通道，并能�
 
 下面是本文所涉及到的主题列表：
 
-1. [为什么使用Selector?](#1)
-2. [Selector的创建](#2)
-3. [向Selector注册通道](#3)
-4. [SelectionKey](#4)
-5. [通过Selector选择通道](#5)
-6. [wakeUp()](#6)
-7. [close()](#7)
-8. [完整的示例](#7)
+1. [为什么使用Selector?](#为什么使用Selector?)
+2. [Selector的创建](#Selector的创建)
+3. [向Selector注册通道](#向Selector注册通道)
+4. [SelectionKey](#SelectionKey)
+5. [通过Selector选择通道](#通过Selector选择通道)
+6. [wakeUp()](#wakeUp())
+7. [close()](#close())
+8. [完整的示例](#完整的示例)
 
-### 1. 为什么使用Selector?
+### 为什么使用Selector?
 
 仅用单个线程来处理多个Channels的好处是，只需要更少的线程来处理通道。事实上，可以只用一个线程处理所有的通道。对于操作系统来说，线程之间上下文切换的开销很大，而且每个线程都要占用系统的一些资源（如内存）。因此，使用的线程越少越好。
 
@@ -28,13 +28,13 @@ Selector（选择器）是Java NIO中能够检测一到多个NIO通道，并能�
 
 ![](http://tutorials.jenkov.com/images/java-nio/overview-selectors.png)
 
-### 2. Selector的创建
+### Selector的创建
 
 通过调用Selector.open()方法创建一个Selector，如下：
 
 ```Selector selector = Selector.open();```
 
-### 3. 向Selector注册通道
+### 向Selector注册通道
 
 为了将Channel和Selector配合使用，必须将channel注册到selector上。通过SelectableChannel.register()方法来实现，如下：
 
@@ -74,7 +74,7 @@ SelectionKey key = channel.register(selector,
 
 在下面还会继续提到interest集合。
 
-### 4. SelectionKey
+### SelectionKey
 
 在上一小节中，当向Selector注册Channel时，register()方法会返回一个SelectionKey对象。这个对象包含了一些你感兴趣的属性：
 
@@ -136,7 +136,7 @@ Object attachedObj = selectionKey.attachment();
 
 ```SelectionKey key = channel.register(selector, SelectionKey.OP_READ, theObject);```
 
-### 5. 通过Selector选择通道
+### 通过Selector选择通道
 
 一旦向Selector注册了一或多个通道，就可以调用几个重载的select()方法。这些方法返回你所感兴趣的事件（如连接、接受、读或写）已经准备就绪的那些通道。换句话说，如果你对“读就绪”的通道感兴趣，select()方法会返回读事件已经就绪的那些通道。
 
@@ -190,17 +190,17 @@ while(keyIterator.hasNext()) {
 
 SelectionKey.channel()方法返回的通道需要转型成你要处理的类型，如ServerSocketChannel或SocketChannel等。
 
-### 6. wakeUp()
+### wakeUp()
 
 某个线程调用select()方法后阻塞了，即使没有通道已经就绪，也有办法让其从select()方法返回。只要让其它线程在第一个线程调用select()方法的那个对象上调用Selector.wakeup()方法即可。阻塞在select()方法上的线程会立马返回。
 
 如果有其它线程调用了wakeup()方法，但当前没有线程阻塞在select()方法上，下个调用select()方法的线程会立即“醒来（wake up）”。
 
-### 7. close()
+### close()
 
 用完Selector后调用其close()方法会关闭该Selector，且使注册到该Selector上的所有SelectionKey实例无效。通道本身并不会关闭。
 
-### 8. 完整的示例
+### 完整的示例
 
 这里有一个完整的示例，打开一个Selector，注册一个通道注册到这个Selector上(通道的初始化过程略去),然后持续监控这个Selector的四种事件（接受，连接，读，写）是否就绪。
 
@@ -229,7 +229,7 @@ while(true) {
 }
 ```
 
-Next: [Java-NIO-8-FileChannel](http://taoxiaoran.top/2016/06/09/java-nio-8-filechannel.html)
+Next: [Java-NIO-8-FileChannel](http://rannn.cc/2016/06/09/java-nio-8-filechannel.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

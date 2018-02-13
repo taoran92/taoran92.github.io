@@ -6,9 +6,7 @@ category: 技术
 date: 2015-12-23 21:29:22
 ---
 
-<font color="red"><center>本文内容部分转载于网络，站长已阅读并测试，保证其正确性。Update:2015-11-4</center></font>
-
-全文托管于GitHub，点击查看[全文阅读](href=https://github.com/Lemonjing/TinyMood/blob/master/技术文章/Java序列化.md)
+<font color="#3366ff"><center>本文内容部分转载于网络，站长已阅读并测试，保证其正确性。Update:2015-11-4</center></font>
 
 对于一个存在Java虚拟机中的对象来说，其内部的状态只是保存在内存中。JVM退出之后，内存资源也就被释放，Java对象的内部状态也就丢失了。而在很多情况下，对象内部状态是需要被持久化的，将运行中的对象状态保存下来(最直接的方式就是保存到文件系统中)，在需要的时候可以还原，即使是在Java虚拟机退出的情况下。
 

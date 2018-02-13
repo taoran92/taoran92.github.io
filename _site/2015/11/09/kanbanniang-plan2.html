@@ -326,13 +326,15 @@
 然后再在浮动小人的js中将这个div调取并输出。
 实现代码如下</p>
 
-<p>```java<script src="http://api.lwl12.com/hitokoto/?encode=js&amp;charset=utf-8" type="text/javascript"></script></p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-上面的代码放在footer.php中，
-在浮动小人说话的地方加入
-
-```java    msgs = [$("#lwlhitokoto").text().replace("lwlhitokoto()","")];
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s">"http://api.lwl12.com/hitokoto/?encode=js&amp;amp;charset=utf-8"</span> <span class="n">type</span><span class="o">=</span><span class="s">"text/javascript"</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </code></pre></div></div>
+
+<p>上面的代码放在footer.php中，
+在浮动小人说话的地方加入</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msgs</span> <span class="o">=</span> <span class="o">[</span><span class="err">$</span><span class="o">(</span><span class="s">"#lwlhitokoto"</span><span class="o">).</span><span class="na">text</span><span class="o">().</span><span class="na">replace</span><span class="o">(</span><span class="s">"lwlhitokoto()"</span><span class="o">,</span><span class="s">""</span><span class="o">)];</span>
+</code></pre></div></div>
+
 <p>即可输出一句话。
 （api使用了lwl修改的纯净版一言）
 这个方向总的来说是正确的，不过因为div中只能保存一句话，小人不断的吐槽，就会变成不停重复一句话的复读机。
@@ -368,59 +370,60 @@
 
 <p>输出只要将之前的msgs[]更改为</p>
 
-<p>```javamsgs = [“&lt;iframe id="\" src="\" width="5" height="5" frameborder="\" scrolling="\"&gt;&lt;/iframe&gt;”];</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-即可
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">msgs</span> <span class="o">=</span> <span class="o">[</span><span class="s">"&lt;iframe id="</span><span class="err">\</span><span class="s">" src="</span><span class="err">\</span><span class="s">" width="</span><span class="mi">5</span><span class="s">" height="</span><span class="mi">5</span><span class="s">" frameborder="</span><span class="err">\</span><span class="s">" scrolling="</span><span class="err">\</span><span class="s">"&gt;&lt;/iframe&gt;"</span><span class="o">];</span>
+</code></pre></div></div>
 
-因为字号调小了，所以在浮动小人上看起来效果还过得去，这一版也是我感到比较满意的一个版本。
+<p>即可</p>
 
-![110915_0710_2a3.png](http://7xlkoc.com1.z0.glb.clouddn.com/wp-content/uploads/2015/11/110915_0710_2a3.png)
+<p>因为字号调小了，所以在浮动小人上看起来效果还过得去，这一版也是我感到比较满意的一个版本。</p>
 
-从上图看的话，字超过两行的情况还是比较美观的，字数在一行左右会比较尴尬，留白太多。于是便有了第五次尝试
+<p><img src="http://7xlkoc.com1.z0.glb.clouddn.com/wp-content/uploads/2015/11/110915_0710_2a3.png" alt="110915_0710_2a3.png" /></p>
 
-## 第五次尝试
+<p>从上图看的话，字超过两行的情况还是比较美观的，字数在一行左右会比较尴尬，留白太多。于是便有了第五次尝试</p>
 
-考虑了整整一天，我甚至在想到底要不要舍弃掉iframe框架，转用文字输出。
+<h2 id="第五次尝试">第五次尝试</h2>
 
-这个时候我又想到了lwl的纯净版api，也就是蛋炒饭也给我那个解决方案，因为只能保存一句话而被我打入冷宫。
+<p>考虑了整整一天，我甚至在想到底要不要舍弃掉iframe框架，转用文字输出。</p>
 
-&lt;del datetime="2015-11-09T07:12:12+00:00"&gt;15号晚上的时候找lwl要源码准备修改一下，看看能不能实现多条语句保存或者更改字号之类的功能，可是悲剧的被拒绝了TAT&lt;/del&gt;
-LWL迷途知返，将代码开源了，可喜可贺 ：）
+<p>这个时候我又想到了lwl的纯净版api，也就是蛋炒饭也给我那个解决方案，因为只能保存一句话而被我打入冷宫。</p>
 
-http://blog.lwl12.com/read/hitokoto-api.html
+<p><del>15号晚上的时候找lwl要源码准备修改一下，看看能不能实现多条语句保存或者更改字号之类的功能，可是悲剧的被拒绝了TAT</del></p>
 
-我感觉我就是个悲剧，明明就不会写代码，还想做功能，简直就是痴人说梦。
+<p>LWL迷途知返，将代码开源了，可喜可贺 ：）</p>
 
-好在皇天不负有心人，晚上闲逛一言官方api站的时候，在[引用排行榜](http://hitokoto.us/apiref.html)中发现了 哞菇牛 的番萌 http://fmoe.cn/
+<p>http://blog.lwl12.com/read/hitokoto-api.html</p>
 
-查看源代码发现了他的一言获取和输出函数，我泪流满面。
+<p>我感觉我就是个悲剧，明明就不会写代码，还想做功能，简直就是痴人说梦。</p>
 
-其实我当时把排行榜前面两页的网站源码都看了个遍，可用性高的代码还真没找到，能看到fmoe也是缘分未尽。
+<p>好在皇天不负有心人，晚上闲逛一言官方api站的时候，在<a href="http://hitokoto.us/apiref.html">引用排行榜</a>中发现了 哞菇牛 的番萌 http://fmoe.cn/</p>
 
-我把获取一言和输出一言的代码贴一下：
+<p>查看源代码发现了他的一言获取和输出函数，我泪流满面。</p>
 
-```java
-&lt;script&gt;// &lt;![CDATA[
-            //初始化一言
-            setTimeout("getkoto()",1000);
-            //加载一言
-            var t;
-            function getkoto(){
-                var hjs = document.createElement('script');
-                hjs.setAttribute('id', 'hjs');
-                hjs.setAttribute('src', 'http://api.hitokoto.us/rand?uid=3221&amp;encode=jsc&amp;fun=echokoto');
-                document.getElementById("hjsbox").appendChild(hjs);
-                t=setTimeout("getkoto()",2000);
-            }
-            //输出一言
-            function echokoto(result){
-                var hc = eval(result);
-                //$("#hitokoto").fadeTo(300,0);
-                document.getElementById("hitokoto").innerHTML = hc.hitokoto;
-                //$("#hitokoto").fadeTo(300,0.75);
-            }
+<p>其实我当时把排行榜前面两页的网站源码都看了个遍，可用性高的代码还真没找到，能看到fmoe也是缘分未尽。</p>
 
-// ]]&gt;&lt;/script&gt;
+<p>我把获取一言和输出一言的代码贴一下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span><span class="c1">// &lt;![CDATA[</span>
+            <span class="c1">//初始化一言</span>
+            <span class="n">setTimeout</span><span class="o">(</span><span class="s">"getkoto()"</span><span class="o">,</span><span class="mi">1000</span><span class="o">);</span>
+            <span class="c1">//加载一言</span>
+            <span class="n">var</span> <span class="n">t</span><span class="o">;</span>
+            <span class="n">function</span> <span class="nf">getkoto</span><span class="o">(){</span>
+                <span class="n">var</span> <span class="n">hjs</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="na">createElement</span><span class="o">(</span><span class="err">'</span><span class="n">script</span><span class="err">'</span><span class="o">);</span>
+                <span class="n">hjs</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="err">'</span><span class="n">id</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">hjs</span><span class="err">'</span><span class="o">);</span>
+                <span class="n">hjs</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="err">'</span><span class="n">src</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="nl">http:</span><span class="c1">//api.hitokoto.us/rand?uid=3221&amp;encode=jsc&amp;fun=echokoto');</span>
+                <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="s">"hjsbox"</span><span class="o">).</span><span class="na">appendChild</span><span class="o">(</span><span class="n">hjs</span><span class="o">);</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">setTimeout</span><span class="o">(</span><span class="s">"getkoto()"</span><span class="o">,</span><span class="mi">2000</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">//输出一言</span>
+            <span class="n">function</span> <span class="nf">echokoto</span><span class="o">(</span><span class="n">result</span><span class="o">){</span>
+                <span class="n">var</span> <span class="n">hc</span> <span class="o">=</span> <span class="n">eval</span><span class="o">(</span><span class="n">result</span><span class="o">);</span>
+                <span class="c1">//$("#hitokoto").fadeTo(300,0);</span>
+                <span class="n">document</span><span class="o">.</span><span class="na">getElementById</span><span class="o">(</span><span class="s">"hitokoto"</span><span class="o">).</span><span class="na">innerHTML</span> <span class="o">=</span> <span class="n">hc</span><span class="o">.</span><span class="na">hitokoto</span><span class="o">;</span>
+                <span class="c1">//$("#hitokoto").fadeTo(300,0.75);</span>
+            <span class="o">}</span>
+
+<span class="c1">// ]]&gt;&lt;/script&gt;</span>
 </code></pre></div></div>
 
 <p>测试地址:http://api.myhloli.com/hitokoto/test.html

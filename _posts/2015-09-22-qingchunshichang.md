@@ -8,8 +8,6 @@ date: 2015-09-22 22:11:52
 
 **厦门大学微电影厦至45.8℃主题曲**
 
-![](http://7xlkoc.com1.z0.glb.clouddn.com/lemon.jpg)
-
 别驼着背 大气层很轻
 
 害怕看你 渐渐变透明 
@@ -44,7 +42,7 @@ date: 2015-09-22 22:11:52
 
 歌词来源：厦门大学《厦至45.8》微电影
 
-整理：陶柠檬 微博@不能卖萌心塞塞
+整理：梦回少年 微博@梦回少年rannn
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

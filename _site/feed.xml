@@ -949,9 +949,7 @@ openssl: false
         <link>http://localhost:4000/2017/02/10/singleton.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/02/10/singleton.html</guid>
         <pubDate>Fri, 10 Feb 2017 00:00:00 +0800</pubDate>
-        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/Lemonjing/TinyMood/blob/master/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/singleton.md&quot;&gt;点击阅读Github Markdown原文&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;如何正确地写出单例模式&lt;/strong&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;strong&gt;如何正确地写出单例模式&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;单例模式算是设计模式中最容易理解，也是最容易手写代码的模式了吧。但是其中的坑却不少，所以也常作为面试题来考。本文主要对几种单例写法的整理，并分析其优缺点。很多都是一些老生常谈的问题，但如果你不知道如何创建一个线程安全的单例，不知道什么是双检锁，那这篇文章可能会帮助到你。&lt;/p&gt;
 
@@ -1441,7 +1439,7 @@ Vmnet8 NAT模式
         <link>http://localhost:4000/2017/01/31/talk-about-hometown.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/01/31/talk-about-hometown.html</guid>
         <pubDate>Tue, 31 Jan 2017 00:00:00 +0800</pubDate>
-        <description>&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/当我们谈论故乡的时候.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;今日封面图：蝴蝶飞不过沧海（拍摄于厦门外海）&lt;/p&gt;
 
@@ -1485,7 +1483,7 @@ Vmnet8 NAT模式
         <link>http://localhost:4000/2017/01/28/my-new-year-hope.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/01/28/my-new-year-hope.html</guid>
         <pubDate>Sat, 28 Jan 2017 00:00:00 +0800</pubDate>
-        <description>&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/WechatIMG4.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/blogimg/WechatIMG4.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;​今日封面图：杭州茅家埠（自拍直出）&lt;/p&gt;
 

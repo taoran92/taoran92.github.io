@@ -75,7 +75,7 @@ while(true){
 }
 ```
 
-Next: [Java-NIO-11-DatagramChannel](http://taoxiaoran.top/2016/06/09/java-nio-11-datagram-channel.html)
+Next: [Java-NIO-11-DatagramChannel](http://rannn.cc/2016/06/09/java-nio-11-datagram-channel.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

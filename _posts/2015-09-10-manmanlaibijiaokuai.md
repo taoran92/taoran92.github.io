@@ -11,7 +11,9 @@ description: 爱情
 
 小C 送的礼物
 
-![pic](http://7xlkoc.com1.z0.glb.clouddn.com/慢慢来.jpg)
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/慢慢来.jpg" />
+</div>
 
 而对于我来讲，宁静而昏暗的灯光，柔美而舒缓的音乐，在扑鼻的精油香气中缓缓睡去，醒来冲个澡，穿着凉拖和小裙子，头发上还滴着水，晃晃悠悠的走回酒店里。我一直眷恋着这种身心自由且慢悠悠感觉，特别当我生活在北京上海这种天天逼叨叨催的环境里。
 
