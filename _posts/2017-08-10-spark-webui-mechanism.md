@@ -9,12 +9,12 @@ Spark应用运行时的详细进度信息，性能指标等数据和信息对于
 
 目录：
 
-* [Spark WebUI页面](#Spark%20WebUI页面)
+* [Spark WebUI页面](#页面)
 * [Spark WebUI流程图](#流程图)
 * [Spark WebUI流程源码级细述](#源码分析)
 * [Spark WebUI数据获取和更新原理](#数据获取和更新原理)
 
-## Spark WebUI页面
+## 页面
 
 ![](http://rannn.cc/assets/img/tech/sparkui.png)
 
