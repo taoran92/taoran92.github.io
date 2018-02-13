@@ -136,7 +136,9 @@ int main()
 
 **程序输出结果：**
 
-![](http://7xlkoc.com1.z0.glb.clouddn.com/bfs2.png)
+<div align="center">
+<img src="hhttp://7xlkoc.com1.z0.glb.clouddn.com/bfs2.png" />
+</div>
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
