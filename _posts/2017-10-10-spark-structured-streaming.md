@@ -8,14 +8,17 @@ category: 大数据
 目录：
 
 * [引言](#1.引言)
-* [Spark Streaming介绍](#2-spark-streaming)
+* [引言](#11引言)
+* [Spark Streaming介绍](#2-Spark-streaming)
 * [Structured Streaming介绍和使用](#structured-streaming)
   * [DataFrame & DataSet](#dataframe-dataset)
   * [端到端的exactly-once保证](#end-to-end-exactly-once-guarantee)
   * [Structured Streaming其他特性](#structured-streaming-feature)
 * [Structured Streaimg总结与实践](#summary-structured-streaming)
 
-## 1-引言
+## 11引言
+
+## 1.引言
 
 随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。基础平台大数据架构部这边的业务在spark2.0以前版本中一直是使用Spark Streaming作为流式和实时计算的框架。
  
@@ -23,7 +26,7 @@ category: 大数据
 
 ![](http://rannn.cc/assets/img/tech/spark_infra.png)
 
-## 2-spark-streaming
+## 2-Spark-streaming
 
 在介绍Structured Streaming之前，得先介绍下Spark Streaming。Spark Streaming 类似于 Apache Storm，用于流式数据的处理。根据官方文档介绍，Spark Streaming 有高吞吐量和容错能力强这两个特点。Spark Streaming 支持的数据输入源很多，例如：Kafka、Flume和 TCP Socket等。数据输入后可以用 Spark 的map、reduce、join、window 等相关算子进行计算。最终可以sink到 HDFS，数据库等。在 Spark Streaming 中，处理数据的单位是一批（一个batch），Spark Streaming 需要设置batch间隔使得数据汇总到一定的量后再进行操作。batch间隔是 Spark Streaming 的核心概念和关键参数，它决定了 Spark Streaming 提交作业的频率和数据处理的延迟，同时也影响着数据处理的吞吐量和性能。
  
