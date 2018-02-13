@@ -85,7 +85,7 @@ DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，
  
 主要核心代码code-2：
 
-```bash
+```scala
 //Spark2.x无需使用SparkConf、SparkContext，而是SparkSession作为统一的切入点
 1.val spark = SparkSession.builder.appName("SocketWordCount").getOrCreate()
 //以TCP Socket流构建DataFrame
@@ -162,7 +162,7 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
  
 通过业务和实践，发现大多数场景是使用kafka，而业务形态是
 
-```sh
+```
 1、topicA => topicB （ETL作业，普通的join场景）
 2、topicA, topicB, … => topicC（多流join的场景）
 3、topicA => topicB, topicC, …（topic分流的场景）
@@ -170,7 +170,7 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
 
 这边给出一个实际的例子，需求是按字段对topic分流。
 
-```text
+```scala
 //入口
 val sparkSession = SparkSession.builder().appName("TopicSplitFlow").getOrCreate()
 import sparkSession.implicits._
