@@ -57,7 +57,7 @@ apt-get install libssl-dev
 最终如下：
 
 <div align="center">
-<img src="/assets/img/java/hadoopnative.png"/>
+<img src="/assets/img/tech/hadoopnative.png"/>
 </div>
 
 ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
