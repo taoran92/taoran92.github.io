@@ -13,7 +13,7 @@ Spark应用运行时的详细进度信息，性能指标等数据和信息对于
 * [Spark WebUI流程图](#流程图)
 * [Spark WebUI流程源码级细述](#源码分析)
 * [Spark WebUI数据获取和更新原理](#数据获取和更新原理)
-* [Spark WebUI数据获取和更新原理](#Spark)
+* [Spark WebUI数据获取和更新原理](#spark)
 
 ## 页面
 
@@ -231,7 +231,7 @@ Stage的，pendingStages，activeStages，completedStages，failedStages等。
 
 至此JobProgressListener的各项数据就产生了，其他事件触发的时候，或下次同样事件到达的时候，JobProgressListener依然会进行同样的逻辑，然后对数据进行更新。对于Spark WebUI来说，便可以从JobProgressListener中取得数据进行页面呈现了。对于其他的listener，如EnvironmentListener，StorageListener，ExecutorListener等等，数据产生和更新的原理是一致的。
 
-## Spark
+## spark
 
 敲重点：明白了listener的数据产生和更新原理以后对于Spark应用的其他开发是很有意义的，比方说你想设计一个自定义metrics，设计metrics子系统，设计开发spark作业分析诊断系统等等，就可以从spark的各个后台listener中去获取数据啦。
 
