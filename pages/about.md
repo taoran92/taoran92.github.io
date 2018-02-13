@@ -76,16 +76,24 @@ permalink: /pages/about.html
 				微博：
 			</td> 
 			<td>
-				<a href="{{ site.author.weibo }}" target="_blank">风屿alter</a>
+				<a href="{{ site.author.weibo }}" target="_blank">梦回少年rannn</a>
 			</td> 
 		</tr>
 
 		<tr>
 			<td>
-				知乎：
+				网易云音乐：
 			</td> 
 			<td>
-				<a href="{{ site.author.zhihu }}" target="_blank">拾忆旧少年</a>
+				<a href="{{ site.author.netease }}" target="_blank">梦回少年rannn</a>
+			</td> 
+		</tr>
+		<tr>
+			<td>
+				微信公众号：
+			</td> 
+			<td>
+				<a href="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" target="_blank">梦回少年</a>
 			</td> 
 		</tr>
 	</table>
