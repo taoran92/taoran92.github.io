@@ -87,24 +87,24 @@ DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，
 
 ```scala
 //Spark2.x无需使用SparkConf、SparkContext，而是SparkSession作为统一的切入点
-1.val spark = SparkSession.builder.appName("SocketWordCount").getOrCreate()
+val spark = SparkSession.builder.appName("SocketWordCount").getOrCreate()
 //以TCP Socket流构建DataFrame
-2.val lines = spark.readStream.format("socket").option("host", "localhost").option("port", 9999).load()
+val lines = spark.readStream.format("socket").option("host", "localhost").option("port", 9999).load()
 // DataFrame转为Dataset进行算子操作
-3.val words = lines.as[String].flatMap(_.split(" "))
+val words = lines.as[String].flatMap(_.split(" "))
 // 产生单词计数，schema字段为value和count
-4.val wordCounts = words.groupBy("value").count()
+val wordCounts = words.groupBy("value").count()
 // 启动Structured Streaming并sink数据到控制台
-5.val query = wordCounts.writeStream.outputMode("complete").format("console").start()
+val query = wordCounts.writeStream.outputMode("complete").format("console").start()
 // 等待程序终止
-6.query.awaitTermination()
+query.awaitTermination()
 ```
 
 上述例程对应的流程图如下：
 
 ![](http://rannn.cc/assets/img/tech/structured_procedure.png)
 
-从上图可以很直观的理解unbound input table的概念，并且注意到在Structured Streaming中batch以trigger interval来控制，如上述例子中是每1min作为一个触发间隔，每一次触发间隔到达，数据被追加到input table作为新行，经过query的处理从而更新result table。Result Table结果表也是一个unbounded table。Result Table更新后我们可以根据需求将数据以complete模式（全部结果表数据）或者update模式（结果表中更新的行数据）sink到外部存储。（hdfs、kafka等）
+从上图可以很直观的理解unbounded input table的概念，并且注意到在Structured Streaming中batch以trigger interval来控制，如上述例子中是每1min作为一个触发间隔，每一次触发间隔到达，数据被追加到input table作为新行，经过query的处理从而更新result table。Result Table结果表也是一个unbounded table。Result Table更新后我们可以根据需求将数据以complete模式（全部结果表数据）或者update模式（结果表中更新的行数据）sink到外部存储。（hdfs、kafka等）
  
 这里有一个迷惑的点，直观上看Structured Streaming 每次query似乎是对input table的全量数据进行计算。但是在实际执行过程中，由于全量数据会越来越多，那么每次对全量数据进行计算的代价和消耗会越来越大。
 Structured Streaming 的做法是：
@@ -160,7 +160,7 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
  
 基于这些重要特性的考量，我们这边的业务，如ETL作业，samza移交过来的重构作业，join场景等等的流式作业，未来我们都将采用Structured Streaming方式去实现。
  
-通过业务和实践，发现大多数场景是使用kafka，而业务形态是
+通过业务和实践，发现大多数流式场景数据源是使用kafka，而业务形态是
 
 ```
 1、topicA => topicB （ETL作业，普通的join场景）
@@ -172,7 +172,7 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
 
 ```scala
 //入口
-val sparkSession = SparkSession.builder().appName("TopicSplitFlow").getOrCreate()
+val sparkSession = SparkSession.builder().appName("按字段topic分流").getOrCreate()
 import sparkSession.implicits._
 
 //source 
@@ -190,12 +190,12 @@ val result = kafkaDataSets.map(content => {
     val flatMap = new JsonFlattener(content).withFlattenMode(FlattenMode.KEEP_ARRAYS).flattenAsMap()
     val value = JSON.toJSONString(flatMap, SerializerFeature.PrettyFormat)
     var topic = productTopic1
-    val (classValue, categoryValue) = (flatMap.get("data.class"), flatMap.get("data.category"))
+    val (classValue, categoryValue) = (flatMap.get("data.type"), flatMap.get("data.needValue"))
     (classValue, categoryValue) match {
-      case ("applog", _) => topic = productTopic1
-      case ("event", "performance") => topic = productTopic2
-      case ("event", "dlp") | ("even", "dlp_detail") => topic = productTopic3
-      case ("event", _) => topic = productTopic4
+      case ("app_log", _) => topic = productTopic1
+      case ("app_event", "needed1") => topic = productTopic2
+      case ("app_event", "needed2") | ("app_event", "needed3") => topic = productTopic3
+      case ("app_event", _) => topic = productTopic4
     }
     (System.currentTimeMillis().toString, topic, value)
   } catch {
