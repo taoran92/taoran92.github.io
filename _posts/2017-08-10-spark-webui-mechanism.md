@@ -129,11 +129,11 @@ Step5、接收UI请求，数据呈现
 
 因为Spark WebUI上的不同Tab项的数据实际上来源于不同的监听器对象，所以这边抛砖引玉，以JobProgressListener来说明。JobProgressListener中封装了Job和Stage运行状况以及运行进度等全部作业信息。
  
-1、JobProgressListener生成
+1. JobProgressListener生成
 
 根据前文所述，SparkUI对象构建过程中会实例化JobProgressListener然后把它add到ListenerBus中。
  
-2、JobProgressListener接收事件
+2. JobProgressListener接收事件
 
 2.1 事件到达ListenerBus
 
@@ -200,7 +200,7 @@ case jobEnd: SparkListenerJobEnd =>
 }
 ```
 
-3、JobProgressListener对事件进行响应
+3. JobProgressListener对事件进行响应
 
 以JobStart事件为例，相应的listener具体实现——JobProgressListener便接收JobStart的事件，并触发自己的onJobStart方法开始产生和更新数据啦。
  
