@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 添加搜索关键字 -->
+  <meta name="keywords" content="梦回少年,梦回,saber,lemonjing,少年">
+
+  <title>7.Java NIO Selector | 梦回少年</title>
+  <meta name="description" content="Selector（选择器）是Java NIO中能够检测一到多个NIO通道，并能够知晓通道是否为诸如读写事件做好准备的组件。这样，一个单独的线程可以管理多个channel，从而管理多个网络连接。">
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/main.css" >
+  <link rel="stylesheet" href="/assets/js/prettify/prettify.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" />
+  <link rel="canonical" href="http://localhost:4000/2016/06/09/java-nio-7-selector.html">
+  <link rel="alternate" type="application/rss+xml" title="梦回少年" href="http://localhost:4000/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header col-xs-12 col-sm-12 col-md-3 col-lg-3 center">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="sitehome">
+                        <a href="/" title="首页"><i class="fa fa-home fa-2x homeicon"></i><a><a class="site-title" href="/">梦回少年</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 hidden-xs hidden-sm center">
+                    <nav class="site-nav">
+                        <ul class="nav nav-pills">
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/read.html">读书</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/class.html">分类</a></li>
+                            <!-- <li class="select"><a class="page-link pjaxlink" href="/pages/tags.html">标签</a></li> -->
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/archive.html">归档</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/about.html">关于</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- swifttype 搜索 弃用-->
+               <!--  <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div class="search">
+                        <input type="text" class="search-query st-default-search-input" placeholder="Search">
+                    </div>
+                </div> -->
+                 <!-- /swifttype 搜索 -->
+                <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div style="position: fixed; top:10px;">
+                        <img src="/search/img/cb-search.png" id="cb-search-btn" title="双击ctrl试一下" />
+                    </div>
+                </div>
+                   
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav phone-nav center">
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/"><i class="fa fa-home"></i>&nbsp;首页</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/read.html"><i class="fa fa-book"></i>&nbsp;读书</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/class.html"><i class="fa fa-tasks"></i>&nbsp;分类</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/tags.html"><i class="fa fa-tags"></i>&nbsp;标签</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/archive.html"><i class="fa fa-archive"></i>&nbsp;归档</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/about.html"><i class="fa fa-user"></i>&nbsp;关于</a></li>
+                        </ul>
+                    </div>
+            </nav>
+            </div>
+        </div>
+</header>
+
+
+    <div class="content">
+   	<div class="container">	
+   		<div class="row">
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm aside1 fadein-left">
+				<div class="profile box-shadow center">
+					<div class="overlay"></div>
+					<div class="center gavatar">
+						<a href="/" class="profile_gavatar"><img class="circle" src="/assets/img/t1.jpeg"></a>
+					</div>
+					<div class="address">
+						<h5><span class="fa fa-map-marker"></span> Hangzhou, China</h5>
+					</div>
+					<div class="center profile_desc">
+						技术<br>生活<br>和爱情<br>此刻与你分享<br>
+					</div>
+				</div>
+				
+				<div class="tag-cloud-text">
+					<a href="http://rannn.cc/pages/tags.html" title="标签" class="pjaxlink"><p class="center">标签【点我】</p></a>
+				</div>
+				<div class="tag-cloud ">	
+					<hr>
+					<div class="page-tag">
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#随笔" name="随笔" class="pjaxlink"><i class="fa fa-tags"></i>随笔(21)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Java" name="Java" class="pjaxlink"><i class="fa fa-tags"></i>Java(43)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#爱情" name="爱情" class="pjaxlink"><i class="fa fa-tags"></i>爱情(20)</a>
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#原创" name="原创" class="pjaxlink"><i class="fa fa-tags"></i>原创(23)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#技术" name="技术" class="pjaxlink"><i class="fa fa-tags"></i>技术(5)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Spring" name="Spring" class="pjaxlink"><i class="fa fa-tags"></i>Spring(10)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#NIO" name="NIO" class="pjaxlink"><i class="fa fa-tags"></i>NIO(13)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+					</div>					
+				</div>
+				<div class="clear"></div>
+
+	 			<div class="recentuse">
+	 					<p>GitHub项目</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "https://github.com/it-interview/easy-job" target="_blank">互联网求职面试知识复习</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/LightweightApp" target="_blank">集成LBS查询、音乐、阅读的微信公众账号</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/hadoop-dedup" target="_blank">基于hadoop和hbase的大规模海量数据去重</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/TinyMooc" target="_blank">轻量级Java平台在线幕课学习网站</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/Keccak" target="_blank">SHA-3 algorithm Keccak Implementation</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/your-offer" target="_blank">剑指offer的Java实现</a></li>
+	 					</ul>
+	 			</div>
+	 			
+	 			<div class="recentuse">
+	 					<p>经常出没</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "http://music.163.com/#/user/home?id=63589002" target="_blank">网易云音乐</a></li>
+	 						<li><a href = "https://github.com/Lemonjing" target="_blank">GitHub</a></li>
+	 						<li><a href = "http://weibo.com/u/1662536394" target="_blank">微博</a></li>
+	 						<li><a href = "http://pianke.me/profile/1924980/" target="_blank">片刻</a></li>
+		 					<li><a href = "https://www.zhihu.com/people/xmusaber" target="_blank">知乎</a></li>
+		 					<li><a href = "http://www.nowcoder.com/profile/213475" target="_blank">牛客</a></li>
+	 					</ul>
+	 			</div>
+				
+				<div class="friendlink">
+	 					<p>友情链接</p>
+	 					<hr>					
+		 				<a href = "https://imjad.cn/" target="_blank">AD's Blog</a></br>
+						<a href = "http://zyl.me" target="_blank">ZYL的博客</a></br>
+						<a href = "http://mxwu.cn" target="_blank">梦忻屋</a></br>
+						<a href = "http://www.weiyanweiyu.cn" target="_blank">微言微语</a></br>
+						<a href = "http://jloong.com" target="_blank">楚书业</a></br>
+						<a href = "https://emiria.io/" target="_blank">蔓舞寻樱</a></br>
+						<a href = "http://www.xiaokang.info" target="_blank">小康博客</a><br>
+						<a href = "http://blog.iov.me" target="_blank">随心说</a></br>
+						<a href = "http://czduban.com" target="_blank">以歌。先生</a><br>
+						<a href = "http://5mx.net/" target="_blank">冷夜博客</a><br>
+						<a href = "http://www.8hao.com.cn/" target="_blank">艳莜日记</a><br>
+						<a href = "http://blog.sunxyz.cn/" target="_blank">诸葛扬阳</a><br>
+						<a href = "https://lostyou.love/" target="_blank">邻居</a><br>
+						<a href = "http://www.kurodown.com/" target="_blank">酷绒站</a>
+	 			</div>
+				
+			</div>
+			
+			<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 box-shadow fadein-right aside2">					 		
+					<div class="page-content" id="pjax"><div class="post">
+  <header class="post-header">
+    <h1 class="post-title">7.Java NIO Selector</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;2016-06-09</p>
+	    
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		
+			<a class="pjaxlink" href="/pages/tags.html#Java">Java</a>
+		
+			<a class="pjaxlink" href="/pages/tags.html#NIO">NIO</a>
+		
+		</span>
+	    		
+    </div>
+  </header>
+
+  <article class="post-content">
+    <p>Selector（选择器）是Java NIO中能够检测一到多个NIO通道，并能够知晓通道是否为诸如读写事件做好准备的组件。这样，一个单独的线程可以管理多个channel，从而管理多个网络连接。</p>
+
+<p>下面是本文所涉及到的主题列表：</p>
+
+<ol>
+  <li><a href="#1">为什么使用Selector?</a></li>
+  <li><a href="#2">Selector的创建</a></li>
+  <li><a href="#3">向Selector注册通道</a></li>
+  <li><a href="#4">SelectionKey</a></li>
+  <li><a href="#5">通过Selector选择通道</a></li>
+  <li><a href="#6">wakeUp()</a></li>
+  <li><a href="#7">close()</a></li>
+  <li><a href="#7">完整的示例</a></li>
+</ol>
+
+<h3 id="1-为什么使用selector">1. 为什么使用Selector?</h3>
+
+<p>仅用单个线程来处理多个Channels的好处是，只需要更少的线程来处理通道。事实上，可以只用一个线程处理所有的通道。对于操作系统来说，线程之间上下文切换的开销很大，而且每个线程都要占用系统的一些资源（如内存）。因此，使用的线程越少越好。</p>
+
+<p>但是，需要记住，现代的操作系统和CPU在多任务方面表现的越来越好，所以多线程的开销随着时间的推移，变得越来越小了。实际上，如果一个CPU有多个内核，不使用多任务可能是在浪费CPU能力。不管怎么说，关于那种设计的讨论应该放在另一篇不同的文章中。在这里，只要知道使用Selector能够处理多个通道就足够了。</p>
+
+<p>下面是单线程使用一个Selector处理3个channel的示例图：</p>
+
+<p><img src="http://tutorials.jenkov.com/images/java-nio/overview-selectors.png" alt="" /></p>
+
+<h3 id="2-selector的创建">2. Selector的创建</h3>
+
+<p>通过调用Selector.open()方法创建一个Selector，如下：</p>
+
+<p><code class="highlighter-rouge">Selector selector = Selector.open();</code></p>
+
+<h3 id="3-向selector注册通道">3. 向Selector注册通道</h3>
+
+<p>为了将Channel和Selector配合使用，必须将channel注册到selector上。通过SelectableChannel.register()方法来实现，如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">channel</span><span class="o">.</span><span class="na">configureBlocking</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+<span class="n">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">selector</span><span class="o">,</span>
+	<span class="n">Selectionkey</span><span class="o">.</span><span class="na">OP_READ</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>与Selector一起使用时，Channel必须处于非阻塞模式下。这意味着不能将FileChannel与Selector一起使用，因为FileChannel不能切换到非阻塞模式。而套接字通道都可以。</p>
+
+<p>注意register()方法的第二个参数。这是一个“interest集合”，意思是在通过Selector监听Channel时对什么事件感兴趣。可以监听四种不同类型的事件：</p>
+
+<ol>
+  <li>
+    <p>Connect</p>
+  </li>
+  <li>
+    <p>Accept</p>
+  </li>
+  <li>
+    <p>Read</p>
+  </li>
+  <li>
+    <p>Write</p>
+  </li>
+</ol>
+
+<p>通道触发了一个事件意思是该事件已经就绪。所以，某个channel成功连接到另一个服务器称为“连接就绪”。一个server socket channel准备好接收新进入的连接称为“接收就绪”。一个有数据可读的通道可以说是“读就绪”。等待写数据的通道可以说是“写就绪”。</p>
+
+<p>这四种事件用SelectionKey的四个常量来表示：</p>
+
+<ol>
+  <li>
+    <p>SelectionKey.OP_CONNECT</p>
+  </li>
+  <li>
+    <p>SelectionKey.OP_ACCEPT</p>
+  </li>
+  <li>
+    <p>SelectionKey.OP_READ</p>
+  </li>
+  <li>
+    <p>SelectionKey.OP_WRITE</p>
+  </li>
+</ol>
+
+<p>如果你对不止一种事件感兴趣，那么可以用“位或”操作符将常量连接起来，如下：</p>
+
+<p><code class="highlighter-rouge">int interestSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;</code></p>
+
+<p>在下面还会继续提到interest集合。</p>
+
+<h3 id="4-selectionkey">4. SelectionKey</h3>
+
+<p>在上一小节中，当向Selector注册Channel时，register()方法会返回一个SelectionKey对象。这个对象包含了一些你感兴趣的属性：</p>
+
+<ul>
+  <li>interest集合</li>
+  <li>ready集合</li>
+  <li>Channel</li>
+  <li>Selector</li>
+  <li>附加的对象（可选）</li>
+</ul>
+
+<p>下面我会描述这些属性。</p>
+
+<p><strong>interest集合</strong></p>
+
+<p>就像向Selector注册通道一节中所描述的，interest集合是你所选择的感兴趣的事件集合。可以通过SelectionKey读写interest集合，像这样：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">interestSet</span> <span class="o">=</span> <span class="n">selectionKey</span><span class="o">.</span><span class="na">interestOps</span><span class="o">();</span>
+
+<span class="kt">boolean</span> <span class="n">isInterestedInAccept</span>  <span class="o">=</span> <span class="n">interestSet</span> <span class="o">&amp;</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_ACCEPT</span><span class="o">;</span>
+<span class="kt">boolean</span> <span class="n">isInterestedInConnect</span> <span class="o">=</span> <span class="n">interestSet</span> <span class="o">&amp;</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_CONNECT</span><span class="o">;</span>
+<span class="kt">boolean</span> <span class="n">isInterestedInRead</span>    <span class="o">=</span> <span class="n">interestSet</span> <span class="o">&amp;</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_READ</span><span class="o">;</span>
+<span class="kt">boolean</span> <span class="n">isInterestedInWrite</span>   <span class="o">=</span> <span class="n">interestSet</span> <span class="o">&amp;</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_WRITE</span><span class="o">;</span>    
+</code></pre></div></div>
+
+<p>可以看到，用“位与”操作interest 集合和给定的SelectionKey常量，可以确定某个确定的事件是否在interest 集合中。</p>
+
+<p><strong>ready集合</strong></p>
+
+<p>ready 集合是通道已经准备就绪的操作的集合。在一次选择(Selection)之后，你会首先访问这个ready set。Selection将在下一小节进行解释。可以这样访问ready集合：</p>
+
+<p><code class="highlighter-rouge">int readySet = selectionKey.readyOps();</code></p>
+
+<p>可以用像检测interest集合那样的方法，来检测channel中什么事件或操作已经就绪。但是，也可以使用以下四个方法，它们都会返回一个布尔类型：</p>
+
+<ul>
+  <li>selectionKey.isAcceptable();</li>
+  <li>selectionKey.isConnectable();</li>
+  <li>selectionKey.isReadable();</li>
+  <li>selectionKey.isWritable();</li>
+</ul>
+
+<p><strong>Channel + Selector</strong></p>
+
+<p>从SelectionKey访问Channel和Selector很简单。如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Channel</span>  <span class="n">channel</span>  <span class="o">=</span> <span class="n">selectionKey</span><span class="o">.</span><span class="na">channel</span><span class="o">();</span>
+<span class="n">Selector</span> <span class="n">selector</span> <span class="o">=</span> <span class="n">selectionKey</span><span class="o">.</span><span class="na">selector</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p><strong>附加的对象</strong></p>
+
+<p>可以将一个对象或者更多信息附着到SelectionKey上，这样就能方便的识别某个给定的通道。例如，可以附加与通道一起使用的Buffer，或是包含聚集数据的某个对象。使用方法如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">selectionKey</span><span class="o">.</span><span class="na">attach</span><span class="o">(</span><span class="n">theObject</span><span class="o">);</span>
+<span class="n">Object</span> <span class="n">attachedObj</span> <span class="o">=</span> <span class="n">selectionKey</span><span class="o">.</span><span class="na">attachment</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>还可以在用register()方法向Selector注册Channel的时候附加对象。如：</p>
+
+<p><code class="highlighter-rouge">SelectionKey key = channel.register(selector, SelectionKey.OP_READ, theObject);</code></p>
+
+<h3 id="5-通过selector选择通道">5. 通过Selector选择通道</h3>
+
+<p>一旦向Selector注册了一或多个通道，就可以调用几个重载的select()方法。这些方法返回你所感兴趣的事件（如连接、接受、读或写）已经准备就绪的那些通道。换句话说，如果你对“读就绪”的通道感兴趣，select()方法会返回读事件已经就绪的那些通道。</p>
+
+<p>下面是select()方法：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int <span class="k">select</span><span class="o">()</span>
+int <span class="k">select</span><span class="o">(</span>long <span class="nb">timeout</span><span class="o">)</span>
+int selectNow<span class="o">()</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">select()</code>阻塞到至少有一个通道在你注册的事件上就绪了。</p>
+
+<p><code class="highlighter-rouge">select(long timeout)</code>和<code class="highlighter-rouge">select()</code>一样，除了最长会阻塞timeout毫秒(参数)。</p>
+
+<p><code class="highlighter-rouge">selectNow()</code>不会阻塞，不管什么通道就绪都立刻返回（译者注：此方法执行非阻塞的选择操作。如果自从前一次选择操作后，没有通道变成可选择的，则此方法直接返回零。）。</p>
+
+<p><code class="highlighter-rouge">select()方法</code>返回的int值表示有多少通道已经就绪。亦即，自上次调用select()方法后有多少通道变成就绪状态。如果调用select()方法，因为有一个通道变成就绪状态，返回了1，若再次调用select()方法，如果另一个通道就绪了，它会再次返回1。如果对第一个就绪的channel没有做任何操作，现在就有两个就绪的通道，但在每次select()方法调用之间，只有一个通道就绪了。</p>
+
+<p><strong>selectedKeys()</strong></p>
+
+<p>一旦调用了select()方法，并且返回值表明有一个或更多个通道就绪了，然后可以通过调用selector的selectedKeys()方法，访问“已选择键集（selected key set）”中的就绪通道。如下所示：</p>
+
+<p><code class="highlighter-rouge">Set selectedKeys = selector.selectedKeys();</code></p>
+
+<p>当像Selector注册Channel时，Channel.register()方法会返回一个SelectionKey 对象。这个对象代表了注册到该Selector的通道。可以通过SelectionKey的selectedKeySet()方法访问这些对象。</p>
+
+<p>可以遍历这个已选择的键集合来访问就绪的通道。如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span> <span class="n">selectedKeys</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="na">selectedKeys</span><span class="o">();</span>
+<span class="n">Iterator</span> <span class="n">keyIterator</span> <span class="o">=</span> <span class="n">selectedKeys</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+<span class="k">while</span><span class="o">(</span><span class="n">keyIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+    <span class="n">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">keyIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isAcceptable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a connection was accepted by a ServerSocketChannel.</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isConnectable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a connection was established with a remote server.</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isReadable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a channel is ready for reading</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isWritable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a channel is ready for writing</span>
+    <span class="o">}</span>
+    <span class="n">keyIterator</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这个循环遍历已选择键集中的每个键，并检测各个键所对应的通道的就绪事件。</p>
+
+<p>注意每次迭代末尾的keyIterator.remove()调用。Selector不会自己从已选择键集中移除SelectionKey实例。必须在处理完通道时自己移除。下次该通道变成就绪时，Selector会再次将其放入已选择键集中。</p>
+
+<p>SelectionKey.channel()方法返回的通道需要转型成你要处理的类型，如ServerSocketChannel或SocketChannel等。</p>
+
+<h3 id="6-wakeup">6. wakeUp()</h3>
+
+<p>某个线程调用select()方法后阻塞了，即使没有通道已经就绪，也有办法让其从select()方法返回。只要让其它线程在第一个线程调用select()方法的那个对象上调用Selector.wakeup()方法即可。阻塞在select()方法上的线程会立马返回。</p>
+
+<p>如果有其它线程调用了wakeup()方法，但当前没有线程阻塞在select()方法上，下个调用select()方法的线程会立即“醒来（wake up）”。</p>
+
+<h3 id="7-close">7. close()</h3>
+
+<p>用完Selector后调用其close()方法会关闭该Selector，且使注册到该Selector上的所有SelectionKey实例无效。通道本身并不会关闭。</p>
+
+<h3 id="8-完整的示例">8. 完整的示例</h3>
+
+<p>这里有一个完整的示例，打开一个Selector，注册一个通道注册到这个Selector上(通道的初始化过程略去),然后持续监控这个Selector的四种事件（接受，连接，读，写）是否就绪。</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Selector</span> <span class="n">selector</span> <span class="o">=</span> <span class="n">Selector</span><span class="o">.</span><span class="na">open</span><span class="o">();</span>
+<span class="n">channel</span><span class="o">.</span><span class="na">configureBlocking</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+<span class="n">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">selector</span><span class="o">,</span> <span class="n">SelectionKey</span><span class="o">.</span><span class="na">OP_READ</span><span class="o">);</span>
+<span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kt">int</span> <span class="n">readyChannels</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="na">select</span><span class="o">();</span>
+  <span class="k">if</span><span class="o">(</span><span class="n">readyChannels</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="k">continue</span><span class="o">;</span>
+  <span class="n">Set</span> <span class="n">selectedKeys</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="na">selectedKeys</span><span class="o">();</span>
+  <span class="n">Iterator</span> <span class="n">keyIterator</span> <span class="o">=</span> <span class="n">selectedKeys</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+  <span class="k">while</span><span class="o">(</span><span class="n">keyIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+    <span class="n">SelectionKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">keyIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isAcceptable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a connection was accepted by a ServerSocketChannel.</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isConnectable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a connection was established with a remote server.</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isReadable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a channel is ready for reading</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">key</span><span class="o">.</span><span class="na">isWritable</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// a channel is ready for writing</span>
+    <span class="o">}</span>
+    <span class="n">keyIterator</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Next: <a href="http://taoxiaoran.top/2016/06/09/java-nio-8-filechannel.html">Java-NIO-8-FileChannel</a></p>
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+</div>
+
+<blockquote>
+  <p>本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。</p>
+</blockquote>
+	
+  </article>
+</div>
+
+  <div class="prevandnext">
+    	  
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/09/java-nio-8-filechannel.html"  title="8.Java NIO FileChannel">8.Java NIO FileChannel</a>
+	    </div>
+	  
+  	  
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/09/java-nio-6-channeltochanneltransfers.html"  title="6.Java NIO Channel to Channel Transfers">6.Java NIO Channel to Channel Transfers</a>
+	    </div>
+	  
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div></div>		
+			</div>
+ 		</div>	
+	</div>
+    </div> 
+</div>
+	<div class="profile_social">
+		<a class="rss" href="/feed.xml" target="_blank"></a>
+		<a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+		<a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+	</div>
+    <div id="backtotop">
+    		<a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
+    <div class="pjax_loading"></div>
+    
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <h2 class="footer-heading">saber's blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>梦回少年</li>
+          <li><a href="mailto:xmusaber@163.com">xmusaber@163.com</a></li>
+          <li>闽ICP备15018990号</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+          </li>
+          
+
+          
+          <li>
+            <a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="footer-col  footer-col-3">
+        <p class="text">If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</p>
+      </div>
+    </div>
+</div>
+    <div class="center sitedesc">
+    	Powered by <a href ="http://jekyllrb.com/">Jekyll</a>  |  © 2018 梦回少年  |  Hosted on <a href="https://github.com/lemonjing/lemonjing.github.io"> Github</a></div>
+    <div class="center sitedesc"><span id=span_dt_dt></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="busuanzi_container_site_pv" style='display:none'>本站总访问量<span id="busuanzi_value_site_pv"></span>次<br/>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259223523'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1259223523%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </div>
+
+<!-- 访问统计 -->
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 萌萌哒运行 -->
+  <SCRIPT language=javascript>          
+function show_date_time(){
+window.setTimeout("show_date_time()", 1000);
+BirthDay=new Date("8/15/2015 11:30:00");//这个日期是可以修改的
+today=new Date();
+timeold=(today.getTime()-BirthDay.getTime());
+sectimeold=timeold/1000
+secondsold=Math.floor(sectimeold);
+msPerDay=24*60*60*1000
+e_daysold=timeold/msPerDay
+daysold=Math.floor(e_daysold);
+e_hrsold=(e_daysold-daysold)*24;
+hrsold=Math.floor(e_hrsold);
+e_minsold=(e_hrsold-hrsold)*60;
+minsold=Math.floor((e_hrsold-hrsold)*60);
+seconds=Math.floor((e_minsold-minsold)*60);
+span_dt_dt.innerHTML="本站已萌萌哒运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}show_date_time();</SCRIPT>
+
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {equationNumbers: {
+            autoNumber: ["AMS"], useLabelIds: true}},
+            "HTML-CSS": {linebreaks: {automatic: true}},
+            SVG: {linebreaks: {automatic: true}}
+    });
+   </script> -->
+
+  <!-- jQuery -->
+  <script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.pjax.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/prettify/prettify.js"></script>
+  
+  <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+  <script type="text/javascript" src="/assets/js/ua-parser.js"></script>
+
+  <!-- jekyII search-->
+<div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+    <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签" >
+
+    <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="/search/img/cb-close.png"  id="cb-close-btn"/>
+    </div>
+</div>
+
+<!-- <div style="position: fixed; right: 16px; bottom: 20px;">
+    <img src="/search/img/cb-search.png"  id="cb-search-btn"  title="双击ctrl试一下"/>
+</div> -->
+
+<link rel="stylesheet" href="/search/css/cb-search.css">
+
+<script src="/search/js/bootstrap3-typeahead.min.js"></script>
+<script src="/search/js/cb-search.js"></script>
+<!-- jekyII search end -->
+
+  
+<script type="text/javascript" src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script type="text/javascript" src="/assets/js/embed.js"></script>
+<script type="text/javascript" src="/assets/js/stickUp.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+</footer>
+
+  </body>
+
+</html>

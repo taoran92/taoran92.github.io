@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 添加搜索关键字 -->
+  <meta name="keywords" content="梦回少年,梦回,saber,lemonjing,少年">
+
+  <title>Nginx工作原理简介 | 梦回少年</title>
+  <meta name="description" content="Nginx的模块与工作原理">
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/main.css" >
+  <link rel="stylesheet" href="/assets/js/prettify/prettify.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" />
+  <link rel="canonical" href="http://localhost:4000/2016/06/23/nginx-principle.html">
+  <link rel="alternate" type="application/rss+xml" title="梦回少年" href="http://localhost:4000/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header col-xs-12 col-sm-12 col-md-3 col-lg-3 center">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="sitehome">
+                        <a href="/" title="首页"><i class="fa fa-home fa-2x homeicon"></i><a><a class="site-title" href="/">梦回少年</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 hidden-xs hidden-sm center">
+                    <nav class="site-nav">
+                        <ul class="nav nav-pills">
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/read.html">读书</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/class.html">分类</a></li>
+                            <!-- <li class="select"><a class="page-link pjaxlink" href="/pages/tags.html">标签</a></li> -->
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/archive.html">归档</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/about.html">关于</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- swifttype 搜索 弃用-->
+               <!--  <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div class="search">
+                        <input type="text" class="search-query st-default-search-input" placeholder="Search">
+                    </div>
+                </div> -->
+                 <!-- /swifttype 搜索 -->
+                <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div style="position: fixed; top:10px;">
+                        <img src="/search/img/cb-search.png" id="cb-search-btn" title="双击ctrl试一下" />
+                    </div>
+                </div>
+                   
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav phone-nav center">
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/"><i class="fa fa-home"></i>&nbsp;首页</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/read.html"><i class="fa fa-book"></i>&nbsp;读书</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/class.html"><i class="fa fa-tasks"></i>&nbsp;分类</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/tags.html"><i class="fa fa-tags"></i>&nbsp;标签</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/archive.html"><i class="fa fa-archive"></i>&nbsp;归档</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/about.html"><i class="fa fa-user"></i>&nbsp;关于</a></li>
+                        </ul>
+                    </div>
+            </nav>
+            </div>
+        </div>
+</header>
+
+
+    <div class="content">
+   	<div class="container">	
+   		<div class="row">
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm aside1 fadein-left">
+				<div class="profile box-shadow center">
+					<div class="overlay"></div>
+					<div class="center gavatar">
+						<a href="/" class="profile_gavatar"><img class="circle" src="/assets/img/t1.jpeg"></a>
+					</div>
+					<div class="address">
+						<h5><span class="fa fa-map-marker"></span> Hangzhou, China</h5>
+					</div>
+					<div class="center profile_desc">
+						技术<br>生活<br>和爱情<br>此刻与你分享<br>
+					</div>
+				</div>
+				
+				<div class="tag-cloud-text">
+					<a href="http://rannn.cc/pages/tags.html" title="标签" class="pjaxlink"><p class="center">标签【点我】</p></a>
+				</div>
+				<div class="tag-cloud ">	
+					<hr>
+					<div class="page-tag">
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#随笔" name="随笔" class="pjaxlink"><i class="fa fa-tags"></i>随笔(21)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Java" name="Java" class="pjaxlink"><i class="fa fa-tags"></i>Java(43)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#爱情" name="爱情" class="pjaxlink"><i class="fa fa-tags"></i>爱情(20)</a>
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#原创" name="原创" class="pjaxlink"><i class="fa fa-tags"></i>原创(23)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#技术" name="技术" class="pjaxlink"><i class="fa fa-tags"></i>技术(5)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Spring" name="Spring" class="pjaxlink"><i class="fa fa-tags"></i>Spring(10)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#NIO" name="NIO" class="pjaxlink"><i class="fa fa-tags"></i>NIO(13)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+					</div>					
+				</div>
+				<div class="clear"></div>
+
+	 			<div class="recentuse">
+	 					<p>GitHub项目</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "https://github.com/it-interview/easy-job" target="_blank">互联网求职面试知识复习</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/LightweightApp" target="_blank">集成LBS查询、音乐、阅读的微信公众账号</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/hadoop-dedup" target="_blank">基于hadoop和hbase的大规模海量数据去重</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/TinyMooc" target="_blank">轻量级Java平台在线幕课学习网站</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/Keccak" target="_blank">SHA-3 algorithm Keccak Implementation</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/your-offer" target="_blank">剑指offer的Java实现</a></li>
+	 					</ul>
+	 			</div>
+	 			
+	 			<div class="recentuse">
+	 					<p>经常出没</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "http://music.163.com/#/user/home?id=63589002" target="_blank">网易云音乐</a></li>
+	 						<li><a href = "https://github.com/Lemonjing" target="_blank">GitHub</a></li>
+	 						<li><a href = "http://weibo.com/u/1662536394" target="_blank">微博</a></li>
+	 						<li><a href = "http://pianke.me/profile/1924980/" target="_blank">片刻</a></li>
+		 					<li><a href = "https://www.zhihu.com/people/xmusaber" target="_blank">知乎</a></li>
+		 					<li><a href = "http://www.nowcoder.com/profile/213475" target="_blank">牛客</a></li>
+	 					</ul>
+	 			</div>
+				
+				<div class="friendlink">
+	 					<p>友情链接</p>
+	 					<hr>					
+		 				<a href = "https://imjad.cn/" target="_blank">AD's Blog</a></br>
+						<a href = "http://zyl.me" target="_blank">ZYL的博客</a></br>
+						<a href = "http://mxwu.cn" target="_blank">梦忻屋</a></br>
+						<a href = "http://www.weiyanweiyu.cn" target="_blank">微言微语</a></br>
+						<a href = "http://jloong.com" target="_blank">楚书业</a></br>
+						<a href = "https://emiria.io/" target="_blank">蔓舞寻樱</a></br>
+						<a href = "http://www.xiaokang.info" target="_blank">小康博客</a><br>
+						<a href = "http://blog.iov.me" target="_blank">随心说</a></br>
+						<a href = "http://czduban.com" target="_blank">以歌。先生</a><br>
+						<a href = "http://5mx.net/" target="_blank">冷夜博客</a><br>
+						<a href = "http://www.8hao.com.cn/" target="_blank">艳莜日记</a><br>
+						<a href = "http://blog.sunxyz.cn/" target="_blank">诸葛扬阳</a><br>
+						<a href = "https://lostyou.love/" target="_blank">邻居</a><br>
+						<a href = "http://www.kurodown.com/" target="_blank">酷绒站</a>
+	 			</div>
+				
+			</div>
+			
+			<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 box-shadow fadein-right aside2">					 		
+					<div class="page-content" id="pjax"><div class="post">
+  <header class="post-header">
+    <h1 class="post-title">Nginx工作原理简介</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;2016-06-23</p>
+	    
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		
+			<a class="pjaxlink" href="/pages/tags.html#Java">Java</a>
+		
+		</span>
+	    		
+    </div>
+  </header>
+
+  <article class="post-content">
+    <h3 id="nginx的模块与工作原理">Nginx的模块与工作原理</h3>
+
+<p>Nginx由内核和模块组成，其中，内核的设计非常微小和简洁，完成的工作也非常简单，仅仅通过查找配置文件将客户端请求映射到一个location block（location是Nginx配置中的一个指令，用于URL匹配），而在这个location中所配置的每个指令将会启动不同的模块去完成相应的工作。</p>
+
+<p>Nginx的模块从结构上分为核心模块、基础模块和第三方模块：</p>
+
+<p>核心模块：HTTP模块、EVENT模块和MAIL模块</p>
+
+<p>基础模块：HTTP Access模块、HTTP FastCGI模块、HTTP Proxy模块和HTTP Rewrite模块，</p>
+
+<p>第三方模块：HTTP Upstream Request Hash模块、Notice模块和HTTP Access Key模块。</p>
+
+<p>用户根据自己的需要开发的模块都属于第三方模块。正是有了这么多模块的支撑，Nginx的功能才会如此强大。</p>
+
+<p>Nginx的模块从功能上分为如下三类。</p>
+
+<p>Handlers（处理器模块）: 此类模块直接处理请求，并进行输出内容和修改headers信息等操作。Handlers处理器模块一般只能有一个。</p>
+
+<p>Filters （过滤器模块）: 此类模块主要对其他处理器模块输出的内容进行修改操作，最后由Nginx输出。</p>
+
+<p>Proxies （代理类模块）: 此类模块是Nginx的HTTP Upstream之类的模块，这些模块主要与后端一些服务比如FastCGI等进行交互，实现服务代理和负载均衡等功能。</p>
+
+<p>图1-1展示了Nginx模块常规的HTTP请求和响应的过程。</p>
+
+<p><img src="http://img.blog.csdn.net/20130515152325076" alt="" /></p>
+
+<p>图1-1展示了Nginx模块常规的HTTP请求和响应的过程</p>
+
+<p>Nginx本身做的工作实际很少，当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。</p>
+
+<p>Nginx的模块直接被编译进Nginx，因此属于静态编译方式。启动Nginx后，Nginx的模块被自动加载，不像Apache，首先将模块编译为一个so文件，然后在配置文件中指定是否进行加载。在解析配置文件时，Nginx的每个模块都有可能去处理某个请求，但是同一个处理请求只能由一个模块来完成。</p>
+
+<h3 id="nginx的进程模型">Nginx的进程模型</h3>
+
+<p>在工作方式上，Nginx分为单工作进程和多工作进程两种模式。在单工作进程模式下，除主进程外，还有一个工作进程，工作进程是单线程的；在多工作进程模式下，每个工作进程包含多个线程。Nginx默认为单工作进程模式。</p>
+
+<p>Nginx在启动后，会有一个master进程和多个worker进程。</p>
+
+<p><strong>master进程</strong></p>
+
+<p>主要用来管理worker进程，包含：接收来自外界的信号，向各worker进程发送信号，监控worker进程的运行状态，当worker进程退出后(异常情况下)，会自动重新启动新的worker进程。</p>
+
+<p>master进程充当整个进程组与用户的交互接口，同时对进程进行监护。它不需要处理网络事件，不负责业务的执行，只会通过管理worker进程来实现重启服务、平滑升级、更换日志文件、配置文件实时生效等功能。</p>
+
+<p>我们要控制nginx，只需要通过kill向master进程发送信号就行了。比如kill -HUP pid，则是告诉nginx，从容地重启nginx，我们一般用这个信号来重启nginx，或重新加载配置，因为是从容地重启，因此服务是不中断的。master进程在接收到HUP信号后是怎么做的呢？首先master进程在接到信号后，会先重新加载配置文件，然后再启动新的worker进程，并向所有老的worker进程发送信号，告诉他们可以光荣退休了。新的worker在启动后，就开始接收新的请求，而老的worker在收到来自master的信号后，就不再接收新的请求，并且在当前进程中的所有未处理完的请求处理完成后，再退出。当然，直接给master进程发送信号，这是比较老的操作方式，nginx在0.8版本之后，引入了一系列命令行参数，来方便我们管理。比如，./nginx -s reload，就是来重启nginx，./nginx -s stop，就是来停止nginx的运行。如何做到的呢？我们还是拿reload来说，我们看到，执行命令时，我们是启动一个新的nginx进程，而新的nginx进程在解析到reload参数后，就知道我们的目的是控制nginx来重新加载配置文件了，它会向master进程发送信号，然后接下来的动作，就和我们直接向master进程发送信号一样了。</p>
+
+<p><strong>worker进程</strong></p>
+
+<p>而基本的网络事件，则是放在worker进程中来处理了。多个worker进程之间是对等的，他们同等竞争来自客户端的请求，各进程互相之间是独立的。一个请求，只可能在一个worker进程中处理，一个worker进程，不可能处理其它进程的请求。worker进程的个数是可以设置的，一般我们会设置与机器cpu核数一致，这里面的原因与nginx的进程模型以及事件处理模型是分不开的。</p>
+
+<p>worker进程之间是平等的，每个进程，处理请求的机会也是一样的。当我们提供80端口的http服务时，一个连接请求过来，每个进程都有可能处理这个连接，怎么做到的呢？首先，每个worker进程都是从master进程fork过来，在master进程里面，先建立好需要listen的socket（listenfd）之后，然后再fork出多个worker进程。所有worker进程的listenfd会在新连接到来时变得可读，为保证只有一个进程处理该连接，所有worker进程在注册listenfd读事件前抢accept_mutex，抢到互斥锁的那个进程注册listenfd读事件，在读事件里调用accept接受该连接。当一个worker进程在accept这个连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接，这样一个完整的请求就是这样的了。我们可以看到，一个请求，完全由worker进程来处理，而且只在一个worker进程中处理。worker进程之间是平等的，每个进程，处理请求的机会也是一样的。当我们提供80端口的http服务时，一个连接请求过来，每个进程都有可能处理这个连接，怎么做到的呢？首先，每个worker进程都是从master进程fork过来，在master进程里面，先建立好需要listen的socket（listenfd）之后，然后再fork出多个worker进程。所有worker进程的listenfd会在新连接到来时变得可读，为保证只有一个进程处理该连接，所有worker进程在注册listenfd读事件前抢accept_mutex，抢到互斥锁的那个进程注册listenfd读事件，在读事件里调用accept接受该连接。当一个worker进程在accept这个连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接，这样一个完整的请求就是这样的了。我们可以看到，一个请求，完全由worker进程来处理，而且只在一个worker进程中处理。</p>
+
+<p>nginx的进程模型，可以由下图来表示：</p>
+
+<p><img src="http://img.blog.csdn.net/20160401103647146" alt="" /></p>
+
+<p>注：本文转自 http://blog.csdn.net/hguisu/article/details/8930668</p>
+
+<h3 id="联系我">联系我</h3>
+
+<ul>
+  <li>邮箱: xmusaber@163.com</li>
+  <li>QQ: 932191671</li>
+</ul>
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+</div>
+
+<blockquote>
+  <p>本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。</p>
+</blockquote>
+	
+  </article>
+</div>
+
+  <div class="prevandnext">
+    	  
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/25/java-yiwei.html"  title="『原创』JAVA移位运算符简介">『原创』JAVA移位运算符简介</a>
+	    </div>
+	  
+  	  
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/23/java-note.html"  title="『原创』Java笔记连载-基础篇">『原创』Java笔记连载-基础篇</a>
+	    </div>
+	  
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div></div>		
+			</div>
+ 		</div>	
+	</div>
+    </div> 
+</div>
+	<div class="profile_social">
+		<a class="rss" href="/feed.xml" target="_blank"></a>
+		<a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+		<a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+	</div>
+    <div id="backtotop">
+    		<a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
+    <div class="pjax_loading"></div>
+    
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <h2 class="footer-heading">saber's blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>梦回少年</li>
+          <li><a href="mailto:xmusaber@163.com">xmusaber@163.com</a></li>
+          <li>闽ICP备15018990号</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+          </li>
+          
+
+          
+          <li>
+            <a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="footer-col  footer-col-3">
+        <p class="text">If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</p>
+      </div>
+    </div>
+</div>
+    <div class="center sitedesc">
+    	Powered by <a href ="http://jekyllrb.com/">Jekyll</a>  |  © 2018 梦回少年  |  Hosted on <a href="https://github.com/lemonjing/lemonjing.github.io"> Github</a></div>
+    <div class="center sitedesc"><span id=span_dt_dt></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="busuanzi_container_site_pv" style='display:none'>本站总访问量<span id="busuanzi_value_site_pv"></span>次<br/>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259223523'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1259223523%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </div>
+
+<!-- 访问统计 -->
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 萌萌哒运行 -->
+  <SCRIPT language=javascript>          
+function show_date_time(){
+window.setTimeout("show_date_time()", 1000);
+BirthDay=new Date("8/15/2015 11:30:00");//这个日期是可以修改的
+today=new Date();
+timeold=(today.getTime()-BirthDay.getTime());
+sectimeold=timeold/1000
+secondsold=Math.floor(sectimeold);
+msPerDay=24*60*60*1000
+e_daysold=timeold/msPerDay
+daysold=Math.floor(e_daysold);
+e_hrsold=(e_daysold-daysold)*24;
+hrsold=Math.floor(e_hrsold);
+e_minsold=(e_hrsold-hrsold)*60;
+minsold=Math.floor((e_hrsold-hrsold)*60);
+seconds=Math.floor((e_minsold-minsold)*60);
+span_dt_dt.innerHTML="本站已萌萌哒运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}show_date_time();</SCRIPT>
+
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {equationNumbers: {
+            autoNumber: ["AMS"], useLabelIds: true}},
+            "HTML-CSS": {linebreaks: {automatic: true}},
+            SVG: {linebreaks: {automatic: true}}
+    });
+   </script> -->
+
+  <!-- jQuery -->
+  <script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.pjax.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/prettify/prettify.js"></script>
+  
+  <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+  <script type="text/javascript" src="/assets/js/ua-parser.js"></script>
+
+  <!-- jekyII search-->
+<div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+    <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签" >
+
+    <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="/search/img/cb-close.png"  id="cb-close-btn"/>
+    </div>
+</div>
+
+<!-- <div style="position: fixed; right: 16px; bottom: 20px;">
+    <img src="/search/img/cb-search.png"  id="cb-search-btn"  title="双击ctrl试一下"/>
+</div> -->
+
+<link rel="stylesheet" href="/search/css/cb-search.css">
+
+<script src="/search/js/bootstrap3-typeahead.min.js"></script>
+<script src="/search/js/cb-search.js"></script>
+<!-- jekyII search end -->
+
+  
+<script type="text/javascript" src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script type="text/javascript" src="/assets/js/embed.js"></script>
+<script type="text/javascript" src="/assets/js/stickUp.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+</footer>
+
+  </body>
+
+</html>

@@ -38,5 +38,4 @@ permalink: /pages/archive.html
 </div>
 
 <div>
-{% include duoshuo.html %}
 </div>

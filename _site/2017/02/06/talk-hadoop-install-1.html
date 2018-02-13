@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 添加搜索关键字 -->
+  <meta name="keywords" content="梦回少年,梦回,saber,lemonjing,少年">
+
+  <title>深入浅出Hadoop集群搭建补遗 | 梦回少年</title>
+  <meta name="description" content="搭建此环境主要用来跑实验和论文相关，因此我们的操作直接在root用户下，不可用于生产环境。且下文命令、文件均特指Ubuntu14.04 Linux发行版操作系统下。">
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/main.css" >
+  <link rel="stylesheet" href="/assets/js/prettify/prettify.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" />
+  <link rel="canonical" href="http://localhost:4000/2017/02/06/talk-hadoop-install-1.html">
+  <link rel="alternate" type="application/rss+xml" title="梦回少年" href="http://localhost:4000/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header col-xs-12 col-sm-12 col-md-3 col-lg-3 center">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="sitehome">
+                        <a href="/" title="首页"><i class="fa fa-home fa-2x homeicon"></i><a><a class="site-title" href="/">梦回少年</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 hidden-xs hidden-sm center">
+                    <nav class="site-nav">
+                        <ul class="nav nav-pills">
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/read.html">读书</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/class.html">分类</a></li>
+                            <!-- <li class="select"><a class="page-link pjaxlink" href="/pages/tags.html">标签</a></li> -->
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/archive.html">归档</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/about.html">关于</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- swifttype 搜索 弃用-->
+               <!--  <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div class="search">
+                        <input type="text" class="search-query st-default-search-input" placeholder="Search">
+                    </div>
+                </div> -->
+                 <!-- /swifttype 搜索 -->
+                <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div style="position: fixed; top:10px;">
+                        <img src="/search/img/cb-search.png" id="cb-search-btn" title="双击ctrl试一下" />
+                    </div>
+                </div>
+                   
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav phone-nav center">
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/"><i class="fa fa-home"></i>&nbsp;首页</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/read.html"><i class="fa fa-book"></i>&nbsp;读书</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/class.html"><i class="fa fa-tasks"></i>&nbsp;分类</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/tags.html"><i class="fa fa-tags"></i>&nbsp;标签</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/archive.html"><i class="fa fa-archive"></i>&nbsp;归档</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/about.html"><i class="fa fa-user"></i>&nbsp;关于</a></li>
+                        </ul>
+                    </div>
+            </nav>
+            </div>
+        </div>
+</header>
+
+
+    <div class="content">
+   	<div class="container">	
+   		<div class="row">
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm aside1 fadein-left">
+				<div class="profile box-shadow center">
+					<div class="overlay"></div>
+					<div class="center gavatar">
+						<a href="/" class="profile_gavatar"><img class="circle" src="/assets/img/t1.jpeg"></a>
+					</div>
+					<div class="address">
+						<h5><span class="fa fa-map-marker"></span> Hangzhou, China</h5>
+					</div>
+					<div class="center profile_desc">
+						技术<br>生活<br>和爱情<br>此刻与你分享<br>
+					</div>
+				</div>
+				
+				<div class="tag-cloud-text">
+					<a href="http://rannn.cc/pages/tags.html" title="标签" class="pjaxlink"><p class="center">标签【点我】</p></a>
+				</div>
+				<div class="tag-cloud ">	
+					<hr>
+					<div class="page-tag">
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#随笔" name="随笔" class="pjaxlink"><i class="fa fa-tags"></i>随笔(21)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Java" name="Java" class="pjaxlink"><i class="fa fa-tags"></i>Java(43)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#爱情" name="爱情" class="pjaxlink"><i class="fa fa-tags"></i>爱情(20)</a>
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#原创" name="原创" class="pjaxlink"><i class="fa fa-tags"></i>原创(23)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#技术" name="技术" class="pjaxlink"><i class="fa fa-tags"></i>技术(5)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Spring" name="Spring" class="pjaxlink"><i class="fa fa-tags"></i>Spring(10)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#NIO" name="NIO" class="pjaxlink"><i class="fa fa-tags"></i>NIO(13)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+					</div>					
+				</div>
+				<div class="clear"></div>
+
+	 			<div class="recentuse">
+	 					<p>GitHub项目</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "https://github.com/it-interview/easy-job" target="_blank">互联网求职面试知识复习</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/LightweightApp" target="_blank">集成LBS查询、音乐、阅读的微信公众账号</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/hadoop-dedup" target="_blank">基于hadoop和hbase的大规模海量数据去重</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/TinyMooc" target="_blank">轻量级Java平台在线幕课学习网站</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/Keccak" target="_blank">SHA-3 algorithm Keccak Implementation</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/your-offer" target="_blank">剑指offer的Java实现</a></li>
+	 					</ul>
+	 			</div>
+	 			
+	 			<div class="recentuse">
+	 					<p>经常出没</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "http://music.163.com/#/user/home?id=63589002" target="_blank">网易云音乐</a></li>
+	 						<li><a href = "https://github.com/Lemonjing" target="_blank">GitHub</a></li>
+	 						<li><a href = "http://weibo.com/u/1662536394" target="_blank">微博</a></li>
+	 						<li><a href = "http://pianke.me/profile/1924980/" target="_blank">片刻</a></li>
+		 					<li><a href = "https://www.zhihu.com/people/xmusaber" target="_blank">知乎</a></li>
+		 					<li><a href = "http://www.nowcoder.com/profile/213475" target="_blank">牛客</a></li>
+	 					</ul>
+	 			</div>
+				
+				<div class="friendlink">
+	 					<p>友情链接</p>
+	 					<hr>					
+		 				<a href = "https://imjad.cn/" target="_blank">AD's Blog</a></br>
+						<a href = "http://zyl.me" target="_blank">ZYL的博客</a></br>
+						<a href = "http://mxwu.cn" target="_blank">梦忻屋</a></br>
+						<a href = "http://www.weiyanweiyu.cn" target="_blank">微言微语</a></br>
+						<a href = "http://jloong.com" target="_blank">楚书业</a></br>
+						<a href = "https://emiria.io/" target="_blank">蔓舞寻樱</a></br>
+						<a href = "http://www.xiaokang.info" target="_blank">小康博客</a><br>
+						<a href = "http://blog.iov.me" target="_blank">随心说</a></br>
+						<a href = "http://czduban.com" target="_blank">以歌。先生</a><br>
+						<a href = "http://5mx.net/" target="_blank">冷夜博客</a><br>
+						<a href = "http://www.8hao.com.cn/" target="_blank">艳莜日记</a><br>
+						<a href = "http://blog.sunxyz.cn/" target="_blank">诸葛扬阳</a><br>
+						<a href = "https://lostyou.love/" target="_blank">邻居</a><br>
+						<a href = "http://www.kurodown.com/" target="_blank">酷绒站</a>
+	 			</div>
+				
+			</div>
+			
+			<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 box-shadow fadein-right aside2">					 		
+					<div class="page-content" id="pjax"><div class="post">
+  <header class="post-header">
+    <h1 class="post-title">深入浅出Hadoop集群搭建补遗</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;2017-02-06</p>
+	    
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		
+			<a class="pjaxlink" href="/pages/tags.html#原创">原创</a>
+		
+			<a class="pjaxlink" href="/pages/tags.html#技术">技术</a>
+		
+		</span>
+	    		
+    </div>
+  </header>
+
+  <article class="post-content">
+    <p>搭建此环境主要用来跑实验和论文相关，因此我们的操作直接在root用户下，不可用于生产环境。且下文命令、文件均特指Ubuntu14.04 Linux发行版操作系统下。</p>
+
+<p>本次环境搭建包括Hadoop集群的伪分布式安装（基于虚拟机的方式），同时扩展一些诸如大数据知识，VMware网络方式和linux命令等相关。本文扩展均已黑体EXT标识。</p>
+
+<p><strong>文件准备</strong>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>VMware Workstation10
+Ubuntu14.04
+jdk-6u24-linux-bin
+Hadoop-1.1.2.tar.gz
+</code></pre></div></div>
+
+<p><strong>安装步骤</strong>：</p>
+
+<p>1、ubuntu以root身份登录</p>
+
+<p>2、关闭防火墙（Hadoop各节点间RPC机制通信）</p>
+
+<p>2.1关闭虚拟机防火墙</p>
+
+<p>2.2 关闭主机防火墙</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>方法：ufw disable 
+EXT：ufw命令ufw disable | enable | status
+</code></pre></div></div>
+
+<p>3、修改ip</p>
+
+<p>3.1 设置虚拟机网络方式为桥接模式</p>
+
+<p>3.2 设置静态IP</p>
+
+<p>方法：</p>
+
+<p><code class="highlighter-rouge">sudo vi /etc/network/interfaces（针对Ubuntu发行版）</code></p>
+
+<p>注：Ubuntu虚拟机的gateway网关，netmask子网掩码设置与主机
+一样，IP地址address设置为与主机同一网段。原因参见下文桥接模式。</p>
+
+<p>4、网卡设置生效</p>
+
+<p>方法：<code class="highlighter-rouge">sudo /etc/init.d/networking restart</code></p>
+
+<p>5、修改hostname以及绑定</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>修改hostname：vi /etc/hostname
+绑定：vi /etc/hosts（防止重启主机名失效）
+</code></pre></div></div>
+
+<p>6、配置SSH免密登录</p>
+
+<p>6.1 Ubuntu虚拟机安装openssh-server（确保SSH服务启动）</p>
+
+<p>6.2 Ubuntu虚拟机修改SSH配置文件/etc/ssh/sshd_config将PermitRootLogin without-password改为yes（允许root用户SSH连接）</p>
+
+<p><img src="http://taoxiaoran.top/assets/img/blogimg/shaonian2.png" alt="" /></p>
+
+<p>6.3设置免密
+执行命令ssh-keygen –t rsa产生密钥，位于目录~/.ssh/</p>
+
+<p>然后<code class="highlighter-rouge">cp id_rsa.pub authorized_keys</code></p>
+
+<p>验证 ssh localhost</p>
+
+<p>7、安装JDK
+略去</p>
+
+<p>8、安装hadoop</p>
+
+<p>8.1 配置HADOOP_HOME环境变量</p>
+
+<p>8.2 修改hadoop的4个配置文件 位于$HADOOP_HOME/conf下</p>
+
+<p>1、hadoop-env.sh</p>
+
+<p><code class="highlighter-rouge">export JAVA_HOME=/usr/local/jdk1.6.0_24</code></p>
+
+<p>2、core-site.xml</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;fs.default.name&lt;/name&gt;
+        &lt;value&gt;hdfs://hadoop:9000&lt;/value&gt;
+   		&lt;description&gt;改为自己的主机名&lt;/description&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+        &lt;value&gt;/usr/local/hadoop/tmp&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div></div>
+
+<p>3、hdfs-site.xml</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.replication&lt;/name&gt;
+       	&lt;value&gt;1&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.permissions&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div></div>
+
+<p>4、mapred-site.xml</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.job.tracker&lt;/name&gt;
+        &lt;value&gt;hadoop:9001&lt;/value&gt;
+		&lt;description&gt;改为自己的主机名&lt;/description&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div></div>
+
+<p>8.3 Hadoop NameNode格式化</p>
+
+<p>命令hadoop namenode -format</p>
+
+<p>8.4 启动与验证</p>
+
+<p>启动：start-all.sh</p>
+
+<p>验证：jps（Hadoop的5个进程）</p>
+
+<p><img src="http://taoxiaoran.top/assets/img/blogimg/shaonian1.png" alt="" /></p>
+
+<p>9、其他问题：</p>
+
+<p>9.1、NameNode界面: 浏览器查看hadoop:50070</p>
+
+<p>9.2、Map/Reduce界面: 浏览器查看hadoop:50030</p>
+
+<p>9.3、多次格式化hadoop错误？</p>
+
+<p>解决方法：删除/usr/local/hadoop/tmp文件夹，重新格式化</p>
+
+<p>9.4解决<code class="highlighter-rouge">$HADOOP_HOME is deprecated</code>的warning</p>
+
+<p>方法：令$HADOOP_HOME_WARN_SUPPRESS=0</p>
+
+<p>至此，hadoop的伪分布式搭建完毕，后续带来完全分布式的集群搭建。</p>
+
+<p>10、EXT扩展Vmware的三种网络方式</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vmnet0 桥接
+Vmnet1 主机模式
+Vmnet8 NAT模式
+</code></pre></div></div>
+
+<p>10.1 桥接模式Vmnet0</p>
+
+<p>什么是桥接模式？桥接模式就是将主机网卡与虚拟机虚拟的网卡利用虚拟网桥进行通信。在桥接的作用下，类似于把物理主机虚拟为一个交换机，所有桥接设置的虚拟机连接到这个交换机的一个接口上，物理主机也同样插在这个交换机当中，所以所有桥接下的网卡与网卡都是交换模式的，相互可以访问而不干扰。在桥接模式下，虚拟机ip地址需要与主机在同一个网段，如果需要联网，则网关与DNS需要与主机网卡一致。
+适用： 桥接模式配置简单，但如果你的网络环境是ip资源很缺少或对ip管理比较严格的话，那桥接模式就不太适用了。</p>
+
+<p>10.2 NAT地址转换模式（Vmnet8）</p>
+
+<p>如果你的网络ip资源紧缺，但是你又希望你的虚拟机能够联网，这时候NAT模式是最好的选择。NAT模式借助虚拟NAT设备和虚拟DHCP服务器，使得虚拟机可以联网。</p>
+
+<p>10.3 主机模式（VMnet1）</p>
+
+<p>Host-Only模式其实就是NAT模式去除了虚拟NAT设备，然后使用VMware Network Adapter VMnet1虚拟网卡连接VMnet1虚拟交换机来与虚拟机通信的，Host-Only模式将虚拟机与外网隔开，使得虚拟机成为一个独立的系统，只与主机相互通讯。</p>
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+</div>
+
+<blockquote>
+  <p>本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。</p>
+</blockquote>
+	
+  </article>
+</div>
+
+  <div class="prevandnext">
+    	  
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2017/02/08/my-arrietty-essay.html"  title="借物少女Arrietty观后感">借物少女Arrietty观后感</a>
+	    </div>
+	  
+  	  
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2017/02/04/write-read-what.html"  title="写什么作读什么书">写什么作读什么书</a>
+	    </div>
+	  
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div></div>		
+			</div>
+ 		</div>	
+	</div>
+    </div> 
+</div>
+	<div class="profile_social">
+		<a class="rss" href="/feed.xml" target="_blank"></a>
+		<a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+		<a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+	</div>
+    <div id="backtotop">
+    		<a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
+    <div class="pjax_loading"></div>
+    
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <h2 class="footer-heading">saber's blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>梦回少年</li>
+          <li><a href="mailto:xmusaber@163.com">xmusaber@163.com</a></li>
+          <li>闽ICP备15018990号</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+          </li>
+          
+
+          
+          <li>
+            <a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="footer-col  footer-col-3">
+        <p class="text">If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</p>
+      </div>
+    </div>
+</div>
+    <div class="center sitedesc">
+    	Powered by <a href ="http://jekyllrb.com/">Jekyll</a>  |  © 2018 梦回少年  |  Hosted on <a href="https://github.com/lemonjing/lemonjing.github.io"> Github</a></div>
+    <div class="center sitedesc"><span id=span_dt_dt></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="busuanzi_container_site_pv" style='display:none'>本站总访问量<span id="busuanzi_value_site_pv"></span>次<br/>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259223523'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1259223523%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </div>
+
+<!-- 访问统计 -->
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 萌萌哒运行 -->
+  <SCRIPT language=javascript>          
+function show_date_time(){
+window.setTimeout("show_date_time()", 1000);
+BirthDay=new Date("8/15/2015 11:30:00");//这个日期是可以修改的
+today=new Date();
+timeold=(today.getTime()-BirthDay.getTime());
+sectimeold=timeold/1000
+secondsold=Math.floor(sectimeold);
+msPerDay=24*60*60*1000
+e_daysold=timeold/msPerDay
+daysold=Math.floor(e_daysold);
+e_hrsold=(e_daysold-daysold)*24;
+hrsold=Math.floor(e_hrsold);
+e_minsold=(e_hrsold-hrsold)*60;
+minsold=Math.floor((e_hrsold-hrsold)*60);
+seconds=Math.floor((e_minsold-minsold)*60);
+span_dt_dt.innerHTML="本站已萌萌哒运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}show_date_time();</SCRIPT>
+
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {equationNumbers: {
+            autoNumber: ["AMS"], useLabelIds: true}},
+            "HTML-CSS": {linebreaks: {automatic: true}},
+            SVG: {linebreaks: {automatic: true}}
+    });
+   </script> -->
+
+  <!-- jQuery -->
+  <script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.pjax.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/prettify/prettify.js"></script>
+  
+  <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+  <script type="text/javascript" src="/assets/js/ua-parser.js"></script>
+
+  <!-- jekyII search-->
+<div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+    <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签" >
+
+    <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="/search/img/cb-close.png"  id="cb-close-btn"/>
+    </div>
+</div>
+
+<!-- <div style="position: fixed; right: 16px; bottom: 20px;">
+    <img src="/search/img/cb-search.png"  id="cb-search-btn"  title="双击ctrl试一下"/>
+</div> -->
+
+<link rel="stylesheet" href="/search/css/cb-search.css">
+
+<script src="/search/js/bootstrap3-typeahead.min.js"></script>
+<script src="/search/js/cb-search.js"></script>
+<!-- jekyII search end -->
+
+  
+<script type="text/javascript" src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script type="text/javascript" src="/assets/js/embed.js"></script>
+<script type="text/javascript" src="/assets/js/stickUp.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+</footer>
+
+  </body>
+
+</html>

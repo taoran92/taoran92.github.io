@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 添加搜索关键字 -->
+  <meta name="keywords" content="梦回少年,梦回,saber,lemonjing,少年">
+
+  <title>Redis学习日记 | 梦回少年</title>
+  <meta name="description" content="Redis学习日记">
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/main.css" >
+  <link rel="stylesheet" href="/assets/js/prettify/prettify.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" />
+  <link rel="canonical" href="http://localhost:4000/2016/07/09/learn-redis.html">
+  <link rel="alternate" type="application/rss+xml" title="梦回少年" href="http://localhost:4000/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header col-xs-12 col-sm-12 col-md-3 col-lg-3 center">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="sitehome">
+                        <a href="/" title="首页"><i class="fa fa-home fa-2x homeicon"></i><a><a class="site-title" href="/">梦回少年</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 hidden-xs hidden-sm center">
+                    <nav class="site-nav">
+                        <ul class="nav nav-pills">
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/read.html">读书</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/class.html">分类</a></li>
+                            <!-- <li class="select"><a class="page-link pjaxlink" href="/pages/tags.html">标签</a></li> -->
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/archive.html">归档</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/about.html">关于</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- swifttype 搜索 弃用-->
+               <!--  <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div class="search">
+                        <input type="text" class="search-query st-default-search-input" placeholder="Search">
+                    </div>
+                </div> -->
+                 <!-- /swifttype 搜索 -->
+                <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div style="position: fixed; top:10px;">
+                        <img src="/search/img/cb-search.png" id="cb-search-btn" title="双击ctrl试一下" />
+                    </div>
+                </div>
+                   
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav phone-nav center">
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/"><i class="fa fa-home"></i>&nbsp;首页</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/read.html"><i class="fa fa-book"></i>&nbsp;读书</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/class.html"><i class="fa fa-tasks"></i>&nbsp;分类</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/tags.html"><i class="fa fa-tags"></i>&nbsp;标签</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/archive.html"><i class="fa fa-archive"></i>&nbsp;归档</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/about.html"><i class="fa fa-user"></i>&nbsp;关于</a></li>
+                        </ul>
+                    </div>
+            </nav>
+            </div>
+        </div>
+</header>
+
+
+    <div class="content">
+   	<div class="container">	
+   		<div class="row">
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm aside1 fadein-left">
+				<div class="profile box-shadow center">
+					<div class="overlay"></div>
+					<div class="center gavatar">
+						<a href="/" class="profile_gavatar"><img class="circle" src="/assets/img/t1.jpeg"></a>
+					</div>
+					<div class="address">
+						<h5><span class="fa fa-map-marker"></span> Hangzhou, China</h5>
+					</div>
+					<div class="center profile_desc">
+						技术<br>生活<br>和爱情<br>此刻与你分享<br>
+					</div>
+				</div>
+				
+				<div class="tag-cloud-text">
+					<a href="http://rannn.cc/pages/tags.html" title="标签" class="pjaxlink"><p class="center">标签【点我】</p></a>
+				</div>
+				<div class="tag-cloud ">	
+					<hr>
+					<div class="page-tag">
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#随笔" name="随笔" class="pjaxlink"><i class="fa fa-tags"></i>随笔(21)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Java" name="Java" class="pjaxlink"><i class="fa fa-tags"></i>Java(43)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#爱情" name="爱情" class="pjaxlink"><i class="fa fa-tags"></i>爱情(20)</a>
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#原创" name="原创" class="pjaxlink"><i class="fa fa-tags"></i>原创(23)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#技术" name="技术" class="pjaxlink"><i class="fa fa-tags"></i>技术(5)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Spring" name="Spring" class="pjaxlink"><i class="fa fa-tags"></i>Spring(10)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#NIO" name="NIO" class="pjaxlink"><i class="fa fa-tags"></i>NIO(13)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+					</div>					
+				</div>
+				<div class="clear"></div>
+
+	 			<div class="recentuse">
+	 					<p>GitHub项目</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "https://github.com/it-interview/easy-job" target="_blank">互联网求职面试知识复习</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/LightweightApp" target="_blank">集成LBS查询、音乐、阅读的微信公众账号</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/hadoop-dedup" target="_blank">基于hadoop和hbase的大规模海量数据去重</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/TinyMooc" target="_blank">轻量级Java平台在线幕课学习网站</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/Keccak" target="_blank">SHA-3 algorithm Keccak Implementation</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/your-offer" target="_blank">剑指offer的Java实现</a></li>
+	 					</ul>
+	 			</div>
+	 			
+	 			<div class="recentuse">
+	 					<p>经常出没</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "http://music.163.com/#/user/home?id=63589002" target="_blank">网易云音乐</a></li>
+	 						<li><a href = "https://github.com/Lemonjing" target="_blank">GitHub</a></li>
+	 						<li><a href = "http://weibo.com/u/1662536394" target="_blank">微博</a></li>
+	 						<li><a href = "http://pianke.me/profile/1924980/" target="_blank">片刻</a></li>
+		 					<li><a href = "https://www.zhihu.com/people/xmusaber" target="_blank">知乎</a></li>
+		 					<li><a href = "http://www.nowcoder.com/profile/213475" target="_blank">牛客</a></li>
+	 					</ul>
+	 			</div>
+				
+				<div class="friendlink">
+	 					<p>友情链接</p>
+	 					<hr>					
+		 				<a href = "https://imjad.cn/" target="_blank">AD's Blog</a></br>
+						<a href = "http://zyl.me" target="_blank">ZYL的博客</a></br>
+						<a href = "http://mxwu.cn" target="_blank">梦忻屋</a></br>
+						<a href = "http://www.weiyanweiyu.cn" target="_blank">微言微语</a></br>
+						<a href = "http://jloong.com" target="_blank">楚书业</a></br>
+						<a href = "https://emiria.io/" target="_blank">蔓舞寻樱</a></br>
+						<a href = "http://www.xiaokang.info" target="_blank">小康博客</a><br>
+						<a href = "http://blog.iov.me" target="_blank">随心说</a></br>
+						<a href = "http://czduban.com" target="_blank">以歌。先生</a><br>
+						<a href = "http://5mx.net/" target="_blank">冷夜博客</a><br>
+						<a href = "http://www.8hao.com.cn/" target="_blank">艳莜日记</a><br>
+						<a href = "http://blog.sunxyz.cn/" target="_blank">诸葛扬阳</a><br>
+						<a href = "https://lostyou.love/" target="_blank">邻居</a><br>
+						<a href = "http://www.kurodown.com/" target="_blank">酷绒站</a>
+	 			</div>
+				
+			</div>
+			
+			<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 box-shadow fadein-right aside2">					 		
+					<div class="page-content" id="pjax"><div class="post">
+  <header class="post-header">
+    <h1 class="post-title">Redis学习日记</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;2016-07-09</p>
+	    
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		
+			<a class="pjaxlink" href="/pages/tags.html#Java">Java</a>
+		
+		</span>
+	    		
+    </div>
+  </header>
+
+  <article class="post-content">
+    <h2 id="redis学习日记">Redis学习日记</h2>
+
+<p>Redis 是一个开源（BSD许可）的，非关系型内存数据库，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了 复制（replication），LUA脚本（Lua scripting）， LRU驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis哨兵（Sentinel）和自动 分区（Cluster）提供高可用性（high availability）。</p>
+
+<h3 id="redis安装">Redis安装</h3>
+
+<p>Ubuntu上安装</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$sudo</span> apt-get update
+<span class="nv">$sudo</span> apt-get <span class="nb">install </span>redis-server
+</code></pre></div></div>
+
+<p>启动 Redis</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$redis</span><span class="nt">-server</span>
+</code></pre></div></div>
+
+<p>查看 redis 是否还在运行</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$redis</span><span class="nt">-cli</span>
+</code></pre></div></div>
+
+<p>这将打开一个 Redis 提示符，如下图所示：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>redis 127.0.0.1:6379&gt;
+</code></pre></div></div>
+
+<p>在上面的提示信息中：127.0.0.1 是本机的IP地址，6379是 Redis 服务器运行的端口。现在输入 PING 命令，如下图所示：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>redis 127.0.0.1:6379&gt; ping
+PONG
+</code></pre></div></div>
+
+<p>这说明现在你已经成功地在计算机上安装了 Redis。</p>
+
+<p>在Ubuntu上安装Redis桌面管理器
+要在Ubuntu 上安装 Redis桌面管理，可以从 http://redisdesktop.com/download 下载包并安装它。
+Redis 桌面管理器会给你用户界面来管理 Redis 键和数据。</p>
+
+<h3 id="数据类型">数据类型</h3>
+
+<h3 id="数据类型string">数据类型String</h3>
+
+<p>1.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>exists 存在1，否则0 
+append
+get
+<span class="nb">set
+</span>strlen
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>incr
+decr
+incrby
+decrby
+del
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GETSET
+SETEX 过期时间
+
+SETNX
+如果指定的Key不存在，则设定该Key持有指定字符串Value，此时其效果等价于SET命令。相反，如果该Key已经存在，该命令将不做任何操作并返回。
+
+SETRANGE
+GETRANGE
+</code></pre></div></div>
+
+<p>4.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>setbit
+getbit
+</code></pre></div></div>
+
+<p>5.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mset
+mget
+msetnx
+如果在这一批Keys中有任意一个Key已经存在了，那么该操作将全部回滚，即所有的修改都不会生效。
+</code></pre></div></div>
+
+<h3 id="数据类型list">数据类型List</h3>
+
+<p>1.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lpush e.g.lpush mykey a b c d e
+lpushx
+lrange e.g. lrange mykey 0 <span class="nt">-1</span>
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lpop
+llen
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lrem e.g. lrem mykey 2 a
+lset 
+lindex
+ltrim
+linsert
+</code></pre></div></div>
+
+<p>4.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpush e.g.rpush mykey a b c d
+rpushx
+rpop e.g.rpop mykey
+rpoplpush 尾部弹出插入到另一个头部，原子操作
+</code></pre></div></div>
+
+<h3 id="数据类型hash">数据类型Hash</h3>
+
+<p>1.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hset
+hget
+hdel
+hexists
+hlen
+hsetnx
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hincrby
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hgetall
+hkeys
+hvals
+hmget
+hmset
+</code></pre></div></div>
+
+<h3 id="数据类型set">数据类型SET</h3>
+
+<p>1.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sadd
+smembers
+scard 数量
+sismember
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spop
+srem
+srandmember
+smove
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sdiff e.g.sdiff myset myset2 myset3
+sdiffstore e.g.sdiffstore diffkey myset myset2 myset3
+sinter e.g.sinter myset myset2 myset3 交集
+sinterstore e.g.sinterstore interkey myset myset2 myset3 存储交集
+sunion e.g.sunion myset myset2 myset3 并集
+sunionstore e.g.sunionstore unionkey myset myset2 myset3
+</code></pre></div></div>
+
+<h3 id="数据类型sortedset">数据类型SortedSet</h3>
+
+<p>1.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zadd
+zcard
+zcount
+zrem
+zincrby
+zscore 返回score值
+zrange 递增
+zrank
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zrangebysocre
+zremrangebyrank
+zremrangebyscore
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zrevrange 递减
+zrevrangebyscore
+zrevrank
+</code></pre></div></div>
+
+<h3 id="key命令">Key命令</h3>
+
+<p>1.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>flushdb
+set
+sadd
+hset
+del e.g.del key1 key2
+exists
+move
+keys hello*
+select 0切换数据库
+rename 改名 改名的存在被覆盖，成功
+renamenx 改名的存在操作无效
+quit
+info
+dbsize
+flushdb
+</code></pre></div></div>
+
+<p>2.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>persist
+expire
+expireat
+ttl
+</code></pre></div></div>
+
+<p>3.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">type
+</span>randomkey
+<span class="nb">sort</span>
+</code></pre></div></div>
+
+<h3 id="事务">事务</h3>
+
+<p>1. 事务被正常执行：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c">#在Shell命令行下执行Redis的客户端工具。</span>
+    /&gt; redis-cli
+    <span class="c">#在当前连接上启动一个新的事务。</span>
+    redis 127.0.0.1:6379&gt; multi
+    OK
+    <span class="c">#执行事务中的第一条命令，从该命令的返回结果可以看出，该命令并没有立即执行，而是存于事务的命令队列。</span>
+    redis 127.0.0.1:6379&gt; incr t1
+    QUEUED
+    <span class="c">#又执行一个新的命令，从结果可以看出，该命令也被存于事务的命令队列。</span>
+    redis 127.0.0.1:6379&gt; incr t2
+    QUEUED
+    <span class="c">#执行事务命令队列中的所有命令，从结果可以看出，队列中命令的结果得到返回。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">exec
+    </span>1<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> 1
+    2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> 1
+</code></pre></div></div>
+
+<p>2. 事务中存在失败的命令：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c">#开启一个新的事务。</span>
+    redis 127.0.0.1:6379&gt; multi
+    OK
+    <span class="c">#设置键a的值为string类型的3。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>a 3
+    QUEUED
+    <span class="c">#从键a所关联的值的头部弹出元素，由于该值是字符串类型，而lpop命令仅能用于List类型，因此在执行exec命令时，该命令将会失败。</span>
+    redis 127.0.0.1:6379&gt; lpop a
+    QUEUED
+    <span class="c">#再次设置键a的值为字符串4。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>a 4
+    QUEUED
+    <span class="c">#获取键a的值，以便确认该值是否被事务中的第二个set命令设置成功。</span>
+    redis 127.0.0.1:6379&gt; get a
+    QUEUED
+    <span class="c">#从结果中可以看出，事务中的第二条命令lpop执行失败，而其后的set和get命令均执行成功，这一点是Redis的事务与关系型数据库中的事务之间最为重要的差别。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">exec
+    </span>1<span class="o">)</span> OK
+    2<span class="o">)</span> <span class="o">(</span>error<span class="o">)</span> ERR Operation against a key holding the wrong kind of value
+    3<span class="o">)</span> OK
+    4<span class="o">)</span> <span class="s2">"4"</span>
+</code></pre></div></div>
+
+<p>3. 回滚事务：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c">#为键t2设置一个事务执行前的值。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>t2 tt
+    OK
+    <span class="c">#开启一个事务。</span>
+    redis 127.0.0.1:6379&gt; multi
+    OK
+    <span class="c">#在事务内为该键设置一个新值。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>t2 ttnew
+    QUEUED
+    <span class="c">#放弃事务。</span>
+    redis 127.0.0.1:6379&gt; discard
+    OK
+    <span class="c">#查看键t2的值，从结果中可以看出该键的值仍为事务开始之前的值。</span>
+    redis 127.0.0.1:6379&gt; get t2
+    <span class="s2">"tt"</span>
+</code></pre></div></div>
+
+<p>4. WATCH命令和基于CAS的乐观锁：</p>
+
+<p>在Redis的事务中，WATCH命令可用于提供CAS(check-and-set)功能。假设我们通过WATCH命令在事务执行之前监控了多个Keys，倘若在WATCH之后有任何Key的值发生了变化，EXEC命令执行的事务都将被放弃，同时返回Null multi-bulk应答以通知调用者事务执行失败。例如，我们再次假设Redis中并未提供incr命令来完成键值的原子性递增，如果要实现该功能，我们只能自行编写相应的代码。其伪码如下：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      val <span class="o">=</span> GET mykey
+      val <span class="o">=</span> val + 1
+      SET mykey <span class="nv">$val</span>
+</code></pre></div></div>
+
+<p>以上代码只有在单连接的情况下才可以保证执行结果是正确的，因为如果在同一时刻有多个客户端在同时执行该段代码，那么就会出现多线程程序中经常出现的一种错误场景–竞态争用(race condition)。比如，客户端A和B都在同一时刻读取了mykey的原有值，假设该值为10，此后两个客户端又均将该值加一后set回Redis服务器，这样就会导致mykey的结果为11，而不是我们认为的12。为了解决类似的问题，我们需要借助WATCH命令的帮助，见如下代码：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      WATCH mykey
+      val <span class="o">=</span> GET mykey
+      val <span class="o">=</span> val + 1
+      MULTI
+      SET mykey <span class="nv">$val</span>
+      EXEC
+</code></pre></div></div>
+
+<p>和此前代码不同的是，新代码在获取mykey的值之前先通过WATCH命令监控了该键，此后又将set命令包围在事务中，这样就可以有效的保证每个连接在执行EXEC之前，如果当前连接获取的mykey的值被其它连接的客户端修改，那么当前连接的EXEC命令将执行失败。这样调用者在判断返回值后就可以获悉val是否被重新设置成功。</p>
+
+<h3 id="主从复制">主从复制</h3>
+
+<p>一、Redis的Replication：</p>
+
+<p>这里首先需要说明的是，在Redis中配置Master-Slave模式真是太简单了。相信在阅读完这篇Blog之后你也可以轻松做到。这里我们还是先列出一些理论性的知识，后面给出实际操作的案例。下面的列表清楚的解释了Redis Replication的特点和优势。</p>
+
+<p>1). 同一个Master可以同步多个Slaves。</p>
+
+<p>2). Slave同样可以接受其它Slaves的连接和同步请求，这样可以有效的分载Master的同步压力。因此我们可以将Redis的Replication架构视为图结构。</p>
+
+<p>3). Master Server是以非阻塞的方式为Slaves提供服务。所以在Master-Slave同步期间，客户端仍然可以提交查询或修改请求。</p>
+
+<p>4). Slave Server同样是以非阻塞的方式完成数据同步。在同步期间，如果有客户端提交查询请求，Redis则返回同步之前的数据。</p>
+
+<p>5). 为了分载Master的读操作压力，Slave服务器可以为客户端提供只读操作的服务，写服务仍然必须由Master来完成。即便如此，系统的伸缩性还是得到了很大的提高。</p>
+
+<p>6). Master可以将数据保存操作交给Slaves完成，从而避免了在Master中要有独立的进程来完成此操作。</p>
+
+<p>二、Replication的工作原理：</p>
+
+<p>在Slave启动并连接到Master之后，它将主动发送一个SYNC命令。此后Master将启动后台存盘进程，同时收集所有接收到的用于修改数据集的命令，在后台进程执行完毕后，Master将传送整个数据库文件到Slave，以完成一次完全同步。而Slave服务器在接收到数据库文件数据之后将其存盘并加载到内存中。此后，Master继续将所有已经收集到的修改命令，和新的修改命令依次传送给Slaves，Slave将在本次执行这些数据修改命令，从而达到最终的数据同步。</p>
+
+<p>如果Master和Slave之间的链接出现断连现象，Slave可以自动重连Master，但是在连接成功之后，一次完全同步将被自动执行。</p>
+
+<p>三、如何配置Replication：</p>
+
+<p>见如下步骤：</p>
+
+<p>1). 同时启动两个Redis服务器，可以考虑在同一台机器上启动两个Redis服务器，分别监听不同的端口，如6379和6380。</p>
+
+<p>2). 在Slave服务器上执行一下命令：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    /&gt; redis-cli <span class="nt">-p</span> 6380   <span class="c">#这里我们假设Slave的端口号是6380</span>
+    redis 127.0.0.1:6380&gt; slaveof 127.0.0.1 6379 <span class="c">#我们假设Master和Slave在同一台主机，Master的端口为6379</span>
+    OK
+</code></pre></div></div>
+
+<p>上面的方式只是保证了在执行slaveof命令之后，redis_6380成为了redis_6379的slave，一旦服务(redis_6380)重新启动之后，他们之间的复制关系将终止。
+如果希望长期保证这两个服务器之间的Replication关系，可以在redis_6380的配置文件中做如下修改：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    /&gt; <span class="nb">cd</span> /etc/redis  <span class="c">#切换Redis服务器配置文件所在的目录。</span>
+    /&gt; <span class="nb">ls
+    </span>6379.conf  6380.conf
+    /&gt; vi 6380.conf
+    将
+    <span class="c"># slaveof &lt;masterip&gt; &lt;masterport&gt;</span>
+    改为
+    slaveof 127.0.0.1 6379
+</code></pre></div></div>
+
+<p>保存退出。这样就可以保证Redis_6380服务程序在每次启动后都会主动建立与Redis_6379的Replication连接了。</p>
+
+<p>四、应用示例：</p>
+
+<p>这里我们假设Master-Slave已经建立。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c">#启动master服务器。</span>
+    <span class="o">[</span>root@Stephen-PC redis]# redis-cli <span class="nt">-p</span> 6379
+    redis 127.0.0.1:6379&gt;
+    <span class="c">#情况Master当前数据库中的所有Keys。</span>
+    redis 127.0.0.1:6379&gt; flushdb
+    OK
+    <span class="c">#在Master中创建新的Keys作为测试数据。</span>
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>mykey hello
+    OK
+    redis 127.0.0.1:6379&gt; <span class="nb">set </span>mykey2 world
+    OK
+    <span class="c">#查看Master中存在哪些Keys。</span>
+    redis 127.0.0.1:6379&gt; keys <span class="k">*</span>
+    1<span class="o">)</span> <span class="s2">"mykey"</span>
+    2<span class="o">)</span> <span class="s2">"mykey2"</span>
+    
+    <span class="c">#启动slave服务器。</span>
+    <span class="o">[</span>root@Stephen-PC redis]# redis-cli <span class="nt">-p</span> 6380
+    <span class="c">#查看Slave中的Keys是否和Master中一致，从结果看，他们是相等的。</span>
+    redis 127.0.0.1:6380&gt; keys <span class="k">*</span>
+    1<span class="o">)</span> <span class="s2">"mykey"</span>
+    2<span class="o">)</span> <span class="s2">"mykey2"</span>
+    
+    <span class="c">#在Master中删除其中一个测试Key，并查看删除后的结果。</span>
+    redis 127.0.0.1:6379&gt; del mykey2
+    <span class="o">(</span>integer<span class="o">)</span> 1
+    redis 127.0.0.1:6379&gt; keys <span class="k">*</span>
+    1<span class="o">)</span> <span class="s2">"mykey"</span>
+    
+    <span class="c">#在Slave中查看是否mykey2也已经在Slave中被删除。</span>
+    redis 127.0.0.1:6380&gt; keys <span class="k">*</span>
+    1<span class="o">)</span> <span class="s2">"mykey"</span>
+</code></pre></div></div>
+
+<h3 id="数据持久化">数据持久化</h3>
+
+<p>一、Redis提供了哪些持久化机制：</p>
+
+<p>1). RDB持久化：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>该机制是指在指定的时间间隔内将内存中的数据集快照写入磁盘。 
+</code></pre></div></div>
+
+<p>2). AOF持久化:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>该机制将以日志的形式记录服务器所处理的每一个写操作，在Redis服务器启动之初会读取该文件来重新构建数据库，以保证启动后数据库中的数据是完整的。
+</code></pre></div></div>
+
+<p>3). 无持久化：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>我们可以通过配置的方式禁用Redis服务器的持久化功能，这样我们就可以将Redis视为一个功能加强版的memcached了。
+</code></pre></div></div>
+
+<p>4). 同时应用AOF和RDB。</p>
+
+<p>二、RDB机制的优势和劣势：</p>
+
+<p>RDB存在哪些优势呢？</p>
+
+<p>1). 一旦采用该方式，那么你的整个Redis数据库将只包含一个文件，这对于文件备份而言是非常完美的。比如，你可能打算每个小时归档一次最近24小时的数据，同时还要每天归档一次最近30天的数据。通过这样的备份策略，一旦系统出现灾难性故障，我们可以非常容易的进行恢复。</p>
+
+<p>2). 对于灾难恢复而言，RDB是非常不错的选择。因为我们可以非常轻松的将一个单独的文件压缩后再转移到其它存储介质上。</p>
+
+<p>3). 性能最大化。对于Redis的服务进程而言，在开始持久化时，它唯一需要做的只是fork出子进程，之后再由子进程完成这些持久化的工作，这样就可以极大的避免服务进程执行IO操作了。</p>
+
+<p>4). 相比于AOF机制，如果数据集很大，RDB的启动效率会更高。</p>
+
+<p>RDB又存在哪些劣势呢？</p>
+
+<p>1). 如果你想保证数据的高可用性，即最大限度的避免数据丢失，那么RDB将不是一个很好的选择。因为系统一旦在定时持久化之前出现宕机现象，此前没有来得及写入磁盘的数据都将丢失。</p>
+
+<p>2). 由于RDB是通过fork子进程来协助完成数据持久化工作的，因此，如果当数据集较大时，可能会导致整个服务器停止服务几百毫秒，甚至是1秒钟。</p>
+
+<p>三、AOF机制的优势和劣势：</p>
+
+<p>AOF的优势有哪些呢？</p>
+
+<p>1). 该机制可以带来更高的数据安全性，即数据持久性。Redis中提供了3中同步策略，即每秒同步、每修改同步和不同步。事实上，每秒同步也是异步完成的，其效率也是非常高的，所差的是一旦系统出现宕机现象，那么这一秒钟之内修改的数据将会丢失。而每修改同步，我们可以将其视为同步持久化，即每次发生的数据变化都会被立即记录到磁盘中。可以预见，这种方式在效率上是最低的。至于无同步，无需多言，我想大家都能正确的理解它。</p>
+
+<p>2). 由于该机制对日志文件的写入操作采用的是append模式，因此在写入过程中即使出现宕机现象，也不会破坏日志文件中已经存在的内容。然而如果我们本次操作只是写入了一半数据就出现了系统崩溃问题，不用担心，在Redis下一次启动之前，我们可以通过redis-check-aof工具来帮助我们解决数据一致性的问题。</p>
+
+<p>3). 如果日志过大，Redis可以自动启用rewrite机制。即Redis以append模式不断的将修改数据写入到老的磁盘文件中，同时Redis还会创建一个新的文件用于记录此期间有哪些修改命令被执行。因此在进行rewrite切换时可以更好的保证数据安全性。</p>
+
+<p>4). AOF包含一个格式清晰、易于理解的日志文件用于记录所有的修改操作。事实上，我们也可以通过该文件完成数据的重建。</p>
+
+<p>AOF的劣势有哪些呢？</p>
+
+<p>1). 对于相同数量的数据集而言，AOF文件通常要大于RDB文件。</p>
+
+<p>2). 根据同步策略的不同，AOF在运行效率上往往会慢于RDB。总之，每秒同步策略的效率是比较高的，同步禁用策略的效率和RDB一样高效。</p>
+
+<p>四、其它：</p>
+
+<p>1. Snapshotting:</p>
+
+<p>缺省情况下，Redis会将数据集的快照dump到dump.rdb文件中。此外，我们也可以通过配置文件来修改Redis服务器dump快照的频率，在打开6379.conf文件之后，我们搜索save，可以看到下面的配置信息：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    save 900 1              <span class="c">#在900秒(15分钟)之后，如果至少有1个key发生变化，则dump内存快照。</span>
+    save 300 10            <span class="c">#在300秒(5分钟)之后，如果至少有10个key发生变化，则dump内存快照。</span>
+    save 60 10000        <span class="c">#在60秒(1分钟)之后，如果至少有10000个key发生变化，则dump内存快照。</span>
+</code></pre></div></div>
+
+<p>2. Dump快照的机制：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    1<span class="o">)</span><span class="nb">.</span> Redis先fork子进程。
+    2<span class="o">)</span><span class="nb">.</span> 子进程将快照数据写入到临时RDB文件中。
+    3<span class="o">)</span><span class="nb">.</span> 当子进程完成数据写入操作后，再用临时文件替换老的文件。
+</code></pre></div></div>
+
+<p>3. AOF文件：</p>
+
+<p>上面已经多次讲过，RDB的快照定时dump机制无法保证很好的数据持久性。如果我们的应用确实非常关注此点，我们可以考虑使用Redis中的AOF机制。对于Redis服务器而言，其缺省的机制是RDB，如果需要使用AOF，则需要修改配置文件中的以下条目：
+将<strong>appendonly no改为appendonly yes</strong>
+从现在起，Redis在每一次接收到数据修改的命令之后，都会将其追加到AOF文件中。在Redis下一次重新启动时，需要加载AOF文件中的信息来构建最新的数据到内存中。</p>
+
+<p>4. AOF的配置：</p>
+
+<p>在Redis的配置文件中存在三种同步方式，它们分别是：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    appendfsync always     <span class="c">#每次有数据修改发生时都会写入AOF文件。</span>
+    appendfsync everysec  <span class="c">#每秒钟同步一次，该策略为AOF的缺省策略。</span>
+    appendfsync no          <span class="c">#从不同步。高效但是数据不会被持久化。</span>
+</code></pre></div></div>
+
+<p>5. 如何修复坏损的AOF文件：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1<span class="o">)</span><span class="nb">.</span> 将现有已经坏损的AOF文件额外拷贝出来一份。
+2<span class="o">)</span><span class="nb">.</span> 执行<span class="s2">"redis-check-aof --fix &lt;filename&gt;"</span>命令来修复坏损的AOF文件。
+3<span class="o">)</span><span class="nb">.</span> 用修复后的AOF文件重新启动Redis服务器。
+</code></pre></div></div>
+
+<p>6. Redis的数据备份：</p>
+
+<p>在Redis中我们可以通过copy的方式在线备份正在运行的Redis数据文件。这是因为RDB文件一旦被生成之后就不会再被修改。Redis每次都是将最新的数据dump到一个临时文件中，之后在利用rename函数原子性的将临时文件改名为原有的数据文件名。因此我们可以说，在任意时刻copy数据文件都是安全的和一致的。鉴于此，我们就可以通过创建cron job的方式定时备份Redis的数据文件，并将备份文件copy到安全的磁盘介质中。</p>
+
+<h3 id="管道">管道</h3>
+
+<p>一、请求应答协议和RTT：</p>
+
+<p>Redis是一种典型的基于C/S模型的TCP服务器。在客户端与服务器的通讯过程中，通常都是客户端率先发起请求，服务器在接收到请求后执行相应的任务，最后再将获取的数据或处理结果以应答的方式发送给客户端。在此过程中，客户端都会以阻塞的方式等待服务器返回的结果。见如下命令序列：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Client: INCR X
+    Server: 1
+    Client: INCR X
+    Server: 2
+    Client: INCR X
+    Server: 3
+    Client: INCR X
+    Server: 4
+</code></pre></div></div>
+
+<p>在每一对请求与应答的过程中，我们都不得不承受网络传输所带来的额外开销。我们通常将这种开销称为RTT(Round Trip Time)。现在我们假设每一次请求与应答的RTT为250毫秒，而我们的服务器可以在一秒内处理100k的数据，可结果则是我们的服务器每秒至多处理4条请求。要想解决这一性能问题，我们该如何进行优化呢？</p>
+
+<p>二、管线(pipelining)：</p>
+
+<p>Redis在很早的版本中就已经提供了对命令管线的支持。在给出具体解释之前，我们先将上面的同步应答方式的例子改造为基于命令管线的异步应答方式，这样可以让大家有一个更好的感性认识。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Client: INCR X
+    Client: INCR X
+    Client: INCR X
+    Client: INCR X
+    Server: 1
+    Server: 2
+    Server: 3
+    Server: 4
+</code></pre></div></div>
+
+<p>从以上示例可以看出，客户端在发送命令之后，不用立刻等待来自服务器的应答，而是可以继续发送后面的命令。在命令发送完毕后，再一次性的读取之前所有命令的应答。这样便节省了同步方式中RTT的开销。</p>
+
+<p>最后需要说明的是，如果Redis服务器发现客户端的请求是基于管线的，那么服务器端在接受到请求并处理之后，会将每条命令的应答数据存入队列，之后再发送到客户端。</p>
+
+<h3 id="联系我">联系我</h3>
+
+<ul>
+  <li>邮箱: xmusaber@163.com</li>
+  <li>QQ: 932191671</li>
+</ul>
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+</div>
+
+<blockquote>
+  <p>本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。</p>
+</blockquote>
+	
+  </article>
+</div>
+
+  <div class="prevandnext">
+    	  
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/08/10/distributed-session-strategy.html"  title="分布式环境中三种Session管理方法的使用场景及优缺点">分布式环境中三种Session管理方法的使用场景及优缺点</a>
+	    </div>
+	  
+  	  
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/07/08/consistent-hash-algorithm.html"  title="对一致性哈希算法的深入研究">对一致性哈希算法的深入研究</a>
+	    </div>
+	  
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div></div>		
+			</div>
+ 		</div>	
+	</div>
+    </div> 
+</div>
+	<div class="profile_social">
+		<a class="rss" href="/feed.xml" target="_blank"></a>
+		<a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+		<a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+	</div>
+    <div id="backtotop">
+    		<a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
+    <div class="pjax_loading"></div>
+    
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <h2 class="footer-heading">saber's blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>梦回少年</li>
+          <li><a href="mailto:xmusaber@163.com">xmusaber@163.com</a></li>
+          <li>闽ICP备15018990号</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+          </li>
+          
+
+          
+          <li>
+            <a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="footer-col  footer-col-3">
+        <p class="text">If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</p>
+      </div>
+    </div>
+</div>
+    <div class="center sitedesc">
+    	Powered by <a href ="http://jekyllrb.com/">Jekyll</a>  |  © 2018 梦回少年  |  Hosted on <a href="https://github.com/lemonjing/lemonjing.github.io"> Github</a></div>
+    <div class="center sitedesc"><span id=span_dt_dt></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="busuanzi_container_site_pv" style='display:none'>本站总访问量<span id="busuanzi_value_site_pv"></span>次<br/>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259223523'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1259223523%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </div>
+
+<!-- 访问统计 -->
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 萌萌哒运行 -->
+  <SCRIPT language=javascript>          
+function show_date_time(){
+window.setTimeout("show_date_time()", 1000);
+BirthDay=new Date("8/15/2015 11:30:00");//这个日期是可以修改的
+today=new Date();
+timeold=(today.getTime()-BirthDay.getTime());
+sectimeold=timeold/1000
+secondsold=Math.floor(sectimeold);
+msPerDay=24*60*60*1000
+e_daysold=timeold/msPerDay
+daysold=Math.floor(e_daysold);
+e_hrsold=(e_daysold-daysold)*24;
+hrsold=Math.floor(e_hrsold);
+e_minsold=(e_hrsold-hrsold)*60;
+minsold=Math.floor((e_hrsold-hrsold)*60);
+seconds=Math.floor((e_minsold-minsold)*60);
+span_dt_dt.innerHTML="本站已萌萌哒运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}show_date_time();</SCRIPT>
+
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {equationNumbers: {
+            autoNumber: ["AMS"], useLabelIds: true}},
+            "HTML-CSS": {linebreaks: {automatic: true}},
+            SVG: {linebreaks: {automatic: true}}
+    });
+   </script> -->
+
+  <!-- jQuery -->
+  <script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.pjax.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/prettify/prettify.js"></script>
+  
+  <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+  <script type="text/javascript" src="/assets/js/ua-parser.js"></script>
+
+  <!-- jekyII search-->
+<div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+    <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签" >
+
+    <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="/search/img/cb-close.png"  id="cb-close-btn"/>
+    </div>
+</div>
+
+<!-- <div style="position: fixed; right: 16px; bottom: 20px;">
+    <img src="/search/img/cb-search.png"  id="cb-search-btn"  title="双击ctrl试一下"/>
+</div> -->
+
+<link rel="stylesheet" href="/search/css/cb-search.css">
+
+<script src="/search/js/bootstrap3-typeahead.min.js"></script>
+<script src="/search/js/cb-search.js"></script>
+<!-- jekyII search end -->
+
+  
+<script type="text/javascript" src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script type="text/javascript" src="/assets/js/embed.js"></script>
+<script type="text/javascript" src="/assets/js/stickUp.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+</footer>
+
+  </body>
+
+</html>

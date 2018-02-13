@@ -20,5 +20,4 @@ permalink: /pages/class.html
 </div>
 
 <div>
-{% include duoshuo.html %}
 </div>

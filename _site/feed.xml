@@ -1,0 +1,2951 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>梦回少年</title>
+    <link>http://localhost:4000</link>
+    <description>If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</description>
+    
+      <item>
+        <title>【Spark】Spark WebUI 原理和工作方式</title>
+        <link>http://localhost:4000/2017/08/10/spark-webui-mechanism.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/08/10/spark-webui-mechanism.html</guid>
+        <pubDate>Thu, 10 Aug 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;Spark应用运行时的详细进度信息，性能指标等数据和信息对于我们分析Spark应用是十分重要的。而Spark的WebUI便是观测应用、作业运行情况的一个很重要的窗口。本文主要从源码层面分析下Spark WebUI原理和工作方式。并从Job信息的一个切面阐述WebUI数据获取和更新的过程。&lt;/p&gt;
+
+&lt;p&gt;目录：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#页面&quot;&gt;Spark WebUI页面&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#流程图&quot;&gt;Spark WebUI流程图&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#源码分析&quot;&gt;Spark WebUI流程源码级细述&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#数据获取和更新原理&quot;&gt;Spark WebUI数据获取和更新原理&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;页面&quot;&gt;页面&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkui.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;流程图&quot;&gt;流程图&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/procedure.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;源码分析&quot;&gt;源码分析&lt;/h2&gt;
+
+&lt;p&gt;Step1、SparkContext初始化时构建SparkUI&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;_ui&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBoolean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;spark.ui.enabled&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Some&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SparkUI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createLiveUI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_jobProgressListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_env&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;securityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;appName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;startTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;startTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// For tests, do not enable the UI&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;None&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step2、执行SparkUI的create方法，实例化各个监听器&lt;/p&gt;
+
+&lt;p&gt;在创建SparkUI的过程中，会实例化几个重要的listener并添加到ListenerBus中，这是一种观察者模式。在数据获取和更新中会详细介绍监听器数据产生和更新的原理。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;_jobProgressListener:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobProgressListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobProgressListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOrElse&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobProgressListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;listener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;listener&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;environmentListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnvironmentListener&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;storageStatusListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StorageStatusListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;executorsListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ExecutorsListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storageStatusListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;storageListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StorageListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storageStatusListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;operationGraphListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RDDOperationGraphListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environmentListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storageStatusListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;executorsListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;storageListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;operationGraphListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ 
+&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SparkUI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;securityManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;environmentListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;storageStatusListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;executorsListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_jobProgressListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;storageListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;operationGraphListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;appName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;basePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;startTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;上述的几个监听对象分别与UI上的&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这几个Tab项的是对应的，具体是：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;JobProgressListener -&amp;gt; Jobs和Stages&lt;/strong&gt;，即Spark应用运行过程中的Job和Stage信息和数据。
+&lt;strong&gt;EnvironmentListener -&amp;gt; Environment&lt;/strong&gt;，即Spark应用的作业配置和Spark参数等环境变量和配置信息。
+&lt;strong&gt;StorageListener -&amp;gt; Storage&lt;/strong&gt;， RDD的存储状态等信息。
+&lt;strong&gt;ExecutorListener -&amp;gt;Executors&lt;/strong&gt;，即Spark应用运行时的所有Executor的数据。
+而&lt;strong&gt;operationGraphListener -&amp;gt; Jobs, Stages&lt;/strong&gt;主要是作业的DAG图数据。
+也就是说，Spark WebUI中的所有数据正是来源于这些监听器对象。&lt;/p&gt;
+
+&lt;p&gt;Step3、执行SparkUI的initialize初始化方法&lt;/p&gt;
+
+&lt;p&gt;当实例化SparkUI的过程中会执行初始化方法，绑定如下的tab项对应的对象数据以及注册页面处理句柄&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;即&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobsTab&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JobsTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobsTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stagesTab&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StagesTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stagesTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StorageTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnvironmentTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ExecutorsTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createStaticHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SparkUI&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;STATIC_RESOURCE_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/static&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createRedirectHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/jobs/&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;basePath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;basePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ApiRootResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getServletHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// These should be POST only, but, the YARN AM proxy won't proxy POSTs&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attachHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createRedirectHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;/jobs/job/kill&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/jobs/&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobsTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;handleKillRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;httpMethods&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;GET&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;POST&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attachHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createRedirectHandler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;/stages/stage/kill&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/stages/&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stagesTab&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;handleKillRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;httpMethods&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;GET&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;POST&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;SparkUI初始化过程全部结束。Spark WebUI的Tab项对应了相应的SparkUI的Tab类，Tab类中封装了页面数据。&lt;/p&gt;
+
+&lt;p&gt;Step4、调用SparkUI的bind方法启动JettyServer&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;_ui&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;foreach&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;bind方法会启动spark内嵌的jetty。Jetty采用java编写,是非常轻巧的servlet engine和http server，Spark使用内嵌的Jetty响应web请求。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;serverInfo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Some&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;startJettyServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sslOptions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;handlers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;conf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Step5、接收UI请求，数据呈现
+当发起Spark WebUI的数据请求时，Spark引擎会进行Tab和Page数据的渲染然后返回给用户。&lt;/p&gt;
+
+&lt;h2 id=&quot;数据获取和更新原理&quot;&gt;数据获取和更新原理&lt;/h2&gt;
+
+&lt;p&gt;因为Spark WebUI上的不同Tab项的数据实际上来源于不同的监听器对象，所以这边抛砖引玉，以JobProgressListener来说明。JobProgressListener中封装了Job和Stage运行状况以及运行进度等全部作业信息。&lt;/p&gt;
+
+&lt;p&gt;1 JobProgressListener生成&lt;/p&gt;
+
+&lt;p&gt;根据前文所述，SparkUI对象构建过程中会实例化JobProgressListener然后把它add到ListenerBus中。&lt;/p&gt;
+
+&lt;p&gt;2 JobProgressListener接收事件&lt;/p&gt;
+
+&lt;p&gt;2.1 事件到达ListenerBus&lt;/p&gt;
+
+&lt;p&gt;根据前文所述JobProgressListener与ListenerBus是一种观察者模式，为什么这么说呢，这是因为ListenerBus中同时维护了listener的一个set集合和eventQueue。eventQueue即一个事件的队列。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spark&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listeners&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CopyOnWriteArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lazy&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eventQueue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LinkedBlockingQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SparkListenerEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EVENT_QUEUE_CAPACITY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Spark作业在运行的时候，事件发生后（即某些方法的具体调用，如Job提交、Job结束等事件）会通过ListenerBus的post方法传入eventQueue。比如说当Job提交事件发生时，DAGScheduler调用handleJobSubmitted方法执行然后将Job开始事件通过post方法加入eventQueue中。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;listenerBus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;SparkListenerJobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;job&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobSubmissionTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stageInfos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eventAdded&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eventQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;offer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;事件的种类是很多的，以DAGScheduler类为例，会有如下的事件。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;对应的DAGScheduler方法&lt;/th&gt;
+      &lt;th&gt;SparkListenerEvent事件&lt;/th&gt;
+      &lt;th&gt;描述&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;executorHeartbeatReceived&lt;/td&gt;
+      &lt;td&gt;SparkListenerExecutorMetricsUpdate&lt;/td&gt;
+      &lt;td&gt;executor向master发送心跳表示BlockManager仍然存活&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleBeginEvent&lt;/td&gt;
+      &lt;td&gt;SparkListenerTaskStart&lt;/td&gt;
+      &lt;td&gt;task开始执行事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;cleanUpAfterSchedulerStop&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobEnd&lt;/td&gt;
+      &lt;td&gt;Job结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleGetTaskResult&lt;/td&gt;
+      &lt;td&gt;SparkListenerTaskGettingResult&lt;/td&gt;
+      &lt;td&gt;task获取结果事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleJobSubmitted&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobStart&lt;/td&gt;
+      &lt;td&gt;Job开始事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleMapStageSubmitted&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobStart&lt;/td&gt;
+      &lt;td&gt;Job开始事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;submitMissingTasks&lt;/td&gt;
+      &lt;td&gt;SparkListenerStageSubmitted&lt;/td&gt;
+      &lt;td&gt;Stage提交事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleTaskCompletion&lt;/td&gt;
+      &lt;td&gt;SparkListenerTaskEnd&lt;/td&gt;
+      &lt;td&gt;Task结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;handleTaskCompletion&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobEnd&lt;/td&gt;
+      &lt;td&gt;Job结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;markStageAsFinished&lt;/td&gt;
+      &lt;td&gt;SparkListenerStageCompleted&lt;/td&gt;
+      &lt;td&gt;Stage结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;failJobAndIndependentStages&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobEnd&lt;/td&gt;
+      &lt;td&gt;Job结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;markMapStageJobAsFinished&lt;/td&gt;
+      &lt;td&gt;SparkListenerJobEnd&lt;/td&gt;
+      &lt;td&gt;Job结束事件&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;2.2 事件到达JobProgressListener&lt;/p&gt;
+
+&lt;p&gt;ListenerBus的run方法会持续运转，&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;event&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eventQueue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;poll&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Get out of the while loop and shutdown the daemon thread&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stopped&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;IllegalStateException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Polling `null` from eventQueue means&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot; the listener bus has been stopped. So `stopped` must be true&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;postToAll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;从eventQueue取出事件后，调用ListenerBus的postToAll方法，将事件分发到各Listener中。具体的ListenerBus实现类封装了相应的事件。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;jobStart:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SparkListenerJobStart&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;listener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onJobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;jobEnd:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SparkListenerJobEnd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;listener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onJobEnd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobEnd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3 JobProgressListener对事件进行响应&lt;/p&gt;
+
+&lt;p&gt;以JobStart事件为例，相应的listener具体实现——JobProgressListener便接收JobStart的事件，并触发自己的onJobStart方法开始产生和更新数据啦。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onJobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;jobStart:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SparkListenerJobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Unit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;synchronized&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;省略&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;jobIdToData&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobData&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;activeJobs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobData&lt;/span&gt;
+  &lt;span class=&quot;nf&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stageId&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stageIds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stageIdToActiveJobIds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOrElseUpdate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stageId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HashSet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;StageId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;jobId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stageInfo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jobStart&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stageInfos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stageIdToInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOrElseUpdate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stageInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stageId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stageInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stageIdToData&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getOrElseUpdate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stageInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stageId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stageInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;attemptId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StageUIData&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;省略&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;jobIdToData、activeJobs等对象和集合就是JobProgressListener中封装的数据啦。&lt;/p&gt;
+
+&lt;p&gt;JobProgressListener封装的其他数据还有：&lt;/p&gt;
+
+&lt;p&gt;Job的，completedJobs，activeJobs，failedJobs，jobIdToData&lt;/p&gt;
+
+&lt;p&gt;Stage的，pendingStages，activeStages，completedStages，failedStages等。&lt;/p&gt;
+
+&lt;p&gt;至此JobProgressListener的各项数据就产生了，其他事件触发的时候，或下次同样事件到达的时候，JobProgressListener依然会进行同样的逻辑，然后对数据进行更新。对于Spark WebUI来说，便可以从JobProgressListener中取得数据进行页面呈现了。对于其他的listener，如EnvironmentListener，StorageListener，ExecutorListener等等，数据产生和更新的原理是一致的。&lt;/p&gt;
+
+&lt;p&gt;敲重点：明白了listener的数据产生和更新原理以后对于Spark应用的其他开发是很有意义的，比方说你想设计一个自定义metrics，设计metrics子系统，设计开发spark作业分析诊断系统等等，就可以从spark的各个后台listener中去获取数据啦。&lt;/p&gt;
+
+&lt;p&gt;ps：公众号已正式接入图灵机器人，快去和我聊聊吧。&lt;/p&gt;
+
+&lt;center&gt;-END-&lt;/center&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>Hadoop2.6的Snappy、OpenSSL等本地库错误</title>
+        <link>http://localhost:4000/2017/04/10/hadoop-native-error.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/04/10/hadoop-native-error.html</guid>
+        <pubDate>Mon, 10 Apr 2017 00:00:00 +0800</pubDate>
+        <description>&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;环境
+Java 1.8
+Hadoop 2.6.5
+Ubuntu 14.04 x64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;使用 hadoop checknative发现&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Native library checking:
+hadoop: true /usr/local/hadoop-2.4.0/lib/native/libhadoop.so.1.0.0
+zlib:   false
+snappy: false
+lz4:    true revision:99
+bzip2:  false
+openssl: false
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我在执行IDEA远程调试时也报了这个错误，为此谷歌了多方，解决了该问题。&lt;/p&gt;
+
+&lt;h3 id=&quot;1snappy&quot;&gt;1.snappy&lt;/h3&gt;
+
+&lt;p&gt;snappy的本地库编译安装可参考&lt;a href=&quot;http://www.cnblogs.com/shitouer/archive/2013/01/14/2859475.html&quot;&gt;http://www.cnblogs.com/shitouer/archive/2013/01/14/2859475.html&lt;/a&gt;，写的非常详细，其中错误2和3我也遇到了。编译前请执行&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install autoconf automake libtool
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;并安装maven3。我在执行make时还遇到错误，包括make、g++未安装，安装即可。&lt;/p&gt;
+
+&lt;p&gt;其中的snappy和hadoop-snappy源码链接也失效，这里我补上。&lt;/p&gt;
+
+&lt;p&gt;点击下面链接下载。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/Lemonjing/dev-repo/blob/master/hadoop/snappy-1.1.1.tar.gz&quot;&gt;snappy&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/Lemonjing/dev-repo/blob/master/hadoop/hadoop-snappy.tar.gz&quot;&gt;hadoop-snappy.tar.gz&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2openssl&quot;&gt;2.openssl&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install libssl-dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;3bzip2&quot;&gt;3.bzip2&lt;/h3&gt;
+
+&lt;p&gt;请参考这篇文章&lt;a href=&quot;http://www.ithao123.cn/content-28743.html&quot;&gt;http://www.ithao123.cn/content-28743.html&lt;/a&gt;，大致意思是安装bzip2-devel库重新编译hadoop，因为我这边提示warn，就没有解决这个了。&lt;/p&gt;
+
+&lt;p&gt;最终如下：&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;/assets/img/java/hadoopnative.png&quot; /&gt;
+&lt;/div&gt;
+
+&lt;p&gt;ps：公众号已正式接入图灵机器人，快去和我聊聊吧。&lt;/p&gt;
+
+&lt;center&gt;-END-&lt;/center&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>写什么作读什么书</title>
+        <link>http://localhost:4000/2017/03/12/write-and-read.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/03/12/write-and-read.html</guid>
+        <pubDate>Sun, 12 Mar 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;新年假期结束，体重又双叒叕涨了不少，即使在家，失眠的日子也越来越多了，脸上不知不觉又多了几个痘痘，一切一切似乎都不如自己所想。&lt;/p&gt;
+
+&lt;p&gt;突然怀念起孩提旧时的时光，可以疯，可以闹，无拘无束，哭了闹了受伤了眼睛里的泪水也是亮晶晶的。&lt;/p&gt;
+
+&lt;p&gt;如今却一直迷茫着，关于未来、关于人生有了更多的思考，幸好身边还是有很多小确幸，让我仍旧爱着这个世界。
+–题记&lt;/p&gt;
+
+&lt;p&gt;一直觉得自己是个伪文艺的少年，做不到持之以恒的读书写作，总是在情绪到达的时候才去记录一些琐事。而真正文艺属性的人们才不会去说自己读过哪些书或是将自己的文章发在社交平台。&lt;/p&gt;
+
+&lt;p&gt;缺少什么的人才去追求什么，当然，这也并没有什么不好。起码已经开始写写作读读书了（梦想家与新手的区别，就如0和1.000……的区别）毕竟也不能因为所学专业或是自己的性格原因而去拒绝读书写作，拒绝心灵的给养啊。&lt;/p&gt;
+
+&lt;p&gt;如果你自己就已经给自己画好了圈子，囿于一隅，执于一端，那么谁也帮不了你了。很多时候并不是你不能做什么，而是你自己给自己挖了个坑然后埋葬了你自己，然后说我不行，做不了。是这个道理么。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;凡事去做，就不会那么难；去做，再容易的事，也不会那么容易；做过之后，再难的事也不会那么难。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;至于文艺的心。我是这样理解的，它是一种生活，是一种信仰，一种精神的力量。它并不是一种炫耀和花哨，并不是矫情的文字堆砌而成。&lt;/p&gt;
+
+&lt;p&gt;有时候它甚至不美，是伤感的，是哭泣的，是沉默的。真正的文艺者是孤独的，但又是骄傲的。文艺帮不了我们衣食住行，茶米油盐，它可以与读书、艺术有关，但又没有关系。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;人有两个世界，一个精神世界，一个是物质世界，任何脱离物质世界的范畴应该都是文艺。它是一种灵魂的表达。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;以前的自己还是很爱读书的，现在确实越来越「节能主义」（懒）了，去年在学校听到俞敏洪老师一次讲座确实让我着实震惊了一下。&lt;/p&gt;
+
+&lt;p&gt;大致内容是这样的：一年之中至少要读30本书，任何实用型的技术类书籍或是教科书之类的却是不能算的。犹太人年人均65本以上，日本45，而中国是5。当然，不是刻意要去比较什么，但总有一些值得我们深思的地方。读书也并非必须。不能因为别人不喜欢阅读，别人没有阅读，你就觉得阅读是一件伟大的事了，认为你是特别的。&lt;/p&gt;
+
+&lt;p&gt;本来，阅读，也只是自己的一个普通兴趣罢了。只是，幸好自己还有这个兴趣。生活中一旦将某件事不抱以很大的目的去坚持下去，总有一些意想不到的事情发生。&lt;/p&gt;
+
+&lt;p&gt;比如说，写博客、自媒体，虽然一开始做了一些小功能，然而新鲜感过去后倒也没有什么意思，可是坚持久了才会有所收获，譬如认识了认真可爱的粉丝，时不时收到关于技术、项目的邮件交流，大家彼此都天南海北，却因此而产生交集，这也算是一种宽慰和鼓励吧。&lt;/p&gt;
+
+&lt;p&gt;大道理人人都懂，小情绪难以自控，习惯去写一些东西，走心而不从众，反而更真实，更有情感。&lt;/p&gt;
+
+&lt;p&gt;其实，譬如读书和写作，坚持下去，总会给你带来有意想不到的变化，只是，我们需要时间去积累，量变到质变这个过程却是无法跨越。&lt;/p&gt;
+
+&lt;p&gt;某一刻，否极泰来，当你偶然抬头仰望那天空，早已不似从前的天空；眼前的花儿似乎比从前还要鲜艳；空气是如此新鲜异常；不远处白衣素裙的姑娘怎比平常惊艳些许。你的一切，都因阅读和写作在潜移默化中改变着，所以，只管去读书，读好书，至于剩下的，交于时光便好，上穷碧落下黄泉，时光将永不辜负与你。&lt;/p&gt;
+
+&lt;p&gt;但，时刻要记住，伟大或是优秀与否，与喜不喜欢阅读无关。作为一个平凡的人，平凡到自己都不敢想象未来的自己能够怎样，这种平凡也许可通过阅读去改变一些，但也只是一些罢了，离伟大却是差了十万八千里，甚至优秀也是难以到达的。&lt;/p&gt;
+
+&lt;p&gt;但，那又怎样呢？读书写作，作为一个兴趣，能够去享受一个人的恬静，享受黄皮纸的颜色和淡淡书卷的味道，个中味道，不足为外人道也。就像某篇文章中描述的那样，读书的感觉就像一汪清水，干涸了，变不见了，却蒸发在了空中，无所不在，于阳光下和空气凝结出彩色的光晕，瞧，是五彩的光呢，绚烂之极，这简直是比假装伟大还要奢侈的享受。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;挫败，总是不期而至，犹如潮水打翻了一个又一个弱者；只有真正的强者，虽然一次次踉踉跄跄，但至少又一次次还活着。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;所以，或是纸质的书籍，或是用手机，方式并不重要，重要的是文的实质。找个安静的地儿，去与文章的作者感同身受，一起看天，看海，看季节的倒影，经历那些或是荡气回肠，青葱岁月，或是励志故事，凄凉的爱情吧，总会有些能打动你的地方。&lt;/p&gt;
+
+&lt;p&gt;瞧，你又读到了一篇可爱的文章呢。&lt;/p&gt;
+
+&lt;p&gt;ps：公众号已正式接入图灵机器人，快去和我聊聊吧。&lt;/p&gt;
+
+&lt;center&gt;-END-&lt;/center&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>2017年我打算实现的13个愿望·下</title>
+        <link>http://localhost:4000/2017/02/22/my-new-year-hope-second.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/22/my-new-year-hope-second.html</guid>
+        <pubDate>Wed, 22 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;每一年新年，我们总会许下新年的美好愿望。愿望包含了我们对于自己学业、工作、家庭、爱情等等美好的愿景。&lt;/p&gt;
+
+&lt;p&gt;一开始，我们每每干劲十足，许下豪言壮志。可是大多数时候却是很难坚持下来，因为这些愿望需要我们持之以恒的努力，需要付出艰辛。&lt;/p&gt;
+
+&lt;p&gt;也许是每一个深夜和清晨的奋斗，也许是一次次汗水的累积，也许是一次次的挫败和打击…人生的奔跑，不在于瞬间的爆发，而取决于途中的坚持；能激励你，温暖你，感动你的，不是励志语录或是鸡汤，而是与身边积极、充满正能量的人同行。&lt;/p&gt;
+
+&lt;p&gt;但愿我们都能成为积极、具有正能量的人，成为你想要的那个自己。而少年我，则先抛砖引玉，希望与你们一起同行，一起进步。世界上最美好的事情，莫过于梦想实现了。&lt;/p&gt;
+
+&lt;p&gt;下文给出了新年伊始的计划以及这一段时间按计划坚持去做的。同时给出了具体有效的花费时间以作考量。抛砖引玉~&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;/assets/img/blogimg/hope2.jpg&quot; width=&quot;600&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;1更加丰富的现实生活&quot;&gt;1/更加丰富的现实生活&lt;/h3&gt;
+
+&lt;p&gt;上篇：技术从业者以及更多的人使用手机，呆在办公室时间越来越多，年少的我们无所谓，殊不知身体状况将在未来给予我们众多负反馈，多进入真实生活吧，将受益良多。&lt;/p&gt;
+
+&lt;p&gt;下篇：新年过后，我在坚持慢跑和健身，时间是隔一天进行一次跑步和锻炼，一次2小时，类型是慢跑和器械。已经做好了计划，有备无患。另外，关于远足和旅行，希望在毕业前夕可以去尝试，所以有在节省开销和加快论文写作。多多进入真实生活，多多爱惜自己的身体，一切对于你自己身体的投资都将是正反馈，未来的你会庆幸此时的决定。时间花费：2小时*3.5/每周。&lt;/p&gt;
+
+&lt;h3 id=&quot;2打开一点内向的性格&quot;&gt;2/打开一点内向的性格&lt;/h3&gt;
+
+&lt;p&gt;上篇：尝试主动与人沟通，拥有自己优质的圈子。现在的你，应当意识到性格、习惯、情商正变得如此重要。&lt;/p&gt;
+
+&lt;p&gt;下篇：不在乎新人旧人，熟悉与否，可以互相理解，互相包容，懂得共情的人，我都乐意与TA交朋友，把心打开一点。不考虑太多，顺从自己的内心，肆意而洒脱。时间花费：在每一个瞬间。&lt;/p&gt;
+
+&lt;h3 id=&quot;3信息安全再审查&quot;&gt;3/信息安全再审查&lt;/h3&gt;
+
+&lt;p&gt;上篇：主要社交工具、邮箱、重要web站点账户、密码重新设计，符合强密码原则。在如此繁杂，不安全的信息时代，需要保护好自己。这是一小步，但已然领先了绝大数人。&lt;/p&gt;
+
+&lt;p&gt;下篇：大概花了一上午的时间，重新设计了所有账户的密码。小小算一下密码的复杂度。如果取值仅为数字的话，常见6位密码复杂度为10^6，加上字母取值变成了10+26=36，6位密码复杂度36^6，加上大小写复杂度就是62^6，加上字符就复杂度就更高了。这里分享一个破解密码时间的表格。&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;              符号类             数字类           小写字母          大小写字母+数字
+3位           0.04秒            0.00秒             0.02秒           0.14秒  
+4位           1.19秒            0.01秒             0.46秒           7.31秒      
+5位          39.14秒            0.10秒            11.88秒           15.27分
+6位          21.52分            1.00秒             5.15分          5.49小时  
+7位        11.84小时              10秒           2.23小时           11.90天
+8位          16.28天            1.67分             2.42天            6.92年
+9位           1.14年           16.34分            62.84天           32.65年  
+10位         45.87年          2.78小时             4.48年          429.26年
+11位       1602.68年            1.16天           116.39年          2.66万年
+12位        5.29万年           11.57天           3026.03年       165.23万年
+24位    882.12万兆年        317.10亿年          2.89万兆年      33.01万京年
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;当然，严谨的来说，一，这取决于计算机执行速度也就是硬件条件；二，现实中的密码破解可能会有其他加速的策略；三、现实中的密码破解通常会以诈骗或者密码病毒的方式。不过，越长的密码，组合越多，越复杂，显然是更安全的，这一点，毋庸置疑。&lt;/p&gt;
+
+&lt;p&gt;不同密码组合破解耗时&lt;/p&gt;
+
+&lt;p&gt;上图充分说明了强密码原则（数字+大小写+特殊字符）的重要性。我的方法是基于优先级的基础密码+特殊后缀密码规则（当然首先是强密码组成），比较重要的支付宝、淘宝、微信等密码优先级排第一；邮箱，重要的web站点个人账户优先级第二；不太重要的账户，使用基础密码或者基础密码+通用后缀就可以了。时间花费：一上午3小时。&lt;/p&gt;
+
+&lt;h3 id=&quot;4学习一门新的编程语言&quot;&gt;4/学习一门新的编程语言&lt;/h3&gt;
+
+&lt;p&gt;上篇：技术日新月异，学习一门新的编程语言，加入开发者浪潮。我选择swift，目标是ios开发。当然，在本职工作以外学习，相信自己，时间永远足够。&lt;/p&gt;
+
+&lt;p&gt;下篇：很遗憾，最近学的东西倒是还蛮多的，可是新的程序设计语言却还没有开始去学。时间花费：0。&lt;/p&gt;
+
+&lt;h3 id=&quot;5学习几个专业软件&quot;&gt;5/学习几个专业软件&lt;/h3&gt;
+
+&lt;p&gt;上篇：独立开发者必备的专业软件。Azure、PS、动画。&lt;/p&gt;
+
+&lt;p&gt;如果你有从事互联网的决心，找对路子，开始行动吧。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;下篇：软件都下载下来了，打算用视频教程学，同样这一条只是刚刚开始。时间花费：10分钟（仅仅是下载的时间花费，这网速真快==&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;）。&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;6坚持个人网站更新&quot;&gt;6/坚持个人网站更新&lt;/h3&gt;
+
+&lt;p&gt;上篇：更新个人网站、整理归档、修缮原文。&lt;/p&gt;
+
+&lt;p&gt;修枝剪叶，定期更新，为了更优质的内容，和查询备忘时的方便。&lt;/p&gt;
+
+&lt;p&gt;下篇：这一条前前后后花了一周左右的时间，删除了一些旧文章，修改了一些标题和格式、排版异常。解决了网站评论问题，因为少年重新迁移了域名，所以花费了较长的时间，弄网站确实很折腾。但是，转而一想，如果事事都那么顺利，这世界也不如此般精彩了。少年的新官网，http://taoxiaoran.top，欢迎阅读和叨扰。当然，大多数也是公众号之前的文章，还有一些技术旧文。时间花费：30分钟*1周。&lt;/p&gt;
+
+&lt;h3 id=&quot;7git仓库整理&quot;&gt;7/Git仓库整理&lt;/h3&gt;
+
+&lt;p&gt;上篇：清除废旧repository，合并项目，完善readme&lt;/p&gt;
+
+&lt;p&gt;Git作为当下最具效率的软件，新一年不管你是理科、工科、文科，都值得学习。如果你将面临找工作，将有奇效。&lt;/p&gt;
+
+&lt;p&gt;下篇：前后大约花了两天的时间，删除几个repo，同时同步了各个工程，仓库保持了最新。为此，去年的贡献倒是少了很多，不过，为了强迫症，为了干净coding、干净写作，没有什么后悔的。时间花费：1小时*2天。&lt;/p&gt;
+
+&lt;h3 id=&quot;8坚持自媒体更新&quot;&gt;8/坚持自媒体更新&lt;/h3&gt;
+
+&lt;p&gt;上篇：一周大于两次的原创更新。新时代优秀的IT从业者区别于普通从业者的几处。其中一条，拥有自己定期更新的独立站点，尝试知识分享的自媒体发展。&lt;/p&gt;
+
+&lt;p&gt;下篇：这个算是很紧凑的实现了。在没有灵感，没有题材写不下去的时候，收到腾讯的微信原创保护邀请和赞赏功能邀请，让我又重拾信心，重拾原创的动力。来自微信官方的寄语，“感谢你一直以来的坚持和鼓励”，是最近听到最令自己感动的话语了，感谢微信官方，也感谢你们。&lt;/p&gt;
+
+&lt;p&gt;写一篇文章加排版大约3个小时，所以这一条时间花费是：3小时每两天。&lt;/p&gt;
+
+&lt;h3 id=&quot;9涉猎艺术和人文学科&quot;&gt;9/涉猎艺术和人文学科&lt;/h3&gt;
+
+&lt;p&gt;上篇：&lt;/p&gt;
+
+&lt;p&gt;艺术、人文训练直觉，可以以非量化的方式提升自己的能力。&lt;/p&gt;
+
+&lt;p&gt;读经典文学（推荐微信读书APP）&lt;/p&gt;
+
+&lt;p&gt;学习简单的摄影&lt;/p&gt;
+
+&lt;p&gt;不止于看电影、听音乐，了解音乐、电影行业知识，电影音乐理论基础，继续吉他的学习。&lt;/p&gt;
+
+&lt;p&gt;下篇：听的歌，看的电影倒是越发多了，可是想有一点音乐、电影和艺术的内涵，现在谈之，为之尚早，时间花费也定义为0吧。&lt;/p&gt;
+
+&lt;h3 id=&quot;10写一个有意思的项目&quot;&gt;10/写一个有意思的项目&lt;/h3&gt;
+
+&lt;p&gt;上篇：技术从业者保持先进，永葆兴趣，提升能力的法宝。&lt;/p&gt;
+
+&lt;p&gt;目前还没有项目雏形，只有一点想法，考虑以ios呈现。&lt;/p&gt;
+
+&lt;p&gt;下篇：记录了一些碎片灵感，没有计划，时间花费：0。&lt;/p&gt;
+
+&lt;h3 id=&quot;11大数据知识强化和储备以便顺利完成毕设进入职场&quot;&gt;11/大数据知识强化和储备，以便顺利完成毕设，进入职场。&lt;/h3&gt;
+
+&lt;p&gt;上篇：因人而异的知识强化和所要达到之目的。&lt;/p&gt;
+
+&lt;p&gt;下篇：深入学习了Hadoop、MapReduce、HBase，时间花费：2h/每天&lt;/p&gt;
+
+&lt;h3 id=&quot;12备份本计划&quot;&gt;12/备份本计划&lt;/h3&gt;
+
+&lt;p&gt;上篇：上传git，各终端（手机、笔记本、电脑）同步，按月提醒。&lt;/p&gt;
+
+&lt;p&gt;预则立，不预则废&lt;/p&gt;
+
+&lt;p&gt;下篇：备份了，甚至一度连锻炼、健身的Keep计划都创建了仓库，不过倒是没有很勤的更新就是了。时间花费：2h&lt;/p&gt;
+
+&lt;h3 id=&quot;13早起&quot;&gt;13/早起&lt;/h3&gt;
+
+&lt;p&gt;上篇：早起&lt;/p&gt;
+
+&lt;p&gt;下篇：坚持了两天闹钟7点半起床就完成了生物钟的转变，现在是7点多自然醒。看吧，早起也没有这么难~ 时间花费：2天。&lt;/p&gt;
+
+&lt;p&gt;说实话，很惭愧，上面一些新年伊始许下的愿望还没有开始去做，谨以此文监督鞭策一下自己吧。&lt;/p&gt;
+
+&lt;p&gt;虽然说付出的时间不能证明太多，但你付出了和没有付出就似梦想家与新手的区别，就如0和1.000……的区别。&lt;/p&gt;
+
+&lt;p&gt;所以，暂且以时间小计一下，所以少年我为新年愿望付出的时间大约是：2小时&lt;em&gt;3.5/每周+每一个瞬间+一上午3小时+0+10分钟+30分钟&lt;/em&gt;1周+1小时*2天+3小时每两天+0+0+2h/每天+2h+2天=？&lt;/p&gt;
+
+&lt;p&gt;那么这个值是多少呢，我觉得等于∞（无穷大）。意味着你无限的可能。&lt;/p&gt;
+
+&lt;p&gt;因为你已经在做了，付出了努力和坚持，而这——就是关键。&lt;/p&gt;
+
+&lt;p&gt;最后，送上一句话与大家共勉。顺便晚安啦~（作息很重要*3）&lt;/p&gt;
+
+&lt;p&gt;不要高估短期的成效，也不要低估长期的坚持。恒则成。&lt;/p&gt;
+
+&lt;center&gt;-END-&lt;/center&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>音乐给予的力量</title>
+        <link>http://localhost:4000/2017/02/18/music-give-me-power.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/18/music-give-me-power.html</guid>
+        <pubDate>Sat, 18 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;有的时候，真的觉得音乐有种特别的吸引力，带给人无限之力量。&lt;/p&gt;
+
+&lt;p&gt;按下手机的播放键，指尖在琴弦上弹起，或是忧伤，或是悦耳，轻快的，厚重的，旋律飘荡在天际，余音袅袅。然后，自己在歌声中徜徉，缠绵。一首歌曲简直就是一个小世界啊。心情好时，听一首sitting down here整个人都轻盈起来了。&lt;/p&gt;
+
+&lt;p&gt;心情不好时，听一首略显伤感的歌，种种往事浮于脑海，止不住伤怀。但，却是真实的感情，十分讨厌矫情的自己，但却很喜欢自己被这种小小温柔和小小伤怀感动的每一个小瞬间。因为，卸下伪装，一个人存在的时候，才能感到自己和这个世界是如此贴近。触碰到泪水的瞬间，才发现原来自己是这么感性。想来，始终做不到典型的理工男的样子。午休的时候轻轻闭上眼睛，感觉整个世界都是静静地，思绪在慢慢飞翔，回到过去，去向未来，甚至，那未知的神秘世界，玄而又玄的须弥山。&lt;/p&gt;
+
+&lt;p&gt;一直觉得，一首歌曲也是一段往事，歌词或旋律中有太多与我们自己经历相似的故事。音乐或歌曲总能给我们带来些许思念。可能是，因为某个人爱上某首歌，或许是某个人爱听的，是关于你们的曾经，关于你们的故事，是关于思念和温馨，关于回忆起来的幸福以及悲伤，你就没有解释地爱上某首歌了。&lt;/p&gt;
+
+&lt;p&gt;一遍遍循环播放着那些歌，回想当初的往事，才发现一切虽然并不如愿，但还是留下了让人思念的东西，让人有回忆起来的幸福。而那些歌，曾经是你喜欢的，如今，同样是我喜欢的。熟悉的旋律，无尽的守望。这该死的回忆，拉长千万里。&lt;/p&gt;
+
+&lt;p&gt;也许，这就是音乐的魔力吧，带给你快乐又带给你悲伤，伴着阵阵难以诉清的非快乐又非悲伤的感觉。心情随着音乐的起承转合，平缓激烈也在悄悄地变化着，但更多的是配合这般旋律，不去打扰，婉转于歌声当中。快乐吧，悲伤吧，不在乎，不介意。不如不想。&lt;/p&gt;
+
+&lt;p&gt;后来，我不想刻意的去听一首歌，只随缘份和心情，这样的方式总能带给自己一些特别的感受。也许，还有更多的情绪，更多的想法，且让这些情绪与音乐相互交织吧，细细体会，让思念蔓延开来，带给你力量，击倒那一切想要击倒你的存在。&lt;/p&gt;
+
+&lt;p&gt;人有两个方面，精神和物质。多挣钱，物质自由。而音乐、文字想来也是一种不错的精神享受。你说呢？&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>如何加速你的微信原创保护申请</title>
+        <link>http://localhost:4000/2017/02/16/how-to-accelerate-wechat-original-protection.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/16/how-to-accelerate-wechat-original-protection.html</guid>
+        <pubDate>Thu, 16 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;题记：少年2017.1.29日写了第一篇文章，2.12日收到微信原创邀请，前后两周不到。如果你也在原创，微信原创保护想来是很重要的一个功能。你也非常希望得到，下面我就给大家分享一些干货吧。如果有什么疑问和意见可以下方回复哈~&lt;/p&gt;
+
+&lt;h2 id=&quot;什么是微信原创保护&quot;&gt;什么是微信原创保护&lt;/h2&gt;
+
+&lt;p&gt;为更好地保护原创内容，维护作者权益，支持原创优质内容的生产，微信公众平台在15年1月份发布原创声明功能。&lt;/p&gt;
+
+&lt;p&gt;申请原创申明功能只面向微信认证的媒体类型公众帐号。对于个人公众号来说，目前，原创功能只能通过微信公众平台系统自动发出邀请才能开通。也就是说，这一过程是被动的，只能等腾讯官方联系你的。比较通俗的展示就是文章标题会被腾讯注明「原创」标志。&lt;/p&gt;
+
+&lt;h2 id=&quot;为什么要申请&quot;&gt;为什么要申请&lt;/h2&gt;
+
+&lt;p&gt;1、原创保护功能是对账号原创文章的保护，被声明原创的文章将会进入微信原创文章库。避免其他个人或者账号对你的创作的抄袭，腾讯会通过文件相似性比对或基于hash的方法，如果他人发布的内容与你原创文章相似性达到一定比例，腾讯将会自动替换成你的文章内容，自动添加转载来源，注明来自于你的公众账号。使运营者的艰辛原创得到保护。&lt;/p&gt;
+
+&lt;p&gt;2、获得更多功能开放&lt;/p&gt;
+
+&lt;p&gt;包括原创标识、页面模板、留言、文章内链，后期还会有赞赏功能以及更多。&lt;/p&gt;
+
+&lt;p&gt;原创标识：用于对文章进行原创声明。&lt;/p&gt;
+
+&lt;p&gt;页面模板：用于对你的历史文章进行文章聚合，做成CMS的样式，进行分类展示，并粘贴到自定义菜单之中。用户可以有选择的阅读。（详见本号菜单「往期精选」）&lt;/p&gt;
+
+&lt;p&gt;留言功能：就不必多说了吧，增强与用户的粘性。&lt;/p&gt;
+
+&lt;p&gt;文章内链：可以在文章内部将其他想要推荐阅读的文章链接过来，做成推荐的样式。&lt;/p&gt;
+
+&lt;p&gt;以及更多更多功能等待开放。&lt;/p&gt;
+
+&lt;h2 id=&quot;申请的条件有哪些&quot;&gt;申请的条件有哪些&lt;/h2&gt;
+
+&lt;p&gt;说了这么多，该怎么申请呢？先看下官方说法。&lt;/p&gt;
+
+&lt;p&gt;1、注册时长&lt;/p&gt;
+
+&lt;p&gt;从我自己和身边的朋友来看，下限大概在20天，即注册20天以上即有机会获得原创保护。&lt;/p&gt;
+
+&lt;p&gt;2、原创度&lt;/p&gt;
+
+&lt;p&gt;尽量不要转载，完全的原创，包括图文、视频、语音、视频等形式。注重文章的质量，这就不要新闻或是段子了吧。科技类、文学、经济也许是一些很好的题材。越是微信稀缺的文章题材越增大你的原创申请可能。&lt;/p&gt;
+
+&lt;p&gt;3、活跃度&lt;/p&gt;
+
+&lt;p&gt;这个活跃度一般指登录公众号后台以及与用户交流的频率。&lt;/p&gt;
+
+&lt;p&gt;4、无抄袭等违规&lt;/p&gt;
+
+&lt;p&gt;历史记录最好不要有抄袭记录，否则很难申请。&lt;/p&gt;
+
+&lt;p&gt;5、原创文章数量&lt;/p&gt;
+
+&lt;p&gt;我是两周大概6、7篇左右，一个比较经验的数字是10-15篇左右。&lt;/p&gt;
+
+&lt;p&gt;6、遵守原创规则&lt;/p&gt;
+
+&lt;p&gt;遵守微信官方规定的原创规则。&lt;/p&gt;
+
+&lt;h2 id=&quot;有什么加速的方法&quot;&gt;有什么加速的方法&lt;/h2&gt;
+
+&lt;p&gt;既然取名标题「如何加速你的原创保护申请」，下面就谈谈加速申请的干货。&lt;/p&gt;
+
+&lt;p&gt;1、文章推送保持一定的频率和固定区间。&lt;/p&gt;
+
+&lt;p&gt;比如我是每天10：00左右推送，隔一天推送一次。目的在于让微信的监控平台捕捉到你，当然也是官方条件中考查运营者拥有持续输出的能力的一个体现。并且文章字数300字基础打底，最好做到500字以上，因为你还有一些非文章主体的其他介绍性文字。&lt;/p&gt;
+
+&lt;p&gt;2、删除你的历史转载、非原创文章吧。上面谈到的原创文章数量实际上是一个比例，即不是你有15篇原创文章就可以了，而是你的整个历史记录没有抄袭、转载的文章，完全的15篇原创，这个比例就是100%。所以，尽量保持你的原创比例90%以上，或者更高吧。&lt;/p&gt;
+
+&lt;p&gt;3、活跃度&lt;/p&gt;
+
+&lt;p&gt;这也是我认为除了原创文章的数量和比例以外，最为重要的一个因素。&lt;/p&gt;
+
+&lt;p&gt;活跃度包括两方面，一是指账号运营者登录公众号后台的活跃度。（没事挂一下网页呗）二是指与用户回复消息的互动。针对第二点，也是本文的重点，因为在没拿到原创保护之前，是没有评论功能的，怎么去提高活跃度进行互动呢？:黑人问号&lt;/p&gt;
+
+&lt;p&gt;大家应该看到了我的账号有一个天启机器人，其实就是图灵机器人，可以接收用户的消息全自动智能回复，天气查询、快递查询、酒店预订、人脸识别、四六级、笑话故事等等。&lt;/p&gt;
+
+&lt;p&gt;通过接入图灵机器人，你可以有选择的推广一些生活或学习上的机器人技能，比如打车或是查快递，聊天等。让你的账号活跃度迅速得到提升。说了那么多，图灵机器人我也想用啊，怎么弄机器人啊啊啊啊啊啊？&lt;/p&gt;
+
+&lt;p&gt;4、机器人&lt;/p&gt;
+
+&lt;p&gt;客观稍等，机器人来了~~~~&lt;/p&gt;
+
+&lt;p&gt;机器人在我看来有三种接入方式。&lt;/p&gt;
+
+&lt;p&gt;第一种也是比较简单的一种，登录图灵机器人官网，注册账号，申请微信机器人，扫描你的公众号二维码进行绑定即可，日后你可以有针对的对你的机器人词库进行调教和丰富。缺点是可能会导致你的自动消息回复和菜单失效。&lt;/p&gt;
+
+&lt;p&gt;第二种是启用微信公众号开发模式，调用图灵机器人API，自主开发。这个对没有编程、IT基础的同学有一点难度。&lt;/p&gt;
+
+&lt;p&gt;第三种是启用微信公众号开发模式，用Lucene和数据库技术等独立开发机器人，这个比较难了。&lt;/p&gt;
+
+&lt;p&gt;关于第二种和第三种，好处在于你可以开发更多功能，完全基于你的想象能力（当然前提你要有公众号接口权限）。坏处在于需要计算机专业人士或者有编程基础，懂Java语言或者PHP语言。更为重要的一点是需要搭建自己的服务器，少年之前账号挂的阿里云服务器低配98元/月，哭死~~&lt;/p&gt;
+
+&lt;p&gt;不过如果有兴趣进行二或三的开发，可以联系少年，我都已经开发过了，代码也在GitHub开源了（也就是你可以免费下载代码啦啦啦），有意向者可以去克隆顺便follow一下我吧。我的GitHub在文尾给出。&lt;/p&gt;
+
+&lt;p&gt;那么，这些技能你get了吗？&lt;/p&gt;
+
+&lt;p&gt;后话：说了这么多，重要的是你要坚持再坚持，完全独立的原创并且保证文章质量。另外，不要在乎文章的阅读数和点赞以及用户关注的多少了，真的无所谓，真的不重要，真的。&lt;/p&gt;
+
+&lt;p&gt;ps 收到原创申请后不烦回来给我点个赞。哈哈&lt;/p&gt;
+
+&lt;p&gt;-END-&lt;/p&gt;
+
+&lt;p&gt;我的GitHub账号：Lemonjing&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，转载请联系。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>湘琴之于植树的爱情</title>
+        <link>http://localhost:4000/2017/02/14/xiangqin-and-zhishu.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/14/xiangqin-and-zhishu.html</guid>
+        <pubDate>Tue, 14 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;题记：最近突然与同学聊起儿时的台湾偶像剧，仔细想一想，恶作剧之吻应该是小时候真的有认真看完的偶像剧了，音乐很好听，这么多年一直都在播放列表中，那是一个属于我们那个年纪的美好记忆，遂整理些恶吻的资料，写下这篇文章。&lt;/p&gt;
+
+&lt;p&gt;一、江直树&lt;/p&gt;
+
+&lt;p&gt;他在听到湘琴说找一个比他好一千倍一万倍的人之后吃醋。&lt;/p&gt;
+
+&lt;p&gt;他不忍湘琴打零工辛苦一天只为给她买个按摩器。&lt;/p&gt;
+
+&lt;p&gt;他从不在乎别人送的东西，却把她送的四物鸡精和按摩器收的好好的。&lt;/p&gt;
+
+&lt;p&gt;他一直在偷偷的观察着她的一举一动，他说不是讨厌你而是难以应付。&lt;/p&gt;
+
+&lt;p&gt;“因为你的出现刷新了我整个生活，开始变得有意义起来。”&lt;/p&gt;
+
+&lt;p&gt;他因为她一句话而当了医生，她因为跟随他当了护士。&lt;/p&gt;
+
+&lt;p&gt;他会在圣诞节公司晚会上偷溜出来只为陪她一起过，他买了她最爱吃的巧克力蛋糕。不是商店只有卖巧克力蛋糕，而是她只喜欢吃巧克力蛋糕。&lt;/p&gt;
+
+&lt;p&gt;他把她给他的小纸条收起来，放在上衣内侧口袋，那是距离心脏最近的位置。&lt;/p&gt;
+
+&lt;p&gt;他会在看艺术展的时候想到她呼呼大睡的样子。&lt;/p&gt;
+
+&lt;p&gt;他会为了让她安心带她去研讨会，对着所有的教授和同学说，这是我的新婚妻子。&lt;/p&gt;
+
+&lt;p&gt;“与其说你离开我，没办法活，不如说，失去你，我活着如同行尸走肉。”&lt;/p&gt;
+
+&lt;p&gt;他毫不犹豫的挡在车前拍打车窗焦急的告诉她刹车位置，短短几分钟湿透了大片后背衬衫。&lt;/p&gt;
+
+&lt;p&gt;劈头盖脸的骂她一顿只为克制自己慌乱不已的心，把哭的很惨的湘琴紧紧抱进怀里，一直重复着那句还好你没事，剧烈起伏的胸膛显示着他并未从那场惊吓中走出来。&lt;/p&gt;
+
+&lt;p&gt;她说，好希望把世界上最美的东西都给他。他说，你知道吗？拥有你就是世界上最美好的事。&lt;/p&gt;
+
+&lt;p&gt;二、袁湘琴&lt;/p&gt;
+
+&lt;p&gt;湘琴必须学会自己生活，离开了直树，她必须还要是一个人，一个有血有肉，会快乐，会幸福的人。&lt;/p&gt;
+
+&lt;p&gt;湘琴要怎么过，自从认识了直树，她的喜怒哀乐，她的理想，她的目标，她的一切
+都在围绕着直树。
+阿才说湘琴这辈子唯一想要完成的事就是爱直树，直树是她生命的第一位，很难想象没了直树的湘琴还能不能快乐的生活，第一部的时候，湘琴因为误会子瑜和直树同居，整天魂不守舍，生活没了意义一般，那种伤心的样子，使人不忍再看第二次
+那只是误会他们同居而已，她就能没了魂，我不敢想象，直树也不敢想象，失去了直树的湘琴，还是不是个完整的湘琴。&lt;/p&gt;
+
+&lt;p&gt;三、湘琴与直树&lt;/p&gt;
+
+&lt;p&gt;“还好你没事。”习惯听这句话了，真的。就像是习惯看小夫妻俩甜蜜一样。我不知道这句话出现过多少次，但是次次都有新的感动。一个情况危急的瞬间，每一次心跳都被吓得快停止的时候，每一次看到湘琴有危险的时候。然后紧紧地抱着她，不停地重复“还好你没事。”&lt;/p&gt;
+
+&lt;p&gt;无法想象湘琴真的出了什么意外，直树会怎么样。他自己也说:“你要是怎么样了，我怎么办?”就像无法想象没了直树的湘琴要怎么生活一样。对他们来说，拥有彼此是最大的幸福，失去彼此是最大的痛苦，所以，还好你真的没事。直树的爱，直树的心意，太多太多人不了解了，和湘琴一样，我们都曾被直树的冷淡蒙蔽了眼睛。&lt;/p&gt;
+
+&lt;p&gt;一直以来，直树都在伪装，明明在湘琴看不到的时候会露出宠溺的笑容，明明在嘴里说着伤人的话，心里却在滴血。明明在湘琴难过的时候，他也会黯然伤神，明明那么爱她，明明那么想宠着她，却在逼着湘琴成长，让她难过，那些毒舌的话，那种冷淡的态度，都不是因为不爱，而是太爱，因为太爱，总是会口是心非，太多人都是这样，只是直树这一种，太令人心疼了点，不是吗?&lt;/p&gt;
+
+&lt;p&gt;总有一天，他们的生命中会有一个人消失。&lt;/p&gt;
+
+&lt;p&gt;总有一天，湘琴要离开直树的庇护，自己生活。&lt;/p&gt;
+
+&lt;p&gt;总有一天，那是谁都不愿看到但确确实实要来到的一天。&lt;/p&gt;
+
+&lt;p&gt;可是，心若水墨青花，何惧刹那芳华。不完美才是此间的真谛。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;关于爱情的定义，谁也不能给谁一个确切的答案。但是，看到江直树和袁湘琴，看到张小凡和碧瑶，看到拓跋野和雨师妾，看到他们，你们，更多的人拼命在努力寻找。途中会迷茫，会失落，会绝望…… 但是，展现给我的却是- - -爱情，也是一种信仰。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>拾忆旧少年</title>
+        <link>http://localhost:4000/2017/02/12/my-youth.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/12/my-youth.html</guid>
+        <pubDate>Sun, 12 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;题记：回忆起少年时光的一件件小事，总叫人感动。正是由于这些回忆才能使自己不断进步，不断追求。我倍加珍惜少年时光的美好回忆，却不为逝去的旧时光惋惜，而是懂得忍受时光的无情，方能享受时光带来的温柔。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;春天 水声潺潺 岸边的柳芽正在抽枝
+夏天 波光盈盈 水面的翠鸟来回飞跃
+秋天 河水清凉 天空的落叶纷至落水
+冬天 水面冰封 冰下的鱼儿还在假寐&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;小时候 家乡门口有条小河&lt;/p&gt;
+
+&lt;p&gt;夏天 波光盈盈 鱼儿恋上河水 相伴相拥&lt;/p&gt;
+
+&lt;p&gt;去年秋天岸边枯树落下的枝桠&lt;/p&gt;
+
+&lt;p&gt;在水中伫立尚有半截&lt;/p&gt;
+
+&lt;p&gt;一只翠鸟倒是聪明 敏锐的占住这个地势&lt;/p&gt;
+
+&lt;p&gt;聚精会神只是盯着水面&lt;/p&gt;
+
+&lt;p&gt;电光石火间 夹住一条鱼儿 激起水花几朵&lt;/p&gt;
+
+&lt;p&gt;然后洋洋自得 倒是有几分可爱&lt;/p&gt;
+
+&lt;p&gt;然后&lt;/p&gt;
+
+&lt;p&gt;鱼儿与水的生离死别就这样悄然上演&lt;/p&gt;
+
+&lt;p&gt;可怜的鱼儿啊 你的爱人正在哭泣 你可曾听到&lt;/p&gt;
+
+&lt;p&gt;要不怎会荡起这一圈圈令人心颤的水波&lt;/p&gt;
+
+&lt;p&gt;远方&lt;/p&gt;
+
+&lt;p&gt;两个孩童开怀的声音渐次分明&lt;/p&gt;
+
+&lt;p&gt;一会便走到河边 也不顾衣服尚在身上&lt;/p&gt;
+
+&lt;p&gt;跳入水中&lt;/p&gt;
+
+&lt;p&gt;放肆的游起来&lt;/p&gt;
+
+&lt;p&gt;奇怪的是&lt;/p&gt;
+
+&lt;p&gt;枝桠的翠鸟 并不飞走&lt;/p&gt;
+
+&lt;p&gt;水面的鱼儿 尚在嬉戏&lt;/p&gt;
+
+&lt;p&gt;温馨而和睦&lt;/p&gt;
+
+&lt;p&gt;”柠檬，今天我们比五百米吧？“&lt;/p&gt;
+
+&lt;p&gt;”比你个鬼啊，昨天才被我妈批，今天偷偷下水的。“&lt;/p&gt;
+
+&lt;p&gt;”这样子啊，那咱们游一会回去打游戏吧，今天一定要通关！“&lt;/p&gt;
+
+&lt;p&gt;”才不要，我要游到夕阳西下，那时的阳光美着呢，是五彩的。“&lt;/p&gt;
+
+&lt;p&gt;这时 一只鲜艳的小蝴蝶停在名为柠檬的少年肩上&lt;/p&gt;
+
+&lt;p&gt;”有你肩上这只蝴蝶好看不？“&lt;/p&gt;
+
+&lt;p&gt;少年看了看蝴蝶 嘴角上扬然后坚定的说了句&lt;/p&gt;
+
+&lt;p&gt;”蝴蝶自然比不了的。“&lt;/p&gt;
+
+&lt;p&gt;”真的？那我可不能错过呀。“&lt;/p&gt;
+
+&lt;p&gt;嬉笑打闹后 两人也不管身上湿答答的衣服&lt;/p&gt;
+
+&lt;p&gt;一屁股坐在岸边的泥土地上&lt;/p&gt;
+
+&lt;p&gt;看着夕阳缓缓而来&lt;/p&gt;
+
+&lt;p&gt;这时 一阵清风拂过两人还带着水珠的睫毛&lt;/p&gt;
+
+&lt;p&gt;倏忽间 瞥到那夕阳 默契之极&lt;/p&gt;
+
+&lt;p&gt;那是怎样的色彩和景色啊&lt;/p&gt;
+
+&lt;p&gt;流光溢彩 五彩缤纷&lt;/p&gt;
+
+&lt;p&gt;绚烂的直教人睁不开眼&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;再见了小时候 矇懂的我 现在的梦已经成熟
+风在朗诵 下课的钟 而时光静静的走
+鲜嫩的梦 已经熟透
+夕阳洒落 让剪影斑驳
+旧旧的 围墙外头 悄悄围起未来的 轮廓&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>『原创』6种单例模式的实现以及double check的剖析</title>
+        <link>http://localhost:4000/2017/02/10/singleton.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/10/singleton.html</guid>
+        <pubDate>Fri, 10 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;&lt;a href=&quot;https://github.com/Lemonjing/TinyMood/blob/master/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/singleton.md&quot;&gt;点击阅读Github Markdown原文&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;如何正确地写出单例模式&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;单例模式算是设计模式中最容易理解，也是最容易手写代码的模式了吧。但是其中的坑却不少，所以也常作为面试题来考。本文主要对几种单例写法的整理，并分析其优缺点。很多都是一些老生常谈的问题，但如果你不知道如何创建一个线程安全的单例，不知道什么是双检锁，那这篇文章可能会帮助到你。&lt;/p&gt;
+
+&lt;h2 id=&quot;1懒加载-线程不安全&quot;&gt;1.懒加载 线程不安全&lt;/h2&gt;
+
+&lt;p&gt;当被问到要实现一个单例模式时，很多人的第一反应是写出如下的代码，包括教科书上也是这样教我们的。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(){}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+         &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这段代码简单明了，而且使用了懒加载模式，但是却存在致命的问题。当有多个线程并行调用 getInstance() 的时候，就会创建多个实例。也就是说在多线程下不能正常工作。&lt;/p&gt;
+
+&lt;h2 id=&quot;2懒加载-线程安全&quot;&gt;2.懒加载 线程安全&lt;/h2&gt;
+
+&lt;p&gt;为了解决上面的问题，最简单的方法是将整个 getInstance() 方法设为同步（synchronized）。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;synchronized&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;虽然做到了线程安全，并且解决了多实例的问题，但是它并不高效。因为在任何时候只能有一个线程调用 getInstance() 方法。但是同步操作只需要在第一次调用时才被需要，即第一次创建单例实例对象时。这就引出了双重检验锁。&lt;/p&gt;
+
+&lt;h2 id=&quot;3双重检查加锁-线程安全&quot;&gt;3.双重检查加锁 线程安全&lt;/h2&gt;
+
+&lt;p&gt;双重检验加锁模式（double checked locking pattern），是一种使用同步块加锁的方法。程序员称其为双重检查锁，因为会有两次检查 uniqueInstance == null，一次是在同步块外，一次是在同步块内。为什么在同步块内还要再检验一次？因为可能会有多个线程一起进入同步块外的 if，如果在同步块内不进行二次检验的话就会生成多个实例了。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getSingleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;                         &lt;span class=&quot;c1&quot;&gt;//Single Checked&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;synchronized&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;                 &lt;span class=&quot;c1&quot;&gt;//Double Checked&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;这段代码看起来很完美，很可惜，它是有问题。主要在于uniqueInstance = new Singleton()这句，这并非是一个原子操作，事实上在 JVM 中这句话大概做了下面 3 件事情。&lt;/p&gt;
+
+&lt;p&gt;给 uniqueInstance 分配内存&lt;/p&gt;
+
+&lt;p&gt;调用 Singleton 的构造函数来初始化成员变量&lt;/p&gt;
+
+&lt;p&gt;将uniqueInstance对象指向分配的内存空间（执行完这步 uniqueInstance 就为非 null 了）&lt;/p&gt;
+
+&lt;p&gt;但是在 JVM的即时编译器中存在指令重排序的优化。也就是说上面的第二步和第三步的顺序是不能保证的，最终的执行顺序可能是 1-2-3 也可能是 1-3-2。如果是后者，则在 3 执行完毕、2 未执行之前，被线程二抢占了，这时uniqueInstance已经是非 null 了（但却没有初始化），所以线程二会直接返回 uniqueInstance，然后使用，然后顺理成章地报错。&lt;/p&gt;
+
+&lt;p&gt;我们只需要将 uniqueInstance 变量声明成 volatile 就可以了。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//声明成 volatile&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(){}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getSingleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;                         
+            &lt;span class=&quot;kd&quot;&gt;synchronized&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;       
+                    &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;有些人认为使用 volatile 的原因是可见性，也就是可以保证线程在本地不会存有 uniqueInstance 的副本，每次都是去主内存中读取。但其实是不对的。使用 volatile 的主要原因是其另一个特性：禁止指令重排序优化。也就是说，在 volatile 变量的赋值操作后面会有一个内存屏障（生成的汇编代码上），读操作不会被重排序到内存屏障之前。比如上面的例子，取操作必须在执行完 1-2-3 之后或者 1-3-2 之后，不存在执行到 1-3 然后取到值的情况。从「先行发生原则」的角度理解的话，就是对于一个 volatile 变量的写操作都先行发生于后面对这个变量的读操作（这里的“后面”是时间上的先后顺序）。&lt;/p&gt;
+
+&lt;p&gt;但是特别注意在 Java 5 以前的版本使用了 volatile 的双检锁还是有问题的。其原因是 Java 5 以前的 JMM （Java 内存模型）是存在缺陷的，即时将变量声明成 volatile 也不能完全避免重排序，主要是 volatile 变量前后的代码仍然存在重排序问题。这个 volatile 屏蔽重排序的问题在 Java 5 中才得以修复，所以在这之后才可以放心使用 volatile。&lt;/p&gt;
+
+&lt;p&gt;相信你不会喜欢这种复杂又隐含问题的方式，当然我们有更好的实现线程安全的单例模式的办法。&lt;/p&gt;
+
+&lt;h2 id=&quot;4急加载-static-final-field-线程安全&quot;&gt;4.急加载 static final field 线程安全&lt;/h2&gt;
+
+&lt;p&gt;这种方法非常简单，因为单例的实例被声明成 static 和 final 变量了，在第一次加载类到内存中时就会初始化，所以创建实例本身是线程安全的。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;//类加载时就初始化&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(){}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这种写法如果完美的话，就没必要在啰嗦那么多双检锁的问题了。缺点是它不是一种懒加载模式（lazy initialization），单例会在加载类后一开始就被初始化，即使客户端没有调用 getInstance()方法。饿汉式的创建方式在一些场景中将无法使用：譬如 Singleton 实例的创建是依赖参数或者配置文件的，在 getInstance() 之前必须调用某个方法设置参数给它，那样这种单例写法就无法使用了。&lt;/p&gt;
+
+&lt;h2 id=&quot;5静态内部类-static-nested-class-线程安全&quot;&gt;5.静态内部类 static nested class 线程安全&lt;/h2&gt;
+
+&lt;p&gt;我比较倾向于使用静态内部类的方法，这种方法也是《Effective Java》上所推荐的。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SingletonHolder&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniqueInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;  
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(){}&lt;/span&gt;  
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Singleton&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;  
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SingletonHolder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;uniqueInstance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; 
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这种写法仍然使用JVM本身机制保证了线程安全问题；由于 SingletonHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它是懒加载的；同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本。&lt;/p&gt;
+
+&lt;h2 id=&quot;6枚举-enum-线程安全&quot;&gt;6.枚举 Enum 线程安全&lt;/h2&gt;
+
+&lt;p&gt;用枚举写单例实在太简单了！这也是它最大的优点。下面这段代码就是声明枚举实例的通常做法。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EasySingleton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;INSTANCE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们可以通过EasySingleton.INSTANCE来访问实例，这比调用getInstance()方法简单多了。创建枚举默认就是线程安全的，所以不需要担心double checked locking，而且还能防止反序列化导致重新创建新的对象。但是还是很少看到有人这样写，可能是因为不太熟悉吧。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;一般来说，单例模式有五种写法：懒加载、急加载、双重检查加锁锁、静态内部类、枚举。上述所说都是线程安全的实现，文章开头给出的第一种方法不算正确的写法。&lt;/p&gt;
+
+&lt;p&gt;就我个人而言，一般情况下直接使用急加载就好了，如果明确要求要懒加载（lazy initialization）会倾向于使用静态内部类，如果涉及到反序列化创建对象时会试着使用枚举的方式来实现单例。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;代码打包&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;完整代码 &lt;a href=&quot;https://github.com/Lemonjing/designpattern/tree/master/src/com/tinymood/designpattern/singleton&quot;&gt;Singleton&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Read More&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://javarevisited.blogspot.sg/2014/05/double-checked-locking-on-singleton-in-java.html&quot;&gt;Double Checked Locking on Singleton Class in Java&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://javarevisited.blogspot.sg/2012/07/why-enum-singleton-are-better-in-java.html&quot;&gt;http://javarevisited.blogspot.sg/2012/07/why-enum-singleton-are-better-in-java.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://javarevisited.blogspot.com/2012/12/how-to-create-thread-safe-singleton-in-java-example.html&quot;&gt;How to create thread safe Singleton in Java&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://javarevisited.blogspot.com/2011/03/10-interview-questions-on-singleton.html&quot;&gt;10 Singleton Pattern Interview questions in Java&lt;/a&gt;&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>借物少女Arrietty观后感</title>
+        <link>http://localhost:4000/2017/02/08/my-arrietty-essay.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/08/my-arrietty-essay.html</guid>
+        <pubDate>Wed, 08 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;你借我一块方糖
+我还你一颗心芳
+将彼此收藏到一个
+叫做心灵的地方
+我们都要坚持和勇敢
+还有温柔的刚强&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;宫崎骏的动画总能让人浮躁的心安静下来。电影「借东西的小人阿莉埃蒂」中轻快、好听的音乐贯穿了始末。这是一部与「千与千寻」、「龙猫」或是「哈尔的移动城堡」一样的吉卜力风格的动画电影。乡间的小路，鸟儿的叫声，阵阵的蛙鸣，雨滴打在树叶的沙沙声，偶尔的雷鸣，都勾起自己满满的回忆，荡起满满的开心，仿佛自己也回到了童年乡下的可爱时光。多么美好的那段岁月啊，谢谢小小人让我穿越时空的界限彼时带着微笑，去抓住曾经那些美好的时光。带着这种共鸣和感同身受，静静地，随着阿莉埃蒂一起小心翼翼的借物，看到她还方糖的坚定和果敢，也看到她因妈妈被人类抓住而悲伤至极去求助翔，也看着她开始渐渐对翔产生的小小情愫。大概连阿莉埃蒂自己都没有发现吧，小小人儿已经喜欢上这个患有心脏病的少年。&lt;/p&gt;
+
+&lt;p&gt;阿莉埃蒂和千寻很像，坚定勇敢又有责任心。只是，在最后分别的那个清晨，当翔掏出用手绢小心包裹的方糖，轻轻地对她说“这次能收下这个，我就很高兴了。” 阿莉埃蒂的眼眶还是湿润了。遂摘下红色的发夹放在翔的手心，小小的她握着翔的手指，满含泪水，“你保护了我，我很开心…无论什么时候，都要健康哦。”&lt;/p&gt;
+
+&lt;p&gt;淡淡的忧伤……短短的相遇……仓促的分别……他那年12岁，患有心脏病，她那年14岁，只有他的手指大小，她借走了他的糖，他还给了他的心。&lt;/p&gt;
+
+&lt;p&gt;很喜欢这部电影，自己也确实很久没有这样安静地看完一部动画电影，像这般被打动过了。阿莉埃蒂和翔相遇的故事让我知道，有些爱，只能放在心里，不去打扰。也许，会在某个无人的深夜，想起你来，轻轻呼唤你的名字，诉说自己的思念，就象翔说的：“你已经是我心脏的一部分。”也许，一切都会风清云淡，但是那一份依依的美丽，总能让自己感到生命的美好和回忆起来满满的幸福。所以，谢谢阿莉埃蒂和翔。祝阿莉埃蒂你有个新家，然后喝上妈妈用方糖泡的紫苏汁。祝翔你手术成功，身体健康。然后，各自安好，便已足够。&lt;/p&gt;
+
+&lt;p&gt;其实，只要曾经相遇过了，那便已是无悔的人生。&lt;/p&gt;
+
+&lt;p&gt;爱像水墨青花，何惧刹那芳华。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>深入浅出Hadoop集群搭建补遗</title>
+        <link>http://localhost:4000/2017/02/06/talk-hadoop-install-1.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/06/talk-hadoop-install-1.html</guid>
+        <pubDate>Mon, 06 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;搭建此环境主要用来跑实验和论文相关，因此我们的操作直接在root用户下，不可用于生产环境。且下文命令、文件均特指Ubuntu14.04 Linux发行版操作系统下。&lt;/p&gt;
+
+&lt;p&gt;本次环境搭建包括Hadoop集群的伪分布式安装（基于虚拟机的方式），同时扩展一些诸如大数据知识，VMware网络方式和linux命令等相关。本文扩展均已黑体EXT标识。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;文件准备&lt;/strong&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;VMware Workstation10
+Ubuntu14.04
+jdk-6u24-linux-bin
+Hadoop-1.1.2.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;安装步骤&lt;/strong&gt;：&lt;/p&gt;
+
+&lt;p&gt;1、ubuntu以root身份登录&lt;/p&gt;
+
+&lt;p&gt;2、关闭防火墙（Hadoop各节点间RPC机制通信）&lt;/p&gt;
+
+&lt;p&gt;2.1关闭虚拟机防火墙&lt;/p&gt;
+
+&lt;p&gt;2.2 关闭主机防火墙&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;方法：ufw disable 
+EXT：ufw命令ufw disable | enable | status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3、修改ip&lt;/p&gt;
+
+&lt;p&gt;3.1 设置虚拟机网络方式为桥接模式&lt;/p&gt;
+
+&lt;p&gt;3.2 设置静态IP&lt;/p&gt;
+
+&lt;p&gt;方法：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sudo vi /etc/network/interfaces（针对Ubuntu发行版）&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;注：Ubuntu虚拟机的gateway网关，netmask子网掩码设置与主机
+一样，IP地址address设置为与主机同一网段。原因参见下文桥接模式。&lt;/p&gt;
+
+&lt;p&gt;4、网卡设置生效&lt;/p&gt;
+
+&lt;p&gt;方法：&lt;code class=&quot;highlighter-rouge&quot;&gt;sudo /etc/init.d/networking restart&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;5、修改hostname以及绑定&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;修改hostname：vi /etc/hostname
+绑定：vi /etc/hosts（防止重启主机名失效）
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;6、配置SSH免密登录&lt;/p&gt;
+
+&lt;p&gt;6.1 Ubuntu虚拟机安装openssh-server（确保SSH服务启动）&lt;/p&gt;
+
+&lt;p&gt;6.2 Ubuntu虚拟机修改SSH配置文件/etc/ssh/sshd_config将PermitRootLogin without-password改为yes（允许root用户SSH连接）&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/shaonian2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;6.3设置免密
+执行命令ssh-keygen –t rsa产生密钥，位于目录~/.ssh/&lt;/p&gt;
+
+&lt;p&gt;然后&lt;code class=&quot;highlighter-rouge&quot;&gt;cp id_rsa.pub authorized_keys&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;验证 ssh localhost&lt;/p&gt;
+
+&lt;p&gt;7、安装JDK
+略去&lt;/p&gt;
+
+&lt;p&gt;8、安装hadoop&lt;/p&gt;
+
+&lt;p&gt;8.1 配置HADOOP_HOME环境变量&lt;/p&gt;
+
+&lt;p&gt;8.2 修改hadoop的4个配置文件 位于$HADOOP_HOME/conf下&lt;/p&gt;
+
+&lt;p&gt;1、hadoop-env.sh&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;export JAVA_HOME=/usr/local/jdk1.6.0_24&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;2、core-site.xml&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;configuration&amp;gt;
+    &amp;lt;property&amp;gt;
+        &amp;lt;name&amp;gt;fs.default.name&amp;lt;/name&amp;gt;
+        &amp;lt;value&amp;gt;hdfs://hadoop:9000&amp;lt;/value&amp;gt;
+   		&amp;lt;description&amp;gt;改为自己的主机名&amp;lt;/description&amp;gt;
+    &amp;lt;/property&amp;gt;
+    &amp;lt;property&amp;gt;
+        &amp;lt;name&amp;gt;hadoop.tmp.dir&amp;lt;/name&amp;gt;
+        &amp;lt;value&amp;gt;/usr/local/hadoop/tmp&amp;lt;/value&amp;gt;
+    &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3、hdfs-site.xml&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;configuration&amp;gt;
+    &amp;lt;property&amp;gt;
+        &amp;lt;name&amp;gt;dfs.replication&amp;lt;/name&amp;gt;
+       	&amp;lt;value&amp;gt;1&amp;lt;/value&amp;gt;
+    &amp;lt;/property&amp;gt;
+    &amp;lt;property&amp;gt;
+        &amp;lt;name&amp;gt;dfs.permissions&amp;lt;/name&amp;gt;
+        &amp;lt;value&amp;gt;false&amp;lt;/value&amp;gt;
+    &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4、mapred-site.xml&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;configuration&amp;gt;
+    &amp;lt;property&amp;gt;
+        &amp;lt;name&amp;gt;mapred.job.tracker&amp;lt;/name&amp;gt;
+        &amp;lt;value&amp;gt;hadoop:9001&amp;lt;/value&amp;gt;
+		&amp;lt;description&amp;gt;改为自己的主机名&amp;lt;/description&amp;gt;
+    &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;8.3 Hadoop NameNode格式化&lt;/p&gt;
+
+&lt;p&gt;命令hadoop namenode -format&lt;/p&gt;
+
+&lt;p&gt;8.4 启动与验证&lt;/p&gt;
+
+&lt;p&gt;启动：start-all.sh&lt;/p&gt;
+
+&lt;p&gt;验证：jps（Hadoop的5个进程）&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/shaonian1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;9、其他问题：&lt;/p&gt;
+
+&lt;p&gt;9.1、NameNode界面: 浏览器查看hadoop:50070&lt;/p&gt;
+
+&lt;p&gt;9.2、Map/Reduce界面: 浏览器查看hadoop:50030&lt;/p&gt;
+
+&lt;p&gt;9.3、多次格式化hadoop错误？&lt;/p&gt;
+
+&lt;p&gt;解决方法：删除/usr/local/hadoop/tmp文件夹，重新格式化&lt;/p&gt;
+
+&lt;p&gt;9.4解决&lt;code class=&quot;highlighter-rouge&quot;&gt;$HADOOP_HOME is deprecated&lt;/code&gt;的warning&lt;/p&gt;
+
+&lt;p&gt;方法：令$HADOOP_HOME_WARN_SUPPRESS=0&lt;/p&gt;
+
+&lt;p&gt;至此，hadoop的伪分布式搭建完毕，后续带来完全分布式的集群搭建。&lt;/p&gt;
+
+&lt;p&gt;10、EXT扩展Vmware的三种网络方式&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Vmnet0 桥接
+Vmnet1 主机模式
+Vmnet8 NAT模式
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;10.1 桥接模式Vmnet0&lt;/p&gt;
+
+&lt;p&gt;什么是桥接模式？桥接模式就是将主机网卡与虚拟机虚拟的网卡利用虚拟网桥进行通信。在桥接的作用下，类似于把物理主机虚拟为一个交换机，所有桥接设置的虚拟机连接到这个交换机的一个接口上，物理主机也同样插在这个交换机当中，所以所有桥接下的网卡与网卡都是交换模式的，相互可以访问而不干扰。在桥接模式下，虚拟机ip地址需要与主机在同一个网段，如果需要联网，则网关与DNS需要与主机网卡一致。
+适用： 桥接模式配置简单，但如果你的网络环境是ip资源很缺少或对ip管理比较严格的话，那桥接模式就不太适用了。&lt;/p&gt;
+
+&lt;p&gt;10.2 NAT地址转换模式（Vmnet8）&lt;/p&gt;
+
+&lt;p&gt;如果你的网络ip资源紧缺，但是你又希望你的虚拟机能够联网，这时候NAT模式是最好的选择。NAT模式借助虚拟NAT设备和虚拟DHCP服务器，使得虚拟机可以联网。&lt;/p&gt;
+
+&lt;p&gt;10.3 主机模式（VMnet1）&lt;/p&gt;
+
+&lt;p&gt;Host-Only模式其实就是NAT模式去除了虚拟NAT设备，然后使用VMware Network Adapter VMnet1虚拟网卡连接VMnet1虚拟交换机来与虚拟机通信的，Host-Only模式将虚拟机与外网隔开，使得虚拟机成为一个独立的系统，只与主机相互通讯。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>写什么作读什么书</title>
+        <link>http://localhost:4000/2017/02/04/write-read-what.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/04/write-read-what.html</guid>
+        <pubDate>Sat, 04 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;新年假期结束，体重又双叒叕涨了不少，即使在家，失眠的日子也越来越多了，脸上不知不觉又多了几个痘痘，一切一切似乎都不如自己所想。&lt;/p&gt;
+
+&lt;p&gt;突然怀念起孩提旧时的时光，可以疯，可以闹，无拘无束，哭了闹了受伤了眼睛里的泪水也是亮晶晶的。&lt;/p&gt;
+
+&lt;p&gt;如今却一直迷茫着，关于未来、关于人生有了更多的思考，幸好身边还是有很多小确幸，让我仍旧爱着这个世界。&lt;/p&gt;
+
+&lt;p&gt;–题记&lt;/p&gt;
+
+&lt;p&gt;一直觉得自己是个伪文艺的少年，做不到持之以恒的读书写作，总是在情绪到达的时候才去记录一些琐事。而真正文艺属性的人们才不会去说自己读过哪些书或是将自己的文章发在社交平台。&lt;/p&gt;
+
+&lt;p&gt;缺少什么的人才去追求什么，当然，这也并没有什么不好。起码已经开始写写作读读书了（梦想家与新手的区别，就如0和1.000……的区别）毕竟也不能因为所学专业或是自己的性格原因而去拒绝读书写作，拒绝心灵的给养啊。&lt;/p&gt;
+
+&lt;p&gt;如果你自己就已经给自己画好了圈子，囿于一隅，执于一端，那么谁也帮不了你了。很多时候并不是你不能做什么，而是你自己给自己挖了个坑然后埋葬了你自己，然后说我不行，做不了。是这个道理么。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;凡事去做，就不会那么难；去做，再容易的事，也不会那么容易；做过之后，再难的事也不会那么难。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;至于文艺的心。我是这样理解的，它是一种生活，是一种信仰，一种精神的力量。它并不是一种炫耀和花哨，并不是矫情的文字堆砌而成。&lt;/p&gt;
+
+&lt;p&gt;有时候它甚至不美，是伤感的，是哭泣的，是沉默的。真正的文艺者是孤独的，但又是骄傲的。文艺帮不了我们衣食住行，茶米油盐，它可以与读书、艺术有关，但又没有关系。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;人有两个世界，一个精神世界，一个是物质世界，任何脱离物质世界的范畴应该都是文艺。它是一种灵魂的表达。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;以前的自己还是很爱读书的，现在确实越来越「节能主义」（懒）了，去年在学校听到俞敏洪老师一次讲座确实让我着实震惊了一下。&lt;/p&gt;
+
+&lt;p&gt;大致内容是这样的：一年之中至少要读30本书，任何实用型的技术类书籍或是教科书之类的却是不能算的。犹太人年人均65本以上，日本45，而中国是5。当然，不是刻意要去比较什么，但总有一些值得我们深思的地方。读书也并非必须。不能因为别人不喜欢阅读，别人没有阅读，你就觉得阅读是一件伟大的事了，认为你是特别的。&lt;/p&gt;
+
+&lt;p&gt;本来，阅读，也只是自己的一个普通兴趣罢了。只是，幸好自己还有这个兴趣。生活中一旦将某件事不抱以很大的目的去坚持下去，总有一些意想不到的事情发生。&lt;/p&gt;
+
+&lt;p&gt;比如说，写博客、自媒体，虽然一开始做了一些小功能，然而新鲜感过去后倒也没有什么意思，可是坚持久了才会有所收获，譬如认识了认真可爱的粉丝，时不时收到关于技术、项目的邮件交流，大家彼此都天南海北，却因此而产生交集，这也算是一种宽慰和鼓励吧。&lt;/p&gt;
+
+&lt;p&gt;大道理人人都懂，小情绪难以自控，习惯去写一些东西，走心而不从众，反而更真实，更有情感。&lt;/p&gt;
+
+&lt;p&gt;其实，譬如读书和写作，坚持下去，总会给你带来有意想不到的变化，只是，我们需要时间去积累，量变到质变这个过程却是无法跨越。&lt;/p&gt;
+
+&lt;p&gt;某一刻，否极泰来，当你偶然抬头仰望那天空，早已不似从前的天空；眼前的花儿似乎比从前还要鲜艳；空气是如此新鲜异常；不远处白衣素裙的姑娘怎比平常惊艳些许。你的一切，都因阅读和写作在潜移默化中改变着，所以，只管去读书，读好书，至于剩下的，交于时光便好，上穷碧落下黄泉，时光将永不辜负与你。&lt;/p&gt;
+
+&lt;p&gt;但，时刻要记住，伟大或是优秀与否，与喜不喜欢阅读无关。作为一个平凡的人，平凡到自己都不敢想象未来的自己能够怎样，这种平凡也许可通过阅读去改变一些，但也只是一些罢了，离伟大却是差了十万八千里，甚至优秀也是难以到达的。&lt;/p&gt;
+
+&lt;p&gt;但，那又怎样呢？读书写作，作为一个兴趣，能够去享受一个人的恬静，享受黄皮纸的颜色和淡淡书卷的味道，个中味道，不足为外人道也。就像某篇文章中描述的那样，读书的感觉就像一汪清水，干涸了，变不见了，却蒸发在了空中，无所不在，于阳光下和空气凝结出彩色的光晕，瞧，是五彩的光呢，绚烂之极，这简直是比假装伟大还要奢侈的享受。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;挫败，总是不期而至，犹如潮水打翻了一个又一个弱者；只有真正的强者，虽然一次次踉踉跄跄，但至少又一次次还活着。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;所以，或是纸质的书籍，或是用手机，方式并不重要，重要的是文的实质。找个安静的地儿，去与文章的作者感同身受，一起看天，看海，看季节的倒影，经历那些或是荡气回肠，青葱岁月，或是励志故事，凄凉的爱情吧，总会有些能打动你的地方。&lt;/p&gt;
+
+&lt;p&gt;瞧，你又读到了一篇可爱的文章呢。末了，安之若素，寂静欢喜。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>折木的节能主义</title>
+        <link>http://localhost:4000/2017/02/02/zhemu-jieneng.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/02/02/zhemu-jieneng.html</guid>
+        <pubDate>Thu, 02 Feb 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;折木奉太郎，日本动画作品《冰菓》中男主角，拥有出色的洞察能力和推理能力。人生信条是“不做也行的事情就不做，非做不可的事情一切从简”，自称“节能主义者“。&lt;/p&gt;
+
+&lt;p&gt;折木在日本、中国有大批粉丝，我也是其中之一。而折木奉行的节能主义，曾经也尝试去理解和实践。&lt;/p&gt;
+
+&lt;p&gt;每到节假日，迈不开步子出去。与其出去聚餐，不如听一天的歌，不悦耳却能打动自己，给予快乐或者欢愉。学习弹弹琴，不美妙却是真诚。&lt;/p&gt;
+
+&lt;p&gt;过年了，读读书，也许不是自己感兴趣的题材，但有时硬着头皮做一些离开自己舒适区的事情，也是一种新的体验。&lt;/p&gt;
+
+&lt;p&gt;你可以称呼这种生活方式为懒，但仔细想想很多东西很多技术正是由于人类那颗不安分的懒惰之心才发明的呀。&lt;/p&gt;
+
+&lt;p&gt;当然，我也承认自己是一个懒人，不喜欢去麻烦别人，没有折木这般聪明，也做不到折木这般的节能，内心也渐渐明白折木这般的「节能」终究是模仿不来。还年轻，要做的事情还很多，怎能草草结束，必须付出激情和专注，坚持和努力。&lt;/p&gt;
+
+&lt;p&gt;想来，我是很难去拥有「节能主义」这种生活方式的。&lt;/p&gt;
+
+&lt;p&gt;曾经与朋友讨论关于「人们的生活方式」这个问题。发现他们的想法与自己倒是差不多的。每个人都有独立的想法，独立的生活方式，自己的思考，如果没有打扰到你，请尊重他人的选择，这也是在尊重你自己。&lt;/p&gt;
+
+&lt;p&gt;不止于节能主义，人生观，世界观，价值观，善与恶的看法，美与丑的甄别，太多太多。不活在自己的世界里，学习学习共情（指站在他人立场想问题），我想这也是一种情商的提高，成熟的表现。&lt;/p&gt;
+
+&lt;p&gt;当然，看完整部动画，其实心底也明白，折木奉行的「灰色」或者「节能」的生活方式并不纯粹，终究是无法奉行完全的节能主义。&lt;/p&gt;
+
+&lt;p&gt;所以，即使做不到纯粹的「节能主义」（这里不谈论好坏，不谈论对错），也做不到折木这般的节能，那不妨将「节能主义」的内涵广义化，将它视为一种生活方式，一种寻找平静心灵的生活状态。去追求你内在的平静与充实，这何尝不是一种宽慰。&lt;/p&gt;
+
+&lt;p&gt;更重要的是，即使做到了「节能主义」，当你命定的千反田来到时，把你的人生从「灰色」「节能」变成「彩色」，一切似乎已经不在重要。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>当我们谈论故乡的时候</title>
+        <link>http://localhost:4000/2017/01/31/talk-about-hometown.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/01/31/talk-about-hometown.html</guid>
+        <pubDate>Tue, 31 Jan 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/当我们谈论故乡的时候.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;今日封面图：蝴蝶飞不过沧海（拍摄于厦门外海）&lt;/p&gt;
+
+&lt;p&gt;题记：当我们谈论故乡的时候，故乡已不存在，如果有，那一定是在十多年前家乡小河边，在炎炎夏日灼烧后我跳进小河中戏水后眼角沾着水珠在夕阳光线散射的五彩斑斓中。&lt;/p&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;p&gt;年前1月16号就已经放假了，当然可以回家，心里也是想着家乡的。但是内心又觉得回家去干嘛呢，姐姐早已结婚，上班。父母也都在上班。工作以后的假期是极少的。家乡人家的屋子随着城镇化进程早已被拆的七零八落。于是乎，在学校又坚持做了2个星期的工作，然后带着一点点希许踏上回家漫漫路。回家后才发现记忆中的一切都被摧毁，如果说还剩下什么，大概只有儿时种下的几株树还是挺拔地屹立着，其中一棵记忆中一直很弱小，小时候的我每每担心它会死掉而不愿将秋千系在它身上的小小树，如今却也长成了几十米高，当我看到后却是有一种惊讶而又欣慰的感情，无法言说。老一辈的孩子王已经长大结婚，曾经一起玩弹珠，跳皮筋，丢沙包，打雪仗，下河捉虾，掏螃蟹洞，上树掏鸟窝的小伙伴们你们又在哪里？我分外想念，但却又不想去见你们。我怕我无法融入到你们的话题中。你们说“你有女朋友了吗？你女朋宇哪里人？你现在在做什么工作？打算什么时候结婚？啊，你还在读书啊？读这么多书有什么用啊？告诉你，前年东头的王牙子生了个大胖娃哦……”你们所热衷的话题，我却是无法参与其中。我想去试着感受你们的快乐，却是无法成功。一闭眼就能想到自己未来10年，20年，30年，甚至更多时间以后的生活的样子，太可怕了，我不敢去想。都说人生如戏，可是精彩的戏不应当是步步惊心，充满变数，吊足观众胃口却又让观众猜不到结局的么？难道不是吗？可现在呢，这又哪里是戏，或者说即使是戏，也是部坏戏，是一部从头到尾的烂戏，因为看到了开头就早已知道结尾，平淡的没有一丝涟漪。早早结婚生子，担心孩子的小学，初中，高中，大学，孩子结婚，生子，担心……人生如戏，这戏不应该这么平淡呀。曾经的好男儿啊，岁月竟如此可怕，将你们的棱角磨的这般平滑。更让我伤心的是，不知何时，咱们早已没有后辈去继承我们的“光辉历史”了，他们都在补习在舞蹈班都在pad在电脑，再也没人给我们的小兔子喂菜，踢几脚还在睡懒觉的小刺猬，或是守在高压线下等着傻乎乎的野鸡触电，然后饱餐一顿烧烤大餐。真的，我们是最后的一代，在田地里长大的最后一代。真是令人唏嘘不已。&lt;/p&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;p&gt;原本，说起故乡应当是令人感到宽慰而感动，无需表演，不用伪装，一片真心，心的归属之地。可是我回到家都是如此情形。“你以后去哪找工作啊？”“我想去大城市，工作机会多，而且我们专业在家这里没什么公司，不好找的。”“什么？家里怎么可能没你的工作！我看你就是眼光高，读书怎么了，我们厂里大学生挣的还没我们多”“我跟你讲现在的女孩子都特别傲气，现在不找就找不到了”，“你们现在读书都把脑子读坏了吧，这个东西都不会”，诸如此类，很多很多。不是特别亲的亲戚，但都是认识的，我听完都不知如何去接话，只是呵呵一笑了之。他们当然不是坏心，但说出来的话却让我气不知从何出，只能抑着。孩提时我所认为的好伯伯们好阿姨们啊，虽然不是你们的错，却让我认清了回忆和现状的巨大差别。夏虫不可语于冰，井蛙不可语于海。古人诚不欺于我。索性一笑了之了，相当之尴尬。&lt;/p&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;p&gt;小时候在村里长大，在田里地里播种，河里捉鱼摸虾，掏鸟窝，逮兔子，捉野鸡，都是如此稀松平常，可这个画面注定只能封存在记忆中了，不愉快却又很无力。为了发展，为了经济，我不知这种破坏或是拆迁的举措是否真的值得。但现实是，真的这样做了。至于我，希望人生这部戏能够精彩，能够耐人寻味，能够引人入胜，而不是猜中开头即是结局这般。而对于穷苦家的孩子来说，也只有去读书了。所以，踏上求学之路，曾经做上30多个小时的绿皮火车，那滋味体会过的都知道，却是难熬，各种辛苦，怎是几句话可以道的清楚；在火车站熬夜，辗转多地，更换多种交通方式；一个人在陌生的城市问路；一个人在冬天的冷风中拖着行李瑟瑟发抖；太多太多。求学真的如此容易么？求学并不容易啊。我的一些天高地远的小伙伴们回家，求学的经历简直就是一部励志电影，每每让我打心里佩服，愿意竖起10个大拇指加脚趾的那种。至于现在，因为一个人所经历的事情带来的影响，很多事都不再怕了，什么都不介意了，微微笑就可以了，好事或事坏事，寂寞或是孤单。不过，话又说回来，幸好，我们还有求学的机会啊，而且如此来之不易，那便付出十万分努力吧，浪费机会不是智者所为。时间久了以后，一个人在奶茶店认真的写作，一个人在图书馆读书，一个人在午夜时间的实验室敲代码，在海边沙滩上不顾他人眼光用树枝写下新年祝福，找一天时间躲在宿舍看部催泪的电影默默抽泣，一个人去到陌生城市请教陌生的人…….你问我，你怕么？我怕，我怕极了，我怕我考虑的多了，就错过机会了，我怕时间不等人，我怕若是自己一时的不如意而落下心结。我怕极了所有的一切。可是，正因为怕我才要去做，去克服去战胜自己，这种经历简直美妙。你试试就知道了。&lt;/p&gt;
+
+&lt;p&gt;4.&lt;/p&gt;
+
+&lt;p&gt;现在的我早已不是过去的我了，可现在的我还是过去的我。如果你遇到我，和我讨论故乡，其实我告诉你的已经不是事实不是真相，但是，请你记住，我告诉你的关于故乡的样子，它就是故乡本来的样子。&lt;/p&gt;
+
+&lt;p&gt;当我们说出远方，远方已是虚妄。
+当我们说出故乡，故乡已不再存在。&lt;/p&gt;
+
+&lt;p&gt;不是年味越来越淡了，虽然极不愿意承认，但坦白的说，其实是因为我们－－长大了。而在心里最柔软的地方，它仍旧是我的故乡所在。&lt;/p&gt;
+
+&lt;p&gt;人如尘埃，渺渺茫茫，珍惜一切，不沉浸在逝去的过去，努力拼搏，不忘初心，方得始终。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>2017年我打算实现的13个愿望</title>
+        <link>http://localhost:4000/2017/01/28/my-new-year-hope.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/01/28/my-new-year-hope.html</guid>
+        <pubDate>Sat, 28 Jan 2017 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;&lt;img src=&quot;http://taoxiaoran.top/assets/img/blogimg/WechatIMG4.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;​今日封面图：杭州茅家埠（自拍直出）&lt;/p&gt;
+
+&lt;p&gt;1、更加丰富的现实生活&lt;/p&gt;
+
+&lt;p&gt;技术从业者以及更多的人使用手机，呆在办公室时间越来越多，年少的我们无所谓，殊不知身体状况将在未来给予我们众多负反馈，多进入真实生活吧，将受益良多。&lt;/p&gt;
+
+&lt;p&gt;过去和将继续坚持的：慢跑、健身、锻炼、远足、旅行。&lt;/p&gt;
+
+&lt;p&gt;2、打开一点内向的性格&lt;/p&gt;
+
+&lt;p&gt;尝试主动与人沟通，拥有自己优质的圈子。现在的你，应当意识到性格、习惯、情商正变得如此重要。&lt;/p&gt;
+
+&lt;p&gt;3、信息安全再审查&lt;/p&gt;
+
+&lt;p&gt;主要社交工具、邮箱、重要web站点账户、密码重新设计，符合强密码原则。在如此繁杂，不安全的信息时代，需要保护好自己。这是一小步，但已然领先了绝大数人。&lt;/p&gt;
+
+&lt;p&gt;4、学习一门新的编程语言&lt;/p&gt;
+
+&lt;p&gt;技术日新月异，学习一门新的编程语言，加入开发者浪潮。swift从0单排，已经开始，目标是ios开发。当然，在本职工作以外学习，相信自己，时间永远足够。&lt;/p&gt;
+
+&lt;p&gt;5、学习几个专业软件&lt;/p&gt;
+
+&lt;p&gt;独立开发者必备的专业软件。Azure、PS、动画。&lt;/p&gt;
+
+&lt;p&gt;如果你有从事互联网的决心，找对路子，开始行动吧。&lt;/p&gt;
+
+&lt;p&gt;6、坚持个人网站更新&lt;/p&gt;
+
+&lt;p&gt;更新个人网站、整理归档、修缮原文。&lt;/p&gt;
+
+&lt;p&gt;修枝剪叶，定期更新，为了更优质的内容，和查询备忘时的方便。&lt;/p&gt;
+
+&lt;p&gt;7、Git仓库整理&lt;/p&gt;
+
+&lt;p&gt;清除废旧repository，合并项目，完善readme&lt;/p&gt;
+
+&lt;p&gt;Git作为当下最具效率的软件，新一年不管你是理科、工科、文科，都值得学习。如果你将面临找工作，将有奇效。&lt;/p&gt;
+
+&lt;p&gt;8、坚持自媒体更新&lt;/p&gt;
+
+&lt;p&gt;一周大于两次的原创更新。新时代优秀的IT从业者区别于普通从业者的几处。其中一条，拥有自己定期更新的独立站点，尝试知识分享的自媒体发展。&lt;/p&gt;
+
+&lt;p&gt;9、涉猎艺术和人文学科&lt;/p&gt;
+
+&lt;p&gt;艺术、人文训练直觉，可以以非量化的方式提升自己的能力。&lt;/p&gt;
+
+&lt;p&gt;读经典文学（推荐微信读书APP）&lt;/p&gt;
+
+&lt;p&gt;学习简单的摄影&lt;/p&gt;
+
+&lt;p&gt;不止于看电影、听音乐，了解音乐、电影行业知识，电影音乐理论基础，继续吉他的学习。&lt;/p&gt;
+
+&lt;p&gt;10、写一个有意思的项目&lt;/p&gt;
+
+&lt;p&gt;技术从业者保持先进，永葆兴趣，提升能力的法宝。&lt;/p&gt;
+
+&lt;p&gt;目前还没有项目雏形，只有一点想法，考虑以ios呈现。&lt;/p&gt;
+
+&lt;p&gt;11、大数据知识强化和储备，以便顺利完成毕设，进入职场。&lt;/p&gt;
+
+&lt;p&gt;因人而异的知识强化和所要达到之目的。&lt;/p&gt;
+
+&lt;p&gt;12、备份本计划&lt;/p&gt;
+
+&lt;p&gt;上传git，各终端（手机、笔记本、电脑）同步，按月提醒。&lt;/p&gt;
+
+&lt;p&gt;预则立，不预则废&lt;/p&gt;
+
+&lt;p&gt;13、早起&lt;/p&gt;
+
+&lt;p&gt;后话：不需要更多，一点点计划，一点点改变，脚踏实地，我已经迈出了第一步。&lt;/p&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>分布式环境中三种Session管理方法的使用场景及优缺点</title>
+        <link>http://localhost:4000/2016/08/10/distributed-session-strategy.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/08/10/distributed-session-strategy.html</guid>
+        <pubDate>Wed, 10 Aug 2016 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;在分布式环境，管理Session通常使用下面三种方式：&lt;/p&gt;
+
+&lt;h2 id=&quot;一session-replication-方式管理-即session复制&quot;&gt;一、Session Replication 方式管理 (即session复制)&lt;/h2&gt;
+
+&lt;p&gt;简介：将一台机器上的Session数据广播复制到集群中其余机器上&lt;/p&gt;
+
+&lt;p&gt;使用场景：机器较少，网络流量较小&lt;/p&gt;
+
+&lt;p&gt;优点：实现简单、配置较少、当网络中有机器Down掉时不影响用户访问&lt;/p&gt;
+
+&lt;p&gt;缺点：广播式复制到其余机器有一定廷时，带来一定网络开销&lt;/p&gt;
+
+&lt;h2 id=&quot;二session-sticky-方式管理&quot;&gt;二、Session Sticky 方式管理&lt;/h2&gt;
+
+&lt;p&gt;简介：即粘性Session、当用户访问集群中某台机器后，强制指定后续所有请求均落到此机器上&lt;/p&gt;
+
+&lt;p&gt;使用场景：机器数适中、对稳定性要求不是非常苛刻&lt;/p&gt;
+
+&lt;p&gt;优点：实现简单、配置方便、没有额外网络开销&lt;/p&gt;
+
+&lt;p&gt;缺点：网络中有机器Down掉时、用户Session会丢失、容易造成单点故障&lt;/p&gt;
+
+&lt;h2 id=&quot;三缓存集中式管理&quot;&gt;三、缓存集中式管理&lt;/h2&gt;
+
+&lt;p&gt;简介：将Session存入分布式缓存集群中的某台机器上，当用户访问不同节点时先从缓存中拿Session信息&lt;/p&gt;
+
+&lt;p&gt;使用场景：集群中机器数多、网络环境复杂&lt;/p&gt;
+
+&lt;p&gt;优点：可靠性好&lt;/p&gt;
+
+&lt;p&gt;缺点：实现复杂、稳定性依赖于缓存的稳定性、Session信息放入缓存时要有合理的策略写入&lt;/p&gt;
+
+&lt;h3 id=&quot;联系我&quot;&gt;联系我&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;邮箱: xmusaber@163.com&lt;/li&gt;
+  &lt;li&gt;QQ: 932191671&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>Redis学习日记</title>
+        <link>http://localhost:4000/2016/07/09/learn-redis.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/07/09/learn-redis.html</guid>
+        <pubDate>Sat, 09 Jul 2016 00:00:00 +0800</pubDate>
+        <description>&lt;h2 id=&quot;redis学习日记&quot;&gt;Redis学习日记&lt;/h2&gt;
+
+&lt;p&gt;Redis 是一个开源（BSD许可）的，非关系型内存数据库，它可以用作数据库、缓存和消息中间件。 它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。 Redis 内置了 复制（replication），LUA脚本（Lua scripting）， LRU驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis哨兵（Sentinel）和自动 分区（Cluster）提供高可用性（high availability）。&lt;/p&gt;
+
+&lt;h3 id=&quot;redis安装&quot;&gt;Redis安装&lt;/h3&gt;
+
+&lt;p&gt;Ubuntu上安装&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$sudo&lt;/span&gt; apt-get update
+&lt;span class=&quot;nv&quot;&gt;$sudo&lt;/span&gt; apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;redis-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;启动 Redis&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$redis&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-server&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;查看 redis 是否还在运行&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$redis&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-cli&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这将打开一个 Redis 提示符，如下图所示：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;redis 127.0.0.1:6379&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在上面的提示信息中：127.0.0.1 是本机的IP地址，6379是 Redis 服务器运行的端口。现在输入 PING 命令，如下图所示：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;redis 127.0.0.1:6379&amp;gt; ping
+PONG
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这说明现在你已经成功地在计算机上安装了 Redis。&lt;/p&gt;
+
+&lt;p&gt;在Ubuntu上安装Redis桌面管理器
+要在Ubuntu 上安装 Redis桌面管理，可以从 http://redisdesktop.com/download 下载包并安装它。
+Redis 桌面管理器会给你用户界面来管理 Redis 键和数据。&lt;/p&gt;
+
+&lt;h3 id=&quot;数据类型&quot;&gt;数据类型&lt;/h3&gt;
+
+&lt;h3 id=&quot;数据类型string&quot;&gt;数据类型String&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;exists 存在1，否则0 
+append
+get
+&lt;span class=&quot;nb&quot;&gt;set
+&lt;/span&gt;strlen
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;incr
+decr
+incrby
+decrby
+del
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GETSET
+SETEX 过期时间
+
+SETNX
+如果指定的Key不存在，则设定该Key持有指定字符串Value，此时其效果等价于SET命令。相反，如果该Key已经存在，该命令将不做任何操作并返回。
+
+SETRANGE
+GETRANGE
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;setbit
+getbit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;5.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mset
+mget
+msetnx
+如果在这一批Keys中有任意一个Key已经存在了，那么该操作将全部回滚，即所有的修改都不会生效。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据类型list&quot;&gt;数据类型List&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;lpush e.g.lpush mykey a b c d e
+lpushx
+lrange e.g. lrange mykey 0 &lt;span class=&quot;nt&quot;&gt;-1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;lpop
+llen
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;lrem e.g. lrem mykey 2 a
+lset 
+lindex
+ltrim
+linsert
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rpush e.g.rpush mykey a b c d
+rpushx
+rpop e.g.rpop mykey
+rpoplpush 尾部弹出插入到另一个头部，原子操作
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据类型hash&quot;&gt;数据类型Hash&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hset
+hget
+hdel
+hexists
+hlen
+hsetnx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hincrby
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hgetall
+hkeys
+hvals
+hmget
+hmset
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据类型set&quot;&gt;数据类型SET&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sadd
+smembers
+scard 数量
+sismember
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;spop
+srem
+srandmember
+smove
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sdiff e.g.sdiff myset myset2 myset3
+sdiffstore e.g.sdiffstore diffkey myset myset2 myset3
+sinter e.g.sinter myset myset2 myset3 交集
+sinterstore e.g.sinterstore interkey myset myset2 myset3 存储交集
+sunion e.g.sunion myset myset2 myset3 并集
+sunionstore e.g.sunionstore unionkey myset myset2 myset3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据类型sortedset&quot;&gt;数据类型SortedSet&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zadd
+zcard
+zcount
+zrem
+zincrby
+zscore 返回score值
+zrange 递增
+zrank
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zrangebysocre
+zremrangebyrank
+zremrangebyscore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zrevrange 递减
+zrevrangebyscore
+zrevrank
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;key命令&quot;&gt;Key命令&lt;/h3&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;flushdb
+set
+sadd
+hset
+del e.g.del key1 key2
+exists
+move
+keys hello*
+select 0切换数据库
+rename 改名 改名的存在被覆盖，成功
+renamenx 改名的存在操作无效
+quit
+info
+dbsize
+flushdb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;persist
+expire
+expireat
+ttl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;type
+&lt;/span&gt;randomkey
+&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;事务&quot;&gt;事务&lt;/h3&gt;
+
+&lt;p&gt;1. 事务被正常执行：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;#在Shell命令行下执行Redis的客户端工具。&lt;/span&gt;
+    /&amp;gt; redis-cli
+    &lt;span class=&quot;c&quot;&gt;#在当前连接上启动一个新的事务。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; multi
+    OK
+    &lt;span class=&quot;c&quot;&gt;#执行事务中的第一条命令，从该命令的返回结果可以看出，该命令并没有立即执行，而是存于事务的命令队列。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; incr t1
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#又执行一个新的命令，从结果可以看出，该命令也被存于事务的命令队列。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; incr t2
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#执行事务命令队列中的所有命令，从结果可以看出，队列中命令的结果得到返回。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;exec
+    &lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;integer&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 1
+    2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;integer&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2. 事务中存在失败的命令：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;#开启一个新的事务。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; multi
+    OK
+    &lt;span class=&quot;c&quot;&gt;#设置键a的值为string类型的3。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;a 3
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#从键a所关联的值的头部弹出元素，由于该值是字符串类型，而lpop命令仅能用于List类型，因此在执行exec命令时，该命令将会失败。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; lpop a
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#再次设置键a的值为字符串4。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;a 4
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#获取键a的值，以便确认该值是否被事务中的第二个set命令设置成功。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; get a
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#从结果中可以看出，事务中的第二条命令lpop执行失败，而其后的set和get命令均执行成功，这一点是Redis的事务与关系型数据库中的事务之间最为重要的差别。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;exec
+    &lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; OK
+    2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;error&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ERR Operation against a key holding the wrong kind of value
+    3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; OK
+    4&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;4&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3. 回滚事务：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;#为键t2设置一个事务执行前的值。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;t2 tt
+    OK
+    &lt;span class=&quot;c&quot;&gt;#开启一个事务。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; multi
+    OK
+    &lt;span class=&quot;c&quot;&gt;#在事务内为该键设置一个新值。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;t2 ttnew
+    QUEUED
+    &lt;span class=&quot;c&quot;&gt;#放弃事务。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; discard
+    OK
+    &lt;span class=&quot;c&quot;&gt;#查看键t2的值，从结果中可以看出该键的值仍为事务开始之前的值。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; get t2
+    &lt;span class=&quot;s2&quot;&gt;&quot;tt&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4. WATCH命令和基于CAS的乐观锁：&lt;/p&gt;
+
+&lt;p&gt;在Redis的事务中，WATCH命令可用于提供CAS(check-and-set)功能。假设我们通过WATCH命令在事务执行之前监控了多个Keys，倘若在WATCH之后有任何Key的值发生了变化，EXEC命令执行的事务都将被放弃，同时返回Null multi-bulk应答以通知调用者事务执行失败。例如，我们再次假设Redis中并未提供incr命令来完成键值的原子性递增，如果要实现该功能，我们只能自行编写相应的代码。其伪码如下：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;      val &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; GET mykey
+      val &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; val + 1
+      SET mykey &lt;span class=&quot;nv&quot;&gt;$val&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以上代码只有在单连接的情况下才可以保证执行结果是正确的，因为如果在同一时刻有多个客户端在同时执行该段代码，那么就会出现多线程程序中经常出现的一种错误场景–竞态争用(race condition)。比如，客户端A和B都在同一时刻读取了mykey的原有值，假设该值为10，此后两个客户端又均将该值加一后set回Redis服务器，这样就会导致mykey的结果为11，而不是我们认为的12。为了解决类似的问题，我们需要借助WATCH命令的帮助，见如下代码：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;      WATCH mykey
+      val &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; GET mykey
+      val &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; val + 1
+      MULTI
+      SET mykey &lt;span class=&quot;nv&quot;&gt;$val&lt;/span&gt;
+      EXEC
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;和此前代码不同的是，新代码在获取mykey的值之前先通过WATCH命令监控了该键，此后又将set命令包围在事务中，这样就可以有效的保证每个连接在执行EXEC之前，如果当前连接获取的mykey的值被其它连接的客户端修改，那么当前连接的EXEC命令将执行失败。这样调用者在判断返回值后就可以获悉val是否被重新设置成功。&lt;/p&gt;
+
+&lt;h3 id=&quot;主从复制&quot;&gt;主从复制&lt;/h3&gt;
+
+&lt;p&gt;一、Redis的Replication：&lt;/p&gt;
+
+&lt;p&gt;这里首先需要说明的是，在Redis中配置Master-Slave模式真是太简单了。相信在阅读完这篇Blog之后你也可以轻松做到。这里我们还是先列出一些理论性的知识，后面给出实际操作的案例。下面的列表清楚的解释了Redis Replication的特点和优势。&lt;/p&gt;
+
+&lt;p&gt;1). 同一个Master可以同步多个Slaves。&lt;/p&gt;
+
+&lt;p&gt;2). Slave同样可以接受其它Slaves的连接和同步请求，这样可以有效的分载Master的同步压力。因此我们可以将Redis的Replication架构视为图结构。&lt;/p&gt;
+
+&lt;p&gt;3). Master Server是以非阻塞的方式为Slaves提供服务。所以在Master-Slave同步期间，客户端仍然可以提交查询或修改请求。&lt;/p&gt;
+
+&lt;p&gt;4). Slave Server同样是以非阻塞的方式完成数据同步。在同步期间，如果有客户端提交查询请求，Redis则返回同步之前的数据。&lt;/p&gt;
+
+&lt;p&gt;5). 为了分载Master的读操作压力，Slave服务器可以为客户端提供只读操作的服务，写服务仍然必须由Master来完成。即便如此，系统的伸缩性还是得到了很大的提高。&lt;/p&gt;
+
+&lt;p&gt;6). Master可以将数据保存操作交给Slaves完成，从而避免了在Master中要有独立的进程来完成此操作。&lt;/p&gt;
+
+&lt;p&gt;二、Replication的工作原理：&lt;/p&gt;
+
+&lt;p&gt;在Slave启动并连接到Master之后，它将主动发送一个SYNC命令。此后Master将启动后台存盘进程，同时收集所有接收到的用于修改数据集的命令，在后台进程执行完毕后，Master将传送整个数据库文件到Slave，以完成一次完全同步。而Slave服务器在接收到数据库文件数据之后将其存盘并加载到内存中。此后，Master继续将所有已经收集到的修改命令，和新的修改命令依次传送给Slaves，Slave将在本次执行这些数据修改命令，从而达到最终的数据同步。&lt;/p&gt;
+
+&lt;p&gt;如果Master和Slave之间的链接出现断连现象，Slave可以自动重连Master，但是在连接成功之后，一次完全同步将被自动执行。&lt;/p&gt;
+
+&lt;p&gt;三、如何配置Replication：&lt;/p&gt;
+
+&lt;p&gt;见如下步骤：&lt;/p&gt;
+
+&lt;p&gt;1). 同时启动两个Redis服务器，可以考虑在同一台机器上启动两个Redis服务器，分别监听不同的端口，如6379和6380。&lt;/p&gt;
+
+&lt;p&gt;2). 在Slave服务器上执行一下命令：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    /&amp;gt; redis-cli &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6380   &lt;span class=&quot;c&quot;&gt;#这里我们假设Slave的端口号是6380&lt;/span&gt;
+    redis 127.0.0.1:6380&amp;gt; slaveof 127.0.0.1 6379 &lt;span class=&quot;c&quot;&gt;#我们假设Master和Slave在同一台主机，Master的端口为6379&lt;/span&gt;
+    OK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;上面的方式只是保证了在执行slaveof命令之后，redis_6380成为了redis_6379的slave，一旦服务(redis_6380)重新启动之后，他们之间的复制关系将终止。
+如果希望长期保证这两个服务器之间的Replication关系，可以在redis_6380的配置文件中做如下修改：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    /&amp;gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /etc/redis  &lt;span class=&quot;c&quot;&gt;#切换Redis服务器配置文件所在的目录。&lt;/span&gt;
+    /&amp;gt; &lt;span class=&quot;nb&quot;&gt;ls
+    &lt;/span&gt;6379.conf  6380.conf
+    /&amp;gt; vi 6380.conf
+    将
+    &lt;span class=&quot;c&quot;&gt;# slaveof &amp;lt;masterip&amp;gt; &amp;lt;masterport&amp;gt;&lt;/span&gt;
+    改为
+    slaveof 127.0.0.1 6379
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;保存退出。这样就可以保证Redis_6380服务程序在每次启动后都会主动建立与Redis_6379的Replication连接了。&lt;/p&gt;
+
+&lt;p&gt;四、应用示例：&lt;/p&gt;
+
+&lt;p&gt;这里我们假设Master-Slave已经建立。&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;#启动master服务器。&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@Stephen-PC redis]# redis-cli &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379
+    redis 127.0.0.1:6379&amp;gt;
+    &lt;span class=&quot;c&quot;&gt;#情况Master当前数据库中的所有Keys。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; flushdb
+    OK
+    &lt;span class=&quot;c&quot;&gt;#在Master中创建新的Keys作为测试数据。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mykey hello
+    OK
+    redis 127.0.0.1:6379&amp;gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;mykey2 world
+    OK
+    &lt;span class=&quot;c&quot;&gt;#查看Master中存在哪些Keys。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; keys &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+    1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey&quot;&lt;/span&gt;
+    2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey2&quot;&lt;/span&gt;
+    
+    &lt;span class=&quot;c&quot;&gt;#启动slave服务器。&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;root@Stephen-PC redis]# redis-cli &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6380
+    &lt;span class=&quot;c&quot;&gt;#查看Slave中的Keys是否和Master中一致，从结果看，他们是相等的。&lt;/span&gt;
+    redis 127.0.0.1:6380&amp;gt; keys &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+    1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey&quot;&lt;/span&gt;
+    2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey2&quot;&lt;/span&gt;
+    
+    &lt;span class=&quot;c&quot;&gt;#在Master中删除其中一个测试Key，并查看删除后的结果。&lt;/span&gt;
+    redis 127.0.0.1:6379&amp;gt; del mykey2
+    &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;integer&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 1
+    redis 127.0.0.1:6379&amp;gt; keys &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+    1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey&quot;&lt;/span&gt;
+    
+    &lt;span class=&quot;c&quot;&gt;#在Slave中查看是否mykey2也已经在Slave中被删除。&lt;/span&gt;
+    redis 127.0.0.1:6380&amp;gt; keys &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;
+    1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mykey&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;数据持久化&quot;&gt;数据持久化&lt;/h3&gt;
+
+&lt;p&gt;一、Redis提供了哪些持久化机制：&lt;/p&gt;
+
+&lt;p&gt;1). RDB持久化：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;该机制是指在指定的时间间隔内将内存中的数据集快照写入磁盘。 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2). AOF持久化:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;该机制将以日志的形式记录服务器所处理的每一个写操作，在Redis服务器启动之初会读取该文件来重新构建数据库，以保证启动后数据库中的数据是完整的。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3). 无持久化：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;我们可以通过配置的方式禁用Redis服务器的持久化功能，这样我们就可以将Redis视为一个功能加强版的memcached了。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4). 同时应用AOF和RDB。&lt;/p&gt;
+
+&lt;p&gt;二、RDB机制的优势和劣势：&lt;/p&gt;
+
+&lt;p&gt;RDB存在哪些优势呢？&lt;/p&gt;
+
+&lt;p&gt;1). 一旦采用该方式，那么你的整个Redis数据库将只包含一个文件，这对于文件备份而言是非常完美的。比如，你可能打算每个小时归档一次最近24小时的数据，同时还要每天归档一次最近30天的数据。通过这样的备份策略，一旦系统出现灾难性故障，我们可以非常容易的进行恢复。&lt;/p&gt;
+
+&lt;p&gt;2). 对于灾难恢复而言，RDB是非常不错的选择。因为我们可以非常轻松的将一个单独的文件压缩后再转移到其它存储介质上。&lt;/p&gt;
+
+&lt;p&gt;3). 性能最大化。对于Redis的服务进程而言，在开始持久化时，它唯一需要做的只是fork出子进程，之后再由子进程完成这些持久化的工作，这样就可以极大的避免服务进程执行IO操作了。&lt;/p&gt;
+
+&lt;p&gt;4). 相比于AOF机制，如果数据集很大，RDB的启动效率会更高。&lt;/p&gt;
+
+&lt;p&gt;RDB又存在哪些劣势呢？&lt;/p&gt;
+
+&lt;p&gt;1). 如果你想保证数据的高可用性，即最大限度的避免数据丢失，那么RDB将不是一个很好的选择。因为系统一旦在定时持久化之前出现宕机现象，此前没有来得及写入磁盘的数据都将丢失。&lt;/p&gt;
+
+&lt;p&gt;2). 由于RDB是通过fork子进程来协助完成数据持久化工作的，因此，如果当数据集较大时，可能会导致整个服务器停止服务几百毫秒，甚至是1秒钟。&lt;/p&gt;
+
+&lt;p&gt;三、AOF机制的优势和劣势：&lt;/p&gt;
+
+&lt;p&gt;AOF的优势有哪些呢？&lt;/p&gt;
+
+&lt;p&gt;1). 该机制可以带来更高的数据安全性，即数据持久性。Redis中提供了3中同步策略，即每秒同步、每修改同步和不同步。事实上，每秒同步也是异步完成的，其效率也是非常高的，所差的是一旦系统出现宕机现象，那么这一秒钟之内修改的数据将会丢失。而每修改同步，我们可以将其视为同步持久化，即每次发生的数据变化都会被立即记录到磁盘中。可以预见，这种方式在效率上是最低的。至于无同步，无需多言，我想大家都能正确的理解它。&lt;/p&gt;
+
+&lt;p&gt;2). 由于该机制对日志文件的写入操作采用的是append模式，因此在写入过程中即使出现宕机现象，也不会破坏日志文件中已经存在的内容。然而如果我们本次操作只是写入了一半数据就出现了系统崩溃问题，不用担心，在Redis下一次启动之前，我们可以通过redis-check-aof工具来帮助我们解决数据一致性的问题。&lt;/p&gt;
+
+&lt;p&gt;3). 如果日志过大，Redis可以自动启用rewrite机制。即Redis以append模式不断的将修改数据写入到老的磁盘文件中，同时Redis还会创建一个新的文件用于记录此期间有哪些修改命令被执行。因此在进行rewrite切换时可以更好的保证数据安全性。&lt;/p&gt;
+
+&lt;p&gt;4). AOF包含一个格式清晰、易于理解的日志文件用于记录所有的修改操作。事实上，我们也可以通过该文件完成数据的重建。&lt;/p&gt;
+
+&lt;p&gt;AOF的劣势有哪些呢？&lt;/p&gt;
+
+&lt;p&gt;1). 对于相同数量的数据集而言，AOF文件通常要大于RDB文件。&lt;/p&gt;
+
+&lt;p&gt;2). 根据同步策略的不同，AOF在运行效率上往往会慢于RDB。总之，每秒同步策略的效率是比较高的，同步禁用策略的效率和RDB一样高效。&lt;/p&gt;
+
+&lt;p&gt;四、其它：&lt;/p&gt;
+
+&lt;p&gt;1. Snapshotting:&lt;/p&gt;
+
+&lt;p&gt;缺省情况下，Redis会将数据集的快照dump到dump.rdb文件中。此外，我们也可以通过配置文件来修改Redis服务器dump快照的频率，在打开6379.conf文件之后，我们搜索save，可以看到下面的配置信息：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    save 900 1              &lt;span class=&quot;c&quot;&gt;#在900秒(15分钟)之后，如果至少有1个key发生变化，则dump内存快照。&lt;/span&gt;
+    save 300 10            &lt;span class=&quot;c&quot;&gt;#在300秒(5分钟)之后，如果至少有10个key发生变化，则dump内存快照。&lt;/span&gt;
+    save 60 10000        &lt;span class=&quot;c&quot;&gt;#在60秒(1分钟)之后，如果至少有10000个key发生变化，则dump内存快照。&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2. Dump快照的机制：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; Redis先fork子进程。
+    2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; 子进程将快照数据写入到临时RDB文件中。
+    3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; 当子进程完成数据写入操作后，再用临时文件替换老的文件。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3. AOF文件：&lt;/p&gt;
+
+&lt;p&gt;上面已经多次讲过，RDB的快照定时dump机制无法保证很好的数据持久性。如果我们的应用确实非常关注此点，我们可以考虑使用Redis中的AOF机制。对于Redis服务器而言，其缺省的机制是RDB，如果需要使用AOF，则需要修改配置文件中的以下条目：
+将&lt;strong&gt;appendonly no改为appendonly yes&lt;/strong&gt;
+从现在起，Redis在每一次接收到数据修改的命令之后，都会将其追加到AOF文件中。在Redis下一次重新启动时，需要加载AOF文件中的信息来构建最新的数据到内存中。&lt;/p&gt;
+
+&lt;p&gt;4. AOF的配置：&lt;/p&gt;
+
+&lt;p&gt;在Redis的配置文件中存在三种同步方式，它们分别是：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    appendfsync always     &lt;span class=&quot;c&quot;&gt;#每次有数据修改发生时都会写入AOF文件。&lt;/span&gt;
+    appendfsync everysec  &lt;span class=&quot;c&quot;&gt;#每秒钟同步一次，该策略为AOF的缺省策略。&lt;/span&gt;
+    appendfsync no          &lt;span class=&quot;c&quot;&gt;#从不同步。高效但是数据不会被持久化。&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;5. 如何修复坏损的AOF文件：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; 将现有已经坏损的AOF文件额外拷贝出来一份。
+2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; 执行&lt;span class=&quot;s2&quot;&gt;&quot;redis-check-aof --fix &amp;lt;filename&amp;gt;&quot;&lt;/span&gt;命令来修复坏损的AOF文件。
+3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; 用修复后的AOF文件重新启动Redis服务器。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;6. Redis的数据备份：&lt;/p&gt;
+
+&lt;p&gt;在Redis中我们可以通过copy的方式在线备份正在运行的Redis数据文件。这是因为RDB文件一旦被生成之后就不会再被修改。Redis每次都是将最新的数据dump到一个临时文件中，之后在利用rename函数原子性的将临时文件改名为原有的数据文件名。因此我们可以说，在任意时刻copy数据文件都是安全的和一致的。鉴于此，我们就可以通过创建cron job的方式定时备份Redis的数据文件，并将备份文件copy到安全的磁盘介质中。&lt;/p&gt;
+
+&lt;h3 id=&quot;管道&quot;&gt;管道&lt;/h3&gt;
+
+&lt;p&gt;一、请求应答协议和RTT：&lt;/p&gt;
+
+&lt;p&gt;Redis是一种典型的基于C/S模型的TCP服务器。在客户端与服务器的通讯过程中，通常都是客户端率先发起请求，服务器在接收到请求后执行相应的任务，最后再将获取的数据或处理结果以应答的方式发送给客户端。在此过程中，客户端都会以阻塞的方式等待服务器返回的结果。见如下命令序列：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    Client: INCR X
+    Server: 1
+    Client: INCR X
+    Server: 2
+    Client: INCR X
+    Server: 3
+    Client: INCR X
+    Server: 4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在每一对请求与应答的过程中，我们都不得不承受网络传输所带来的额外开销。我们通常将这种开销称为RTT(Round Trip Time)。现在我们假设每一次请求与应答的RTT为250毫秒，而我们的服务器可以在一秒内处理100k的数据，可结果则是我们的服务器每秒至多处理4条请求。要想解决这一性能问题，我们该如何进行优化呢？&lt;/p&gt;
+
+&lt;p&gt;二、管线(pipelining)：&lt;/p&gt;
+
+&lt;p&gt;Redis在很早的版本中就已经提供了对命令管线的支持。在给出具体解释之前，我们先将上面的同步应答方式的例子改造为基于命令管线的异步应答方式，这样可以让大家有一个更好的感性认识。&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    Client: INCR X
+    Client: INCR X
+    Client: INCR X
+    Client: INCR X
+    Server: 1
+    Server: 2
+    Server: 3
+    Server: 4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;从以上示例可以看出，客户端在发送命令之后，不用立刻等待来自服务器的应答，而是可以继续发送后面的命令。在命令发送完毕后，再一次性的读取之前所有命令的应答。这样便节省了同步方式中RTT的开销。&lt;/p&gt;
+
+&lt;p&gt;最后需要说明的是，如果Redis服务器发现客户端的请求是基于管线的，那么服务器端在接受到请求并处理之后，会将每条命令的应答数据存入队列，之后再发送到客户端。&lt;/p&gt;
+
+&lt;h3 id=&quot;联系我&quot;&gt;联系我&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;邮箱: xmusaber@163.com&lt;/li&gt;
+  &lt;li&gt;QQ: 932191671&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>对一致性哈希算法的深入研究</title>
+        <link>http://localhost:4000/2016/07/08/consistent-hash-algorithm.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/07/08/consistent-hash-algorithm.html</guid>
+        <pubDate>Fri, 08 Jul 2016 00:00:00 +0800</pubDate>
+        <description>&lt;h2 id=&quot;一致性hash算法&quot;&gt;一致性Hash算法&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/hash2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;关于一致性Hash算法，在我之前的博文中已经有多次提到了，MemCache超详细解读一文中”一致性Hash算法”部分，对于为什么要使用一致性Hash算法、一致性Hash算法的算法原理做了详细的解读。&lt;/p&gt;
+
+&lt;p&gt;算法的具体原理这里再次贴上：&lt;/p&gt;
+
+&lt;font color=&quot;blue&quot;&gt;先构造一个长度为2^32的整数环（这个环被称为一致性Hash环），根据节点名称的Hash值（其分布为[0, 2^32-1]）将服务器节点放置在这个Hash环上，然后根据数据的Key值计算得到其Hash值（其分布也为[0, 2^32-1]），接着在Hash环上顺时针查找距离这个Key值的Hash值最近的服务器节点，完成Key到服务器的映射查找。&lt;/font&gt;
+
+&lt;p&gt;这种算法解决了普通余数Hash算法伸缩性差的问题，可以保证在上线、下线服务器的情况下尽量有多的请求命中原来路由到的服务器。&lt;/p&gt;
+
+&lt;p&gt;当然，万事不可能十全十美，一致性Hash算法比普通的余数Hash算法更具有伸缩性，但是同时其算法实现也更为复杂，本文就来研究一下，如何利用Java代码实现一致性Hash算法。在开始之前，先对一致性Hash算法中的几个核心问题进行一些探究。&lt;/p&gt;
+
+&lt;h3 id=&quot;数据结构的选取&quot;&gt;数据结构的选取&lt;/h3&gt;
+
+&lt;p&gt;一致性Hash算法最先要考虑的一个问题是：构造出一个长度为2^32的整数环，根据节点名称的Hash值将服务器节点放置在这个Hash环上。&lt;/p&gt;
+
+&lt;p&gt;那么，整数环应该使用何种数据结构，才能使得运行时的时间复杂度最低？首先说明一点，关于时间复杂度，常见的时间复杂度与时间效率的关系有如下的经验规则：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;log2N&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;N &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; logN&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;N^2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; O&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;N^3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; 2^N &amp;lt; 3^N &amp;lt; N!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;一般来说，前四个效率比较高，中间两个差强人意，后三个比较差（只要N比较大，这个算法就动不了了）。OK，继续前面的话题，应该如何选取数据结构，我认为有以下几种可行的解决方案。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1、解决方案一：排序+List&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;我想到的第一种思路是：算出所有待加入数据结构的节点名称的Hash值放入一个数组中，然后使用某种排序算法将其从小到大进行排序，最后将排序后的数据放入List中，采用List而不是数组是为了结点的扩展考虑。&lt;/p&gt;
+
+&lt;font color=&quot;blue&quot;&gt;之后，待路由的结点，只需要在List中找到第一个Hash值比它大的服务器节点就可以了，&lt;/font&gt;
+&lt;p&gt;比如服务器节点的Hash值是[0,2,4,6,8,10]，带路由的结点是7，只需要找到第一个比7大的整数，也就是8，就是我们最终需要路由过去的服务器节点。&lt;/p&gt;
+
+&lt;p&gt;如果暂时不考虑前面的排序，那么这种解决方案的时间复杂度：&lt;/p&gt;
+
+&lt;p&gt;（1）最好的情况是第一次就找到，时间复杂度为O(1)&lt;/p&gt;
+
+&lt;p&gt;（2）最坏的情况是最后一次才找到，时间复杂度为O(N)&lt;/p&gt;
+
+&lt;p&gt;平均下来时间复杂度为O(0.5N+0.5)，忽略首项系数和常数，时间复杂度为O(N)。&lt;/p&gt;
+
+&lt;p&gt;但是如果考虑到之前的排序，我在网上找了张图，提供了各种排序算法的时间复杂度：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/sort-complex.jpg&quot; alt=&quot;排序算法复杂度&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2、解决方案二：遍历+List&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;既然排序操作比较耗性能，那么能不能不排序？可以的，所以进一步的，有了第二种解决方案。&lt;/p&gt;
+
+&lt;p&gt;解决方案使用List不变，不过可以采用遍历的方式：&lt;/p&gt;
+
+&lt;p&gt;（1）服务器节点不排序，其Hash值全部直接放入一个List中&lt;/p&gt;
+
+&lt;p&gt;（2）带路由的节点，算出其Hash值，由于指明了”顺时针”，因此遍历List，比待路由的节点Hash值大的算出差值并记录，比待路由节点Hash值小的忽略&lt;/p&gt;
+
+&lt;p&gt;（3）算出所有的差值之后，最小的那个，就是最终需要路由过去的节点&lt;/p&gt;
+
+&lt;p&gt;在这个算法中，看一下时间复杂度：&lt;/p&gt;
+
+&lt;p&gt;1、最好情况是只有一个服务器节点的Hash值大于带路由结点的Hash值，其时间复杂度是O(N)+O(1)=O(N+1)，忽略常数项，即O(N)&lt;/p&gt;
+
+&lt;p&gt;2、最坏情况是所有服务器节点的Hash值都大于带路由结点的Hash值，其时间复杂度是O(N)+O(N)=O(2N)，忽略首项系数，即O(N)&lt;/p&gt;
+
+&lt;p&gt;所以，总的时间复杂度就是O(N)。其实算法还能更改进一些：给一个位置变量X，如果新的差值比原差值小，X替换为新的位置，否则X不变。这样遍历就减少了一轮，不过经过改进后的算法时间复杂度仍为O(N)。&lt;/p&gt;
+
+&lt;p&gt;总而言之，这个解决方案和解决方案一相比，总体来看，似乎更好了一些。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3、解决方案三：二叉查找树&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;抛开List这种数据结构，另一种数据结构则是使用&lt;font color=&quot;blue&quot;&gt;二叉查找树&lt;/font&gt;。&lt;/p&gt;
+
+&lt;p&gt;当然我们不能简单地使用二叉查找树，因为可能出现不平衡的情况。平衡二叉查找树有AVL树、红黑树等，这里使用红黑树，选用红黑树的原因有两点：&lt;/p&gt;
+
+&lt;p&gt;1、红黑树主要的作用是用于存储有序的数据，这其实和第一种解决方案的思路又不谋而合了，但是它的效率非常高&lt;/p&gt;
+
+&lt;p&gt;2、JDK里面提供了红黑树的代码实现TreeMap和TreeSet&lt;/p&gt;
+
+&lt;p&gt;另外，以TreeMap为例，TreeMap本身提供了一个tailMap(K fromKey)方法，支持从红黑树中查找比fromKey大的值的集合，但并不需要遍历整个数据结构。&lt;/p&gt;
+
+&lt;p&gt;使用红黑树，可以使得查找的时间复杂度降低为O(logN)，比上面两种解决方案，效率大大提升。&lt;/p&gt;
+
+&lt;p&gt;为了验证这个说法，我做了一次测试，从大量数据中查找第一个大于其中间值的那个数据，比如10000数据就找第一个大于5000的数据（模拟平均的情况）。看一下O(N)时间复杂度和O(logN)时间复杂度运行效率的对比：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/treemaptest.png&quot; alt=&quot;treemaptest&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;因为再大就内存溢出了，所以只测试到4000000数据。可以看到，数据查找的效率，TreeMap是完胜的，其实再增大数据测试也是一样的，红黑树的数据结构决定了任何一个大于N的最小数据，它都只需要几次至几十次查找就可以查到。&lt;/p&gt;
+
+&lt;p&gt;当然，明确一点，有利必有弊，根据我另外一次测试得到的结论是，&lt;font color=&quot;blue&quot;&gt;为了维护红黑树，数据插入效率TreeMap在三种数据结构里面是最差的，且插入要慢上5~10倍。&lt;/font&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;hash值重新计算&quot;&gt;Hash值重新计算&lt;/h3&gt;
+
+&lt;p&gt;服务器节点我们肯定用字符串来表示，比如”192.168.1.1″、”192.168.1.2″，根据字符串得到其Hash值，那么另外一个重要的问题就是Hash值要重新计算，这个问题是我在测试String的hashCode()方法的时候发现的，不妨来看一下为什么要重新计算Hash值：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cm&quot;&gt;/**
+* String的hashCode()方法运算结果查看
+* @author 哓哓
+*
+*/&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;StringHashCodeTest&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.0:111的哈希值：&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.0:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.1:111的哈希值：&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.1:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.2:111的哈希值：&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.2:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.3:111的哈希值：&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.3:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.4:111的哈希值：&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.4:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hashCode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;我们在做集群的时候，集群点的IP以这种连续的形式存在是很正常的。看一下运行结果为：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;192.168.0.0:111的哈希值：1845870087
+192.168.0.1:111的哈希值：1874499238
+192.168.0.2:111的哈希值：1903128389
+192.168.0.3:111的哈希值：1931757540
+192.168.0.4:111的哈希值：1960386691
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这个就问题大了，[0,2^32-1]的区间之中，5个HashCode值却只分布在这么小小的一个区间，什么概念？[0,2^32-1]中有4294967296个数字，而我们的区间只有122516605，从概率学上讲这将导致97%待路由的服务器都被路由到”192.168.0.1″这个集群点上，简直是糟糕透了！&lt;/p&gt;
+
+&lt;p&gt;另外还有一个不好的地方：规定的区间是非负数，String的hashCode()方法却会产生负数（不信用”192.168.1.0:1111″试试看就知道了）。不过这个问题好解决，取绝对值就是一种解决的办法。&lt;/p&gt;
+
+&lt;p&gt;综上，String重写的hashCode()方法在一致性Hash算法中没有任何实用价值，得找个算法重新计算HashCode。这种重新计算Hash值的算法有很多，比如CRC32_HASH、FNV1_32_HASH、KETAMA_HASH等，其中KETAMA_HASH是默认的MemCache推荐的一致性Hash算法，用别的Hash算法也可以，比如FNV1_32_HASH算法的计算效率就会高一些。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;一致性Hash算法实现版本1：不带虚拟节点&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用一致性Hash算法，尽管增强了系统的伸缩性，但是也有可能导致负载分布不均匀，解决办法就是&lt;font color=&quot;red&quot;&gt;使用虚拟节点代替真实节点，&lt;/font&gt;第一个代码版本，先来个简单的，不带虚拟节点。&lt;/p&gt;
+
+&lt;p&gt;下面来看一下不带虚拟节点的一致性Hash算法的Java代码实现：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cm&quot;&gt;/**
+ * 不带虚拟结点的一致性Hash算法
+ * @author 哓哓
+ *
+ */&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ConsistentHashWithoutVN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 待加入Hash环的服务器列表
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.0:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.1:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.2:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.3:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+			&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.4:111&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * key表示服务器的hash值，value表示服务器的名称
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sortedMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TreeMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 程序初始化，将所有服务器加入集合
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]);&lt;/span&gt;
+			 &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;]加入集群中, 其Hash值为&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		     &lt;span class=&quot;n&quot;&gt;sortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]);&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 使用FNV1_32_HASH算法计算hash值
+	 * @param str
+	 * @return
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16777619&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2166136261L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;charAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+		&lt;span class=&quot;c1&quot;&gt;// 如果算出来的值为负数则取其绝对值&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matchServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 待路由结点的Hash值&lt;/span&gt;
+		&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 得到大于该Hash值的子Map&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;SortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;tailMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 顺时针的第一个Key&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;firstKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 返回路由到的服务器名称&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		 
+		&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;127.0.0.1:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;221.226.0.1:2222&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;10.211.0.1:3333&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;]的hash值为&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;,被路由到的服务器为[&quot;&lt;/span&gt; 
+		&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;matchServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;可以运行一下看一下结果：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;192.168.0.0:111]加入集群中, 其Hash值为575774686
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;192.168.0.1:111]加入集群中, 其Hash值为8518713
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;192.168.0.2:111]加入集群中, 其Hash值为1361847097
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;192.168.0.3:111]加入集群中, 其Hash值为1171828661
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;192.168.0.4:111]加入集群中, 其Hash值为1764547046
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;127.0.0.1:1111]的hash值为380278925,被路由到的服务器为[192.168.0.0:111]
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;221.226.0.1:2222]的hash值为1493545632,被路由到的服务器为[192.168.0.4:111]
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.211.0.1:3333]的hash值为1393836017,被路由到的服务器为[192.168.0.4:111]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;使用虚拟节点来改善一致性Hash算法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;上面的一致性Hash算法实现，可以在很大程度上解决很多分布式环境下不好的路由算法导致系统伸缩性差的问题，但是会带来另外一个问题：负载不均。&lt;/p&gt;
+
+&lt;p&gt;比如说有Hash环上有A、B、C三个服务器节点，分别有100个请求会被路由到相应服务器上。现在在A与B之间增加了一个节点D，这导致了原来会路由到B上的部分节点被路由到了D上，这样A、C上被路由到的请求明显多于B、D上的，原来三个服务器节点上均衡的负载被打破了。&lt;font color=&quot;blue&quot;&gt;某种程度上来说，这失去了负载均衡的意义，因为负载均衡的目的本身就是为了使得目标服务器均分所有的请求。&lt;/font&gt;&lt;/p&gt;
+
+&lt;p&gt;解决这个问题的办法是引入虚拟节点，其&lt;font color=&quot;blue&quot;&gt;工作原理是：将一个物理节点拆分为多个虚拟节点，并且同一个物理节点的虚拟节点尽量均匀分布在Hash环上。&lt;/font&gt;采取这样的方式，就可以有效地解决增加或减少节点时候的负载不均衡的问题。&lt;/p&gt;
+
+&lt;p&gt;至于一个物理节点应该拆分为多少虚拟节点，下面可以先看一张图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/hash1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;横轴表示需要为每台服务器扩展的虚拟节点倍数，纵轴表示的是实际物理服务器数。可以看出，物理服务器很少，需要更大的虚拟节点；反之物理服务器比较多，虚拟节点就可以少一些。比如有10台物理服务器，那么差不多需要为每台服务器增加100~200个虚拟节点才可以达到真正的负载均衡。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;一致性Hash算法实现版本2：带虚拟节点&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;在理解了使用虚拟节点来改善一致性Hash算法的理论基础之后，就可以尝试开发代码了。编程方面需要考虑的问题是：&lt;/p&gt;
+
+&lt;p&gt;1、一个真实结点如何对应成为多个虚拟节点？&lt;/p&gt;
+
+&lt;p&gt;2、虚拟节点找到后如何还原为真实结点？&lt;/p&gt;
+
+&lt;p&gt;这两个问题其实有很多解决办法，我这里使用了一种简单的办法，给每个真实结点后面根据虚拟节点加上后缀再取Hash值，比如”192.168.0.0:111″就把它变成”192.168.0.0:111&amp;amp;&amp;amp;VN0″到”192.168.0.0:111&amp;amp;&amp;amp;VN4″，VN就是Virtual Node的缩写，还原的时候只需要从头截取字符串到”&amp;amp;&amp;amp;”的位置就可以了。&lt;/p&gt;
+
+&lt;p&gt;下面来看一下带虚拟节点的一致性Hash算法的Java代码实现：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cm&quot;&gt;/**
+ * 带虚拟结点的一致性Hash算法
+ * 
+ * @author 哓哓
+ *
+ */&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ConsistentHashWithVN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 待加入Hash环的服务器列表
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.0:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.1:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.2:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;192.168.0.3:111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+			&lt;span class=&quot;s&quot;&gt;&quot;192.168.0.4:111&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 真实结点列表，考虑到服务器上线、下线的场景，即添加、删除的场景会比较频繁，这里使用LinkedList会更好
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;realNodes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LinkedList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * key表示虚拟结点服务器的hash值，value表示虚拟结点服务器的名称
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNodes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TreeMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 虚拟结点数目（一个真实结点对应VN_SUM个虚拟结点）
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;VN_SUM&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 加所有服务器加入集合
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;realNodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]);&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;realNodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;VN_SUM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNodeName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;VN&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;valueOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+				&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;virtualNodeName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;虚拟节点[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNodeName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;]被添加, hash值为&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+				&lt;span class=&quot;n&quot;&gt;virtualNodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNodeName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+			&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;\n===========路由映射==============\n&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * 使用FNV1_32_HASH算法计算hash值
+	 * 
+	 * @param str
+	 * @return
+	 */&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16777619&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2166136261L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;charAt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;17&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+		&lt;span class=&quot;c1&quot;&gt;// 如果算出来的值为负数则取其绝对值&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matchServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 待路由结点的Hash值&lt;/span&gt;
+		&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;node&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 得到大于该Hash值的子Map&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;SortedMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;tailMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 顺时针的第一个Key&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;firstKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// 截取&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		
+		&lt;span class=&quot;c1&quot;&gt;// 返回路由到的服务器名称&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;substring&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;virtualNode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;indexOf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+		&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;127.0.0.1:1111&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;221.226.0.1:2222&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;10.211.0.1:3333&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;112.74.15.218:80&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+					&lt;span class=&quot;s&quot;&gt;&quot;[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;]的hash值为&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getHash&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;,被路由到的服务器为[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;matchServer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nodes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;]&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;关注一下运行结果：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;虚拟节点[192.168.0.0:111&amp;amp;VN0]被添加, hash值为62550928
+虚拟节点[192.168.0.0:111&amp;amp;VN1]被添加, hash值为45670134
+虚拟节点[192.168.0.0:111&amp;amp;VN2]被添加, hash值为1069081239
+虚拟节点[192.168.0.0:111&amp;amp;VN3]被添加, hash值为681260483
+虚拟节点[192.168.0.0:111&amp;amp;VN4]被添加, hash值为345193220
+虚拟节点[192.168.0.1:111&amp;amp;VN0]被添加, hash值为1014794997
+虚拟节点[192.168.0.1:111&amp;amp;VN1]被添加, hash值为314112378
+虚拟节点[192.168.0.1:111&amp;amp;VN2]被添加, hash值为1764217630
+虚拟节点[192.168.0.1:111&amp;amp;VN3]被添加, hash值为1754008301
+虚拟节点[192.168.0.1:111&amp;amp;VN4]被添加, hash值为1013081826
+虚拟节点[192.168.0.2:111&amp;amp;VN0]被添加, hash值为1936519782
+虚拟节点[192.168.0.2:111&amp;amp;VN1]被添加, hash值为1962355349
+虚拟节点[192.168.0.2:111&amp;amp;VN2]被添加, hash值为1051508275
+虚拟节点[192.168.0.2:111&amp;amp;VN3]被添加, hash值为1487794011
+虚拟节点[192.168.0.2:111&amp;amp;VN4]被添加, hash值为1010967116
+虚拟节点[192.168.0.3:111&amp;amp;VN0]被添加, hash值为1671479534
+虚拟节点[192.168.0.3:111&amp;amp;VN1]被添加, hash值为803892279
+虚拟节点[192.168.0.3:111&amp;amp;VN2]被添加, hash值为1986618297
+虚拟节点[192.168.0.3:111&amp;amp;VN3]被添加, hash值为1068919486
+虚拟节点[192.168.0.3:111&amp;amp;VN4]被添加, hash值为454720555
+虚拟节点[192.168.0.4:111&amp;amp;VN0]被添加, hash值为232783560
+虚拟节点[192.168.0.4:111&amp;amp;VN1]被添加, hash值为1097591827
+虚拟节点[192.168.0.4:111&amp;amp;VN2]被添加, hash值为812889841
+虚拟节点[192.168.0.4:111&amp;amp;VN3]被添加, hash值为1338995023
+虚拟节点[192.168.0.4:111&amp;amp;VN4]被添加, hash值为1008393313
+
+&lt;span class=&quot;o&quot;&gt;===========&lt;/span&gt;路由映射&lt;span class=&quot;o&quot;&gt;==============&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;127.0.0.1:1111]的hash值为380278925,被路由到的服务器为[192.168.0.3:111]
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;221.226.0.1:2222]的hash值为1493545632,被路由到的服务器为[192.168.0.3:111]
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.211.0.1:3333]的hash值为1393836017,被路由到的服务器为[192.168.0.2:111]
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;112.74.15.218:80]的hash值为51269059,被路由到的服务器为[192.168.0.0:111]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;从代码运行结果看，每个点路由到的服务器都是Hash值顺时针离它最近的那个服务器节点，没有任何问题。&lt;/p&gt;
+
+&lt;p&gt;通过采取虚拟节点的方法，一个真实结点不再固定在Hash环上的某个点，而是大量地分布在整个Hash环上，这样即使上线、下线服务器，也不会造成整体的负载不均衡。&lt;/p&gt;
+
+&lt;p&gt;后记&lt;/p&gt;
+
+&lt;p&gt;在写本文的时候，很多知识我也是边写边学，难免有很多写得不好、理解得不透彻的地方，而且代码整体也比较糙，未有考虑到可能的各种情况。抛砖引玉，一方面，写得不对的地方，还望网友朋友们指正；另一方面，后续我也将通过自己的工作、学习不断完善上面的代码。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;转自&lt;a href=&quot;http://www.cnblogs.com/xrq730/p/5186728.html&quot;&gt;五月的仓颉&lt;/a&gt;，代码自己重新实现过。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;联系我&quot;&gt;联系我&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;邮箱: xmusaber@163.com&lt;/li&gt;
+  &lt;li&gt;QQ: 932191671&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>Spring 的本质系列之IOC</title>
+        <link>http://localhost:4000/2016/07/07/spring-ioc.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/07/07/spring-ioc.html</guid>
+        <pubDate>Thu, 07 Jul 2016 00:00:00 +0800</pubDate>
+        <description>&lt;p&gt;前言： Spring 这个轻量级的框架已经成为Web开发事实上的标准，阅读本篇文章之前希望你对OO,设计模式，单元测试，XML，反射等技术有一定了解。&lt;/p&gt;
+
+&lt;h2 id=&quot;概念什么是ioc&quot;&gt;概念：什么是IOC？&lt;/h2&gt;
+
+&lt;p&gt;IoC(Inversion of Control)，意为控制反转，不是什么技术，而是一种设计思想。Ioc意味着&lt;strong&gt;将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;谁控制谁，控制什么&lt;/strong&gt;：传统Java程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而IoC是有专门一个容器来创建这些对象，即由Ioc容器来控制对象的创建；谁控制谁？当然是IoC 容器控制了对象；控制什么？那就是主要控制了外部资源获取（不只是对象包括比如文件等）。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;为何是反转，哪些方面反转了&lt;/strong&gt;：有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；哪些方面反转了？依赖对象的获取被反转了。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;1对象的创建&quot;&gt;1.对象的创建&lt;/h3&gt;
+
+&lt;p&gt;面向对象的编程语言是用类(Class)来对现实世界进行抽象，在运行时这些类会生成对象(Object)。&lt;/p&gt;
+
+&lt;p&gt;当然，单独的一个或几个对象根本没办法完成复杂的业务， 实际的系统是由千千万万个对象组成的， 这些对象需要互相协作才能干活，例如对象A调用对象B的方法，那必然会提出一个问题：对象A怎么才能获得对象B的引用呢？&lt;/p&gt;
+
+&lt;p&gt;最简单的办法无非是： 当对象A需要使用对象B的时候，把它给new 出来 ，这也是最常用的办法，java 不就是这么做的？例如：&lt;/p&gt;
+
+&lt;p&gt;Apple a = new Apple();&lt;/p&gt;
+
+&lt;p&gt;后来业务变复杂了， 抽象出了一个水果(Fruit)的类， 创建对象会变成这个样子：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Fruit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Fruit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Banana&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Fruit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;......&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;很自然的，类似下面的代码就会出现：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring1.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这样的代码如果散落在各处，维护起来将会痛苦不堪， 例如你新加一个水果的类型Orange, 那得找到系统中所有的这些创建Fruit的地方，进行修改， 这绝对是一场噩梦。&lt;/p&gt;
+
+&lt;p&gt;解决办法也很简单，前辈们早就总结好了：工厂模式&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;工厂模式，以及其他模式像抽象工厂， Builder模式提供的都是创建对象的方法。&lt;/p&gt;
+
+&lt;p&gt;这背后体现的都是&lt;strong&gt;“封装变化”&lt;/strong&gt;的思想。&lt;/p&gt;
+
+&lt;p&gt;这些模式只是一些最佳实践而已： 起了一个名称、描述一下解决的问题、使用的范围和场景，码农们在项目中还得自己去编码实现他们。&lt;/p&gt;
+
+&lt;h3 id=&quot;2解除依赖&quot;&gt;2.解除依赖&lt;/h3&gt;
+
+&lt;p&gt;我们再来看一个稍微复杂一点，更加贴近实际项目的例子：&lt;/p&gt;
+
+&lt;p&gt;一个订单处理类，它会被定时调用：查询数据库中订单的处理情况，必要时给下订单的用户发信。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看起来也没什么难度， 需要注意的是很多类一起协作了， 尤其是OrderProcessor , 它依赖于
+OrderService 和 EmailService这两个服务，它获取依赖的方式就是通过单例方法。&lt;/p&gt;
+
+&lt;p&gt;如果你想对这个process方法进行单元测试–这也是很多优秀的团队要求的– 麻烦就来了。&lt;/p&gt;
+
+&lt;p&gt;首先OrderService 确实会从真正的数据库中取得Order信息，你需要确保数据库中有数据， 数据库连接没问题，实际上如果数据库连接Container（例如Tomcat）管理的， 你没有Tomcat很难建立数据库连接。&lt;/p&gt;
+
+&lt;p&gt;其次这个EmailService 真的会对外发邮件， 你可不想对真正的用户发测试邮件，当然你可以修改数据库，把邮件地址改成假的，但那样很麻烦， 并且EmailService 会抛出一堆错误来，很不爽。&lt;/p&gt;
+
+&lt;p&gt;所有的这些障碍，最终会导致脆弱的单元测试： 速度慢， 不可重复，需要手工干预，不能独立运行。&lt;/p&gt;
+
+&lt;p&gt;想克服这些障碍，一个可行的办法就是不在方法中直接调用OrderService和EmailService的getInstance()方法， 而是把他们通过setter方法传进来。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring4.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;通过这种方式，你的单元测试就可以构造一个假的OrderService 和假的EmailService 了。&lt;/p&gt;
+
+&lt;p&gt;例如OrderService 的冒牌货可以是MockOrderService , 它可以返回你想要的任何Order 对象， 而不是从数据库取。&lt;/p&gt;
+
+&lt;p&gt;MockEmailService 也不会真的发邮件， 而是把代码中试图发的邮件保存下来， 测试程序可以检查是否正确。&lt;/p&gt;
+
+&lt;p&gt;你的测试代码可能是这样的：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring5.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;当然， 有经验的你马上就会意识到：需要把OrderService 和 EmailService 变成 接口或者抽象类， 这样才可以把Mock对象传进来。&lt;/p&gt;
+
+&lt;p&gt;这其实也遵循了面向对象编程的另外一个要求：对接口编程，而不是对实现编程。&lt;/p&gt;
+
+&lt;h3 id=&quot;3spring-依赖注入&quot;&gt;3.Spring 依赖注入&lt;/h3&gt;
+
+&lt;p&gt;啰啰嗦嗦说了这么多，快要和Spring扯上关系了。&lt;/p&gt;
+
+&lt;p&gt;上面的代码其实就是实现了一个依赖的注入，把两个冒牌货注入到业务类中(通过set方法)， 这个注入的过程是在一个测试类中通过代码完成的。&lt;/p&gt;
+
+&lt;p&gt;既然能把冒牌货注入进去，那毫无疑问肯定也能把一个正经的类安插进去，因为setter 方法接受的是接口，而不是具体类。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring6.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;用这种方式来处理对象之间的依赖，会强迫你对接口编程，好处显而易见。&lt;/p&gt;
+
+&lt;p&gt;随着系统复杂度的增长，这样的代码会越来越多，最后也会变得难于维护。&lt;/p&gt;
+
+&lt;p&gt;能不能把各个类之间的依赖关系统一维护呢？
+能不能把系统做的更加灵活一点，用声明的方式而不是用代码的方式来描述依赖关系呢？&lt;/p&gt;
+
+&lt;p&gt;肯定可以，在Java 世界里，如果想描述各种逻辑关系，XML是不二之选：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring7.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这个xml 挺容易理解的，但是仅仅有它还不够，还缺一个解析器（假设叫做XmlAppContext）来解析，处理这个文件，基本过程是：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;解析xml, 获取各种元素&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;通过Java反射把各个bean 的实例创建起来：com.coderising.OrderProcessor, OrderServiceImpl, EmailServiceImpl.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;还是通过Java反射调用OrderProcessor的两个方法：setOrderService(….)  和 setEmailService(…) 把orderService, emailService 实例 注入进去。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;应用程序使用起来就简单了：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;XmlAppContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;XmlAppContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;c:\\bean.xml&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;OrderProcessor&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OrderProcessor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getBean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;order-processor&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其实Spring的处理方式和上面说的非常类似，当然Spring 处理了更多的细节，例如不仅仅是setter方法注入， 还可以构造函数注入，init 方法，destroy方法等等，基本思想是一致的。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/spring8.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;既然对象的创建过程和装配过程都是Spring做的，那Spring 在这个过程中就可以玩很多把戏了， 比如对你的业务类做点字节码级别的增强，搞点AOP什么的，这都不在话下了。&lt;/p&gt;
+
+&lt;h3 id=&quot;4ioc-vs-di&quot;&gt;4.IoC vs DI&lt;/h3&gt;
+
+&lt;p&gt;“不要给我们打电话，我们会打给你的(don‘t call us, we‘ll call you)”这是著名的好莱坞原则。&lt;/p&gt;
+
+&lt;p&gt;在好莱坞，把简历递交给演艺公司后就只有回家等待。由演艺公司对整个娱乐项目完全控制，演员只能被动式的接受公司的差使,在需要的环节中，完成自己的演出。&lt;/p&gt;
+
+&lt;p&gt;这和软件开发有一定的相似性，演员们就像一个个Java Object, 最早的时候自己去创建自己所依赖的对象，   有了演艺公司（Spring容器）的介入，所有的依赖关系都是演艺公司搞定的，于是控制就翻转了 
+Inversion of Control, 简称IoC。&lt;/p&gt;
+
+&lt;p&gt;但是IoC这个词不能让人更加直观和清晰的理解背后所代表的含义，于是Martin Flower先生就创造了一个新词 : 依赖注入 (Dependency Injection，简称DI), 是不是更加贴切一点？&lt;/p&gt;
+
+&lt;h3 id=&quot;总结&quot;&gt;总结&lt;/h3&gt;
+
+&lt;p&gt;DI—Dependency Injection，即“依赖注入”：组件之间依赖关系由容器在运行期决定，形象的说，即由容器动态的将某个依赖关系注入到组件之中。依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。&lt;/p&gt;
+
+&lt;p&gt;理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”，那我们来深入分析一下：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;谁依赖于谁：当然是应用程序依赖于IoC容器；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;为什么需要依赖：应用程序需要IoC容器来提供对象需要的外部资源；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;谁注入谁：很明显是IoC容器注入应用程序某个对象，应用程序依赖的对象；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;注入了什么：就是注入某个对象所需要的外部资源（包括对象、资源、常量数据）。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;IoC和DI由什么关系呢？其实它们是同一个概念的不同角度描述，由于控制反转概念比较含糊（可能只是理解为容器控制对象这一个层面，很难让人想到谁来维护对象关系），所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，“依赖注入”明确描述了“被注入对象依赖IoC容器配置依赖对象”。&lt;/p&gt;
+
+&lt;p&gt;对于Spring Ioc这个核心概念，我相信每一个学习Spring的人都会有自己的理解。这种概念上的理解没有绝对的标准答案，仁者见仁智者见智。理解了IoC和DI的概念后，一切都将变得简单明了，剩下的工作只是在框架中堆积木而已。&lt;/p&gt;
+
+&lt;h3 id=&quot;联系我&quot;&gt;联系我&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;邮箱: xmusaber@163.com&lt;/li&gt;
+  &lt;li&gt;QQ: 932191671&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+      <item>
+        <title>Spring本质系列之AOP</title>
+        <link>http://localhost:4000/2016/07/06/spring-aop.html</link>
+        <guid isPermaLink="true">http://localhost:4000/2016/07/06/spring-aop.html</guid>
+        <pubDate>Wed, 06 Jul 2016 00:00:00 +0800</pubDate>
+        <description>&lt;h3 id=&quot;问题来源&quot;&gt;问题来源&lt;/h3&gt;
+
+&lt;p&gt;我们在做系统设计的时候，一个非常重要的工作就是把一个大系统做分解， 按业务功能分解成一个个低耦合、高内聚的模块，就像这样：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop1.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;但是分解以后就会发现有些很有趣的东西， 这些东西是通用的，或者是跨越多个模块的：&lt;/p&gt;
+
+&lt;p&gt;日志： 对特定的操作输出日志来记录
+安全：在执行操作之前进行操作检查
+性能：要统计每个方法的执行时间
+事务：方法开始之前要开始事务， 结束后要提交或者回滚事务
+等等….&lt;/p&gt;
+
+&lt;p&gt;这些可以称为是非功能需求， 但他们是多个业务模块都需要的， 是跨越模块的， 把他们放到什么地方呢？&lt;/p&gt;
+
+&lt;p&gt;最简单的办法就是把这些通用模块的接口写好， 让程序员在实现业务模块的时候去调用就可以了，码农嘛，辛苦一下也没什么。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这样做看起来没问题， 只是会产生类似这样的代码：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这样的代码也实现了功能，但是看起来非常的不爽， 那就是日志，性能，事务 相关的代码几乎要把真正的业务代码给淹没了。&lt;/p&gt;
+
+&lt;p&gt;不仅仅这一个类需要这么干， 其他类都得这么干， 重复代码会非常的多。&lt;/p&gt;
+
+&lt;p&gt;有经验的程序员还好， 新手忘记写这样的非业务代码简直是必然的。&lt;/p&gt;
+
+&lt;h3 id=&quot;设计模式模板方法&quot;&gt;设计模式：模板方法&lt;/h3&gt;
+
+&lt;p&gt;用设计模式在某些情况下可以部分解决上面的问题，例如著名的模板方法：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop5.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在父类（BaseCommand）中已经把那些“乱七八糟“的非功能代码都写好了， 只是留了一个口子（抽象方法doBusiness()）让子类去实现。&lt;/p&gt;
+
+&lt;p&gt;子类变的清爽， 只需要关注业务逻辑就可以了。
+调用也很简单，例如：
+BaseCommand  cmd = …  获得PlaceOrderCommand的实例…
+cmd.execute();&lt;/p&gt;
+
+&lt;p&gt;但是这样方式的巨大缺陷就是父类会定义一切： 要执行哪些非功能代码， 以什么顺序执行等等
+子类只能无条件接受，完全没有反抗余地。&lt;/p&gt;
+
+&lt;p&gt;如果有个子类， 根本不需要事务， 但是它也没有办法把事务代码去掉。&lt;/p&gt;
+
+&lt;h3 id=&quot;设计模式装饰者&quot;&gt;设计模式：装饰者&lt;/h3&gt;
+
+&lt;p&gt;如果利用装饰者模式， 针对上面的问题，可以带来更大的灵活性：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop4.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop6.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;现在让这个PlaceOrderCommand 能够打印日志，进行性能统计
+Command cmd = new LoggerDecorator(
+    new PerformanceDecorator(
+        new PlaceOrderCommand()));
+cmd.execute();&lt;/p&gt;
+
+&lt;p&gt;如果PaymentCommand 只需要打印日志，装饰一次就可以了：
+Command cmd = new LoggerDecorator(
+    new PaymentCommand());
+cmd.execute();&lt;/p&gt;
+
+&lt;p&gt;可以使用任意数量装饰器，还可以以任意次序执行（严格意义上来说是不行的）， 是不是很灵活？&lt;/p&gt;
+
+&lt;h3 id=&quot;aop&quot;&gt;AOP&lt;/h3&gt;
+
+&lt;p&gt;如果仔细思考一下就会发现装饰者模式的不爽之处:&lt;/p&gt;
+
+&lt;p&gt;(1)  一个处理日志/性能/事务 的类为什么要实现 业务接口（Command）呢?&lt;/p&gt;
+
+&lt;p&gt;(2) 如果别的业务模块，没有实现Command接口，但是也想利用日志/性能/事务等功能，该怎么办呢？&lt;/p&gt;
+
+&lt;p&gt;最好把日志/安全/事务这样的代码和业务代码完全隔离开来，因为他们的关注点和业务代码的关注点完全不同 ，他们之间应该是正交的，他们之间的关系应该是这样的：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop7.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果把这个业务功能看成一层层面包的话， 这些日志/安全/事务 像不像一个个“切面”(Aspect) ？&lt;/p&gt;
+
+&lt;p&gt;如果我们能让这些“切面“能和业务独立，  并且能够非常灵活的“织入”到业务方法中， 那就实现了面向切面编程(AOP)！&lt;/p&gt;
+
+&lt;h3 id=&quot;实现aop&quot;&gt;实现AOP&lt;/h3&gt;
+
+&lt;p&gt;现在我们来实现AOP吧， 首先我们得有一个所谓的“切面“类(Aspect)， 这应该是一个普通的java 类 ， 不用实现什么“乱七八糟”的接口。&lt;/p&gt;
+
+&lt;p&gt;以一个事务类为例：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop8.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们想达到的目的只这样的： 对于com.coderising这个包中所有类的execute方法， 在方法调用之前，需要执行Transaction.beginTx()方法， 在调用之后， 需要执行Transaction.commitTx()方法。&lt;/p&gt;
+
+&lt;p&gt;暂时停下脚步分析一下。&lt;/p&gt;
+
+&lt;p&gt;“对于com.coderising这个包中所有类的execute方法” ， 用一个时髦的词来描述就是切入点（PointCut） , 它可以是一个方法或一组方法（可以通过通配符来支持，你懂的）&lt;/p&gt;
+
+&lt;p&gt;”在方法调用之前/之后 ， 需要执行xxx“ , 用另外一个时髦的词来描述就是通知（Advice）&lt;/p&gt;
+
+&lt;p&gt;码农翻身认为，PointCut,Advice 这些词实在是不直观， 其实Spring的作者们也是这么想的 :  These terms are not Spring-specific… unfortunately, AOP terminology is not particularly intuitive; however, it would be even more confusing if Spring used its own terminology.&lt;/p&gt;
+
+&lt;p&gt;当然，想描述这些规则， xml依然是不二之选：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/aop9.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;注意：现在Transaction这个类和业务类在源代码层次上没有一点关系，完全隔离了。&lt;/p&gt;
+
+&lt;p&gt;隔离是一件好事情， 但是马上给我们带来了大麻烦 。&lt;/p&gt;
+
+&lt;p&gt;Java 是一门静态的强类型语言， 代码一旦写好， 编译成java class 以后 ，可以在运行时通过反射（Reflection）来查看类的信息， 但是想对类进行修改非常困难。&lt;/p&gt;
+
+&lt;p&gt;而AOP要求的恰恰就是在不改变业务类的源代码（其实大部分情况下你也拿不到）的情况下， 修改业务类的方法, 进行功能的增强，就像上面给所有的业务类增加事务支持。&lt;/p&gt;
+
+&lt;p&gt;为了突破这个限制，大家可以说是费尽心机， 现在基本是有这么几种技术：&lt;/p&gt;
+
+&lt;p&gt;(1) 在编译的时候， 根据AOP的配置信息，悄悄的把日志，安全，事务等“切面”代码 和业务类编译到一起去。&lt;/p&gt;
+
+&lt;p&gt;(2) 在运行期，业务类加载以后， 通过Java动态代理技术为业务类生产一个代理类， 把“切面”代码放到代理类中，  Java 动态代理要求业务类需要实现接口才行。&lt;/p&gt;
+
+&lt;p&gt;(3) 在运行期， 业务类加载以后， 动态的使用字节码构建一个业务类的子类，将“切面”逻辑加入到子类当中去, CGLIB就是这么做的。&lt;/p&gt;
+
+&lt;p&gt;Spring采用的就是(1) +(2) 的方式，限于篇幅，这里不再展开各种技术了， 不管使用哪一种方式， 在运行时，真正干活的“业务类”其实已经不是原来单纯的业务类了， 它们被AOP了 ！&lt;/p&gt;
+
+&lt;p&gt;本文转载自“码农翻身”公众号&lt;/p&gt;
+
+&lt;h3 id=&quot;联系我&quot;&gt;联系我&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;邮箱: xmusaber@163.com&lt;/li&gt;
+  &lt;li&gt;QQ: 932191671&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div align=&quot;center&quot;&gt;
+&lt;img src=&quot;http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg&quot; width=&quot;400&quot; height=&quot;320&quot; /&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+      </item>
+    
+  </channel>
+</rss>

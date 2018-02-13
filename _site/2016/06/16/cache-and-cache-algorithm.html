@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 添加搜索关键字 -->
+  <meta name="keywords" content="梦回少年,梦回,saber,lemonjing,少年">
+
+  <title>译文-缓存、缓存算法和缓存框架简介 | 梦回少年</title>
+  <meta name="description" content="  原文出处： jtraining   译文出处：Lixiang 更新:Saber">
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/main.css" >
+  <link rel="stylesheet" href="/assets/js/prettify/prettify.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" />
+  <link rel="canonical" href="http://localhost:4000/2016/06/16/cache-and-cache-algorithm.html">
+  <link rel="alternate" type="application/rss+xml" title="梦回少年" href="http://localhost:4000/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+    <div class="container">
+        <div class="row">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header col-xs-12 col-sm-12 col-md-3 col-lg-3 center">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="sitehome">
+                        <a href="/" title="首页"><i class="fa fa-home fa-2x homeicon"></i><a><a class="site-title" href="/">梦回少年</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 hidden-xs hidden-sm center">
+                    <nav class="site-nav">
+                        <ul class="nav nav-pills">
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/read.html">读书</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/class.html">分类</a></li>
+                            <!-- <li class="select"><a class="page-link pjaxlink" href="/pages/tags.html">标签</a></li> -->
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/archive.html">归档</a></li>
+                            <li class="select"><a class="page-link pjaxlink" href="/pages/about.html">关于</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- swifttype 搜索 弃用-->
+               <!--  <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div class="search">
+                        <input type="text" class="search-query st-default-search-input" placeholder="Search">
+                    </div>
+                </div> -->
+                 <!-- /swifttype 搜索 -->
+                <div class="col-md-3 col-lg-3 hidden-xs hidden-sm">
+                    <div style="position: fixed; top:10px;">
+                        <img src="/search/img/cb-search.png" id="cb-search-btn" title="双击ctrl试一下" />
+                    </div>
+                </div>
+                   
+                    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                        <ul class="nav navbar-nav phone-nav center">
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/"><i class="fa fa-home"></i>&nbsp;首页</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/read.html"><i class="fa fa-book"></i>&nbsp;读书</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/class.html"><i class="fa fa-tasks"></i>&nbsp;分类</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/tags.html"><i class="fa fa-tags"></i>&nbsp;标签</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/archive.html"><i class="fa fa-archive"></i>&nbsp;归档</a></li>
+                            <li class="phoneselect"><a class="page-link pjaxlink" href="/pages/about.html"><i class="fa fa-user"></i>&nbsp;关于</a></li>
+                        </ul>
+                    </div>
+            </nav>
+            </div>
+        </div>
+</header>
+
+
+    <div class="content">
+   	<div class="container">	
+   		<div class="row">
+			<div class="col-md-3 col-lg-3 hidden-xs hidden-sm aside1 fadein-left">
+				<div class="profile box-shadow center">
+					<div class="overlay"></div>
+					<div class="center gavatar">
+						<a href="/" class="profile_gavatar"><img class="circle" src="/assets/img/t1.jpeg"></a>
+					</div>
+					<div class="address">
+						<h5><span class="fa fa-map-marker"></span> Hangzhou, China</h5>
+					</div>
+					<div class="center profile_desc">
+						技术<br>生活<br>和爱情<br>此刻与你分享<br>
+					</div>
+				</div>
+				
+				<div class="tag-cloud-text">
+					<a href="http://rannn.cc/pages/tags.html" title="标签" class="pjaxlink"><p class="center">标签【点我】</p></a>
+				</div>
+				<div class="tag-cloud ">	
+					<hr>
+					<div class="page-tag">
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#随笔" name="随笔" class="pjaxlink"><i class="fa fa-tags"></i>随笔(21)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Java" name="Java" class="pjaxlink"><i class="fa fa-tags"></i>Java(43)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#爱情" name="爱情" class="pjaxlink"><i class="fa fa-tags"></i>爱情(20)</a>
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#原创" name="原创" class="pjaxlink"><i class="fa fa-tags"></i>原创(23)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#技术" name="技术" class="pjaxlink"><i class="fa fa-tags"></i>技术(5)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#Spring" name="Spring" class="pjaxlink"><i class="fa fa-tags"></i>Spring(10)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+								<a href="http://lemonjing.github.io/pages/tags.html#NIO" name="NIO" class="pjaxlink"><i class="fa fa-tags"></i>NIO(13)</a>
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+								
+							
+					</div>					
+				</div>
+				<div class="clear"></div>
+
+	 			<div class="recentuse">
+	 					<p>GitHub项目</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "https://github.com/it-interview/easy-job" target="_blank">互联网求职面试知识复习</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/LightweightApp" target="_blank">集成LBS查询、音乐、阅读的微信公众账号</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/hadoop-dedup" target="_blank">基于hadoop和hbase的大规模海量数据去重</a></li>
+	 						<li><a href = "https://github.com/Lemonjing/TinyMooc" target="_blank">轻量级Java平台在线幕课学习网站</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/Keccak" target="_blank">SHA-3 algorithm Keccak Implementation</a></li>
+		 					<li><a href = "https://github.com/Lemonjing/your-offer" target="_blank">剑指offer的Java实现</a></li>
+	 					</ul>
+	 			</div>
+	 			
+	 			<div class="recentuse">
+	 					<p>经常出没</p>
+	 					<hr>
+	 					<ul>
+	 						<li><a href = "http://music.163.com/#/user/home?id=63589002" target="_blank">网易云音乐</a></li>
+	 						<li><a href = "https://github.com/Lemonjing" target="_blank">GitHub</a></li>
+	 						<li><a href = "http://weibo.com/u/1662536394" target="_blank">微博</a></li>
+	 						<li><a href = "http://pianke.me/profile/1924980/" target="_blank">片刻</a></li>
+		 					<li><a href = "https://www.zhihu.com/people/xmusaber" target="_blank">知乎</a></li>
+		 					<li><a href = "http://www.nowcoder.com/profile/213475" target="_blank">牛客</a></li>
+	 					</ul>
+	 			</div>
+				
+				<div class="friendlink">
+	 					<p>友情链接</p>
+	 					<hr>					
+		 				<a href = "https://imjad.cn/" target="_blank">AD's Blog</a></br>
+						<a href = "http://zyl.me" target="_blank">ZYL的博客</a></br>
+						<a href = "http://mxwu.cn" target="_blank">梦忻屋</a></br>
+						<a href = "http://www.weiyanweiyu.cn" target="_blank">微言微语</a></br>
+						<a href = "http://jloong.com" target="_blank">楚书业</a></br>
+						<a href = "https://emiria.io/" target="_blank">蔓舞寻樱</a></br>
+						<a href = "http://www.xiaokang.info" target="_blank">小康博客</a><br>
+						<a href = "http://blog.iov.me" target="_blank">随心说</a></br>
+						<a href = "http://czduban.com" target="_blank">以歌。先生</a><br>
+						<a href = "http://5mx.net/" target="_blank">冷夜博客</a><br>
+						<a href = "http://www.8hao.com.cn/" target="_blank">艳莜日记</a><br>
+						<a href = "http://blog.sunxyz.cn/" target="_blank">诸葛扬阳</a><br>
+						<a href = "https://lostyou.love/" target="_blank">邻居</a><br>
+						<a href = "http://www.kurodown.com/" target="_blank">酷绒站</a>
+	 			</div>
+				
+			</div>
+			
+			<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 box-shadow fadein-right aside2">					 		
+					<div class="page-content" id="pjax"><div class="post">
+  <header class="post-header">
+    <h1 class="post-title">译文-缓存、缓存算法和缓存框架简介</h1>
+    <div class="info">
+	    <p class="post-meta"><i class="fa fa-calendar"></i>&nbsp;2016-06-16</p>
+	    
+		<i class="fa fa-tags"></i>
+		<span class="index-post-tag">
+		
+			<a class="pjaxlink" href="/pages/tags.html#Java">Java</a>
+		
+		</span>
+	    		
+    </div>
+  </header>
+
+  <article class="post-content">
+    <blockquote>
+  <p>原文出处： <a href="http://www.jtraining.com/component/content/article/35-jtraining-blog/98.html">jtraining</a>   译文出处：<a href="http://www.leexiang.com/cache-algorithm">Lixiang</a> 更新:<a href="http://taoxiaoran.top/2016/06/16/cache-and-cache-algorithm.html">Saber</a></p>
+</blockquote>
+
+<p><strong>引言</strong></p>
+
+<p>我们都听过 cache，当你问他们是什么是缓存的时候，他们会给你一个完美的答案，可是他们不知道缓存是怎么构建的，或者没有告诉你应该采用什么标准去选择缓存框架。在这边文章，我们会去讨论缓存，缓存算法，缓存框架以及哪个缓存框架会更好。</p>
+
+<p><strong>面试</strong></p>
+
+<p>“缓存就是存贮数据（使用频繁的数据）的临时地方，因为取原始数据的代价太大了，所以我可以取得快一些。”</p>
+
+<p>这就是 programmer one （programmer one 是一个面试者）在面试中的回答（一个月前，他向公司提交了简历，想要应聘要求在缓存，缓存框架，大规模数据操作有着丰富经验的 java 开发职位）。</p>
+
+<p>programmer one 通过 hash table 实现了他自己的缓存，但是他知道的只是他的缓存和他那存储着150条记录的 hash table，这就是他认为的大规模数据（缓存 = hashtable，只需要在 hash table 查找就好了），所以，让我们来看看面试的过程吧。</p>
+
+<p>面试官：你选择的缓存方案，是基于什么标准的？</p>
+
+<p>programmer one：呃，（想了5分钟）嗯，基于，基于，基于数据（咳嗽……）</p>
+
+<p>面试官：excese me ! 能不能重复一下？</p>
+
+<p>programmer one：数据？！</p>
+
+<p>面试官：好的。说说几种缓存算法以及它们的作用</p>
+
+<p>programmer one：（凝视着面试官，脸上露出了很奇怪的表情，没有人知道原来人类可以做出这种表情  ）</p>
+
+<p>面试官：好吧，那我换个说法，当缓存达到容量时，会怎么做？</p>
+
+<p>programmer one：容量？嗯（思考……hash table 的容量时没有限制的，我能任意增加条目，它会自动扩充容量的）（这是 programmer one 的想法，但是他没有说出来）</p>
+
+<p>面试官对 programmer one 表示感谢（面试过程持续了10分钟），之后一个女士走过来说：谢谢你的时间，我们会给你打电话的，祝你好心情。这是 programmer one 最糟糕的面试（他没有看到招聘对求职者有丰富的缓存经验背景要求，实际上，他只看到了丰厚的报酬  ）。</p>
+
+<p><strong>说到做到</strong></p>
+
+<p>programmer one 离开之后，他想要知道这个面试者说的问题和答案，所以他上网去查，programmer one 对缓存一无所知，除了：当我需要缓存的时候，我就会用 hash table。</p>
+
+<p>在他使用了他最爱的搜索引擎搜索之后，他找到了一篇很不错的关于缓存文章，并且开始去阅读……</p>
+
+<p><strong>为什么我们需要缓存？</strong></p>
+
+<p>很久很久以前，在还没有缓存的时候……用户经常是去请求一个对象，而这个对象是从数据库去取，然后，这个对象变得越来越大，这个用户每次的请求时间也越来越长了，这也把数据库弄得很痛苦，他无时不刻不在工作。所以，这个事情就把用户和数据库弄得很生气，接着就有可能发生下面两件事情：</p>
+
+<p>１.用户很烦，在抱怨，甚至不去用这个应用了（这是大多数情况下都会发生的）</p>
+
+<p>２.数据库为打包回家，离开这个应用，然后，就出现了大麻烦（没地方去存储数据了）（发生在极少数情况下）</p>
+
+<p><strong>上帝派来了缓存</strong></p>
+
+<p>在几年之后，IBM（60年代）的研究人员引进了一个新概念，它叫“缓存”。</p>
+
+<p><strong>什么是缓存？</strong></p>
+
+<p>正如开篇所讲，缓存是“存贮数据（使用频繁的数据）的临时地方，因为取原始数据的代价太大了，所以我可以取得快一些。”</p>
+
+<p>缓存可以认为是数据的池，这些数据是从数据库里的真实数据复制出来的，并且为了能正确取回，被标上了标签（键 ID）。太棒了</p>
+
+<p>programmer one 已经知道这点了，但是他还不知道下面的缓存术语。</p>
+
+<p><img src="http://7xlkoc.com1.z0.glb.clouddn.com/caching.jpg" alt="cache访问流程" /></p>
+
+<p><strong>命中：</strong></p>
+
+<p>当客户发起一个请求（我们说他想要查看一个产品信息），我们的应用接受这个请求，并且如果是在第一次检查缓存的时候，需要去数据库读取产品信息。</p>
+
+<p>如果在缓存中，一个条目通过一个标记被找到了，这个条目就会被使用、我们就叫它缓存命中。所以，命中率也就不难理解了。</p>
+
+<p><strong>Cache Miss：</strong></p>
+
+<p>但是这里需要注意两点：</p>
+
+<p>１.　如果还有缓存的空间，那么，没有命中的对象会被存储到缓存中来。</p>
+
+<p>２.　如果缓存满了，而又没有命中缓存，那么就会按照某一种策略，把缓存中的旧对象踢出，而把新的对象加入缓存池。而这些策略统称为替代策略（缓存算法），这些策略会决定到底应该提出哪些对象。</p>
+
+<p><strong>存储成本：</strong></p>
+
+<p>当没有命中时，我们会从数据库取出数据，然后放入缓存。而把这个数据放入缓存所需要的时间和空间，就是存储成本。</p>
+
+<p><strong>索引成本：</strong></p>
+
+<p>和存储成本相仿。</p>
+
+<p><strong>失效：</strong></p>
+
+<p>当存在缓存中的数据需要更新时，就意味着缓存中的这个数据失效了。</p>
+
+<p><strong>替代策略：</strong></p>
+
+<p>当缓存没有命中时，并且缓存容量已经满了，就需要在缓存中踢出一个老的条目，加入一条新的条目，而到底应该踢出什么条目，就由替代策略决定。</p>
+
+<p><strong>最优替代策略：</strong></p>
+
+<p>最优的替代策略就是想把缓存中最没用的条目给踢出去，但是未来是不能够被预知的，所以这种策略是不可能实现的。但是有很多策略，都是朝着这个目前去努力。</p>
+
+<p><strong>Java 街恶梦：</strong></p>
+
+<p>当 programmer one 在读这篇文章的时候，他睡着了，并且做了个恶梦（每个人都有做恶梦的时候）。</p>
+
+<p>programmer one：nihahha，我要把你弄失效！（疯狂的状态）</p>
+
+<p>缓存对象：别别，让我活着，他们还需要我，我还有孩子。</p>
+
+<p>programmer one：每个缓存对象在失效之前都会那样说。你从什么时候开始有孩子的？不用担心，现在就永远消失吧！</p>
+
+<p>哈哈哈哈哈……programmer one 恐怖的笑着，但是警笛打破了沉静，警察把 programmer one 抓了起来，并且控告他杀死了（失效）一个仍需被使用的缓存对象，他被押到了监狱。</p>
+
+<p>programmer one 突然醒了，他被吓到了，浑身是汗，他开始环顾四周，发现这确实是个梦，然后赶紧继续阅读这篇文章，努力的消除自己的恐慌。</p>
+
+<p>在programmer one 醒来之后，他又开始阅读文章了。</p>
+
+<p><strong>缓存算法</strong></p>
+
+<p>没有人能说清哪种缓存算法优于其他的缓存算法</p>
+
+<p><strong>Least Frequently Used（LFU）：</strong></p>
+
+<p>大家好，我是 LFU，我会计算为每个缓存对象计算他们被使用的频率。我会把最不常用的缓存对象踢走。</p>
+
+<p><strong>Least Recently User（LRU）：</strong></p>
+
+<p>我是 LRU 缓存算法，我把最近最少使用的缓存对象给踢走。</p>
+
+<p>我总是需要去了解在什么时候，用了哪个缓存对象。如果有人想要了解我为什么总能把最近最少使用的对象踢掉，是非常困难的。</p>
+
+<p>浏览器就是使用了我（LRU）作为缓存算法。新的对象会被放在缓存的顶部，当缓存达到了容量极限，我会把底部的对象踢走，而技巧就是：我会把最新被访问的缓存对象，放到缓存池的顶部。</p>
+
+<p>所以，经常被读取的缓存对象就会一直呆在缓存池中。有两种方法可以实现我，array 或者是 linked list。</p>
+
+<p>我的速度很快，我也可以被数据访问模式适配。我有一个大家庭，他们都可以完善我，甚至做的比我更好（我确实有时会嫉妒，但是没关系）。我家庭的一些成员包括 LRU2 和 2Q，他们就是为了完善 LRU 而存在的。</p>
+
+<p><strong>Least Recently Used 2（LRU2）：</strong></p>
+
+<p>我是 Least Recently Used 2，有人叫我最近最少使用 twice，我更喜欢这个叫法。我会把被两次访问过的对象放入缓存池，当缓存池满了之后，我会把有两次最少使用的缓存对象踢走。因为需要跟踪对象2次，访问负载就会随着缓存池的增加而增加。如果把我用在大容量的缓存池中，就会有问题。另外，我还需要跟踪那些不再缓存的对象，因为他们还没有被第二次读取。我比LRU好，而且是 adoptive to access 模式 。</p>
+
+<p><strong>Two Queues（2Q）：</strong></p>
+
+<p>我是 Two Queues；我把被访问的数据放到 LRU 的缓存中，如果这个对象再一次被访问，我就把他转移到第二个、更大的 LRU 缓存。</p>
+
+<p>我踢走缓存对象是为了保持第一个缓存池是第二个缓存池的1/3。当缓存的访问负载是固定的时候，把 LRU 换成 LRU2，就比增加缓存的容量更好。这种机制使得我比 LRU2 更好，我也是 LRU 家族中的一员，而且是 adoptive to access 模式 。</p>
+
+<p><strong>Adaptive Replacement Cache（ARC）：</strong></p>
+
+<p>我是 ARC，有人说我是介于 LRU 和 LFU 之间，为了提高效果，我是由2个 LRU 组成，第一个，也就是 L1，包含的条目是最近只被使用过一次的，而第二个 LRU，也就是 L2，包含的是最近被使用过两次的条目。因此， L1 放的是新的对象，而 L2 放的是常用的对象。所以，别人才会认为我是介于 LRU 和 LFU 之间的，不过没关系，我不介意。</p>
+
+<p>我被认为是性能最好的缓存算法之一，能够自调，并且是低负载的。我也保存着历史对象，这样，我就可以记住那些被移除的对象，同时，也让我可以看到被移除的对象是否可以留下，取而代之的是踢走别的对象。我的记忆力很差，但是我很快，适用性也强。</p>
+
+<p><strong>Most Recently Used（MRU）：</strong></p>
+
+<p>我是 MRU，和 LRU 是对应的。我会移除最近最多被使用的对象，你一定会问我为什么。好吧，让我告诉你，当一次访问过来的时候，有些事情是无法预测的，并且在缓存系统中找出最少最近使用的对象是一项时间复杂度非常高的运算，这就是为什么我是最好的选择。</p>
+
+<p>我是数据库内存缓存中是多么的常见！每当一次缓存记录的使用，我会把它放到栈的顶端。当栈满了的时候，你猜怎么着？我会把栈顶的对象给换成新进来的对象！</p>
+
+<p><strong>First in First out（FIFO）：</strong></p>
+
+<p>我是先进先出，我是一个低负载的算法，并且对缓存对象的管理要求不高。我通过一个队列去跟踪所有的缓存对象，最近最常用的缓存对象放在后面，而更早的缓存对象放在前面，当缓存容量满时，排在前面的缓存对象会被踢走，然后把新的缓存对象加进去。我很快，但是我并不适用。</p>
+
+<p><strong>Second Chance：</strong></p>
+
+<p>大家好，我是 second chance，我是通过 FIFO 修改而来的，被大家叫做 second chance 缓存算法，我比 FIFO 好的地方是我改善了 FIFO 的成本。我是 FIFO 一样也是在观察队列的前端，但是很FIFO的立刻踢出不同，我会检查即将要被踢出的对象有没有之前被使用过的标志（1一个 bit 表示），没有被使用过，我就把他踢出；否则，我会把这个标志位清除，然后把这个缓存对象当做新增缓存对象加入队列。你可以想象就这就像一个环队列。当我再一次在队头碰到这个对象时，由于他已经没有这个标志位了，所以我立刻就把他踢开了。我在速度上比 FIFO 快。</p>
+
+<p><strong>CLock：</strong></p>
+
+<p>我是 Clock，一个更好的 FIFO，也比 second chance 更好。因为我不会像 second chance 那样把有标志的缓存对象放到队列的尾部，但是也可以达到 second chance 的效果。</p>
+
+<p>我持有一个装有缓存对象的环形列表，头指针指向列表中最老的缓存对象。当缓存 miss 发生并且没有新的缓存空间时，我会问问指针指向的缓存对象的标志位去决定我应该怎么做。如果标志是0，我会直接用新的缓存对象替代这个缓存对象；如果标志位是1，我会把头指针递增，然后重复这个过程，知道新的缓存对象能够被放入。我比 second chance 更快。</p>
+
+<p><strong>Simple time-based：</strong></p>
+
+<p>我是 simple time-based 缓存算法，我通过绝对的时间周期去失效那些缓存对象。对于新增的对象，我会保存特定的时间。我很快，但是我并不适用。</p>
+
+<p><strong>Extended time-based expiration：</strong></p>
+
+<p>我是 extended time-based expiration 缓存算法，我是通过相对时间去失效缓存对象的；对于新增的缓存对象，我会保存特定的时间，比如是每5分钟，每天的12点。</p>
+
+<p>Sliding time-based expiration：</p>
+
+<p>我是 sliding time-based expiration，与前面不同的是，被我管理的缓存对象的生命起点是在这个缓存的最后被访问时间算起的。我很快，但是我也不太适用。</p>
+
+<p>其他的缓存算法还考虑到了下面几点：</p>
+
+<p><strong>成本</strong>：如果缓存对象有不同的成本，应该把那些难以获得的对象保存下来。</p>
+
+<p><strong>容量</strong>：如果缓存对象有不同的大小，应该把那些大的缓存对象清除，这样就可以让更多的小缓存对象进来了。</p>
+
+<p><strong>时间</strong>：一些缓存还保存着缓存的过期时间。电脑会失效他们，因为他们已经过期了。</p>
+
+<p>根据缓存对象的大小而不管其他的缓存算法可能是有必要的。</p>
+
+<p><strong>电子邮件！</strong></p>
+
+<p>在读完这篇文章之后，programmer one 想了一会儿，然后决定给作者发封邮件，他感觉作者的名字在哪听过，但是已经想不起来了。不管怎样，他还是把邮件发送出来了，他询问了作者在分布式环境中，缓存是怎么样工作的。</p>
+
+<p>文章的作者收到了邮件，具有讽刺意味的是，这个作者就是面试 programmer one 的人  ，作者回复了……</p>
+
+<p>在这一部分中，我们来看看如何实现这些著名的缓存算法。以下的代码只是示例用的，如果你想自己实现缓存算法，可能自己还得加上一些额外的工作。</p>
+
+<p><strong>LeftOver 机制</strong></p>
+
+<p>在 programmer one 阅读了文章之后，他接着看了文章的评论，其中有一篇评论提到了 leftover 机制——random cache。</p>
+
+<p><strong>Random Cache</strong></p>
+
+<p>我是随机缓存，我随意的替换缓存实体，没人敢抱怨。你可以说那个被替换的实体很倒霉。通过这些行为，我随意的去处缓存实体。我比 FIFO 机制好，在某些情况下，我甚至比 LRU 好，但是，通常LRU都会比我好。</p>
+
+<p><strong>现在是评论时间</strong></p>
+
+<p>当 programmer one 继续阅读评论的时候，他发现有个评论非常有趣，这个评论实现了一些缓存算法，应该说这个评论做了一个链向评论者网站的链接，programmer one顺着链接到了那个网站，接着阅读。</p>
+
+<p><strong>看看缓存元素（缓存实体）</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CacheElement</span>
+ <span class="o">{</span>
+     <span class="kd">private</span> <span class="n">Object</span> <span class="n">objectValue</span><span class="o">;</span>
+     <span class="kd">private</span> <span class="n">Object</span> <span class="n">objectKey</span><span class="o">;</span>
+     <span class="kd">private</span> <span class="kt">int</span> <span class="n">index</span><span class="o">;</span>
+     <span class="kd">private</span> <span class="kt">int</span> <span class="n">hitCount</span><span class="o">;</span><span class="err">　</span><span class="c1">// getters and setters</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p>这个缓存实体拥有缓存的key和value，这个实体的数据结构会被以下所有缓存算法用到。</p>
+
+<p><strong>缓存算法的公用代码</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addElement</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="kt">int</span> <span class="n">index</span><span class="o">;</span>
+     <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="c1">// get the entry from the table</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="c1">// If we have the entry already in our table</span>
+     <span class="c1">// then get it and replace only its value.</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+
+     <span class="k">if</span> <span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span><span class="o">;</span>
+         <span class="n">element</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span> <span class="n">obj</span><span class="o">;</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+         <span class="k">return</span><span class="o">;</span>
+     <span class="o">}</span>
+ <span class="err">｝</span>
+</code></pre></div></div>
+
+<p>上面的代码会被所有的缓存算法实现用到。这段代码是用来检查缓存元素是否在缓存中了，如果是，我们就替换它，但是如果我们找不到这个 key 对应的缓存，我们会怎么做呢？那我们就来深入的看看会发生什么吧！</p>
+
+<p><strong>现场访问</strong></p>
+
+<p>今天的专题很特殊，因为我们有特殊的客人，事实上他们是我们想要听的与会者，但是首先，先介绍一下我们的客人：Random Cache，FIFO Cache。让我们从 Random Cache开始。</p>
+
+<p><strong>看看随机缓存的实现</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addElement</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="kt">int</span> <span class="n">index</span><span class="o">;</span>
+     <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span><span class="o">;</span><span class="c1">// Just replace the value.</span>
+         <span class="n">element</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span> <span class="n">obj</span><span class="o">;</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+         <span class="k">return</span><span class="o">;</span>
+     <span class="o">}</span><span class="c1">// If we haven't filled the cache yet, put it at the end.</span>
+     <span class="k">if</span> <span class="o">(!</span><span class="n">isFull</span><span class="o">())</span>
+     <span class="o">{</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="n">numEntries</span><span class="o">;</span>
+         <span class="o">++</span><span class="n">numEntries</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="k">else</span> <span class="o">{</span> <span class="c1">// Otherwise, replace a random entry.</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">cache</span><span class="o">.</span><span class="na">length</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="na">nextFloat</span><span class="o">());</span>
+         <span class="n">table</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">getObjectKey</span><span class="o">());</span>
+     <span class="o">}</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="n">table</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">]);</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>看看FIFO缓算法的实现</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addElement</span><span class="o">(</span><span class="n">Objectkey</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="kt">int</span> <span class="n">index</span><span class="o">;</span>
+     <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span><span class="o">;</span> <span class="c1">// Just replace the value.</span>
+         <span class="n">element</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span> <span class="n">obj</span><span class="o">;</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+         <span class="k">return</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="c1">// If we haven't filled the cache yet, put it at the end.</span>
+     <span class="k">if</span> <span class="o">(!</span><span class="n">isFull</span><span class="o">())</span>
+     <span class="o">{</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="n">numEntries</span><span class="o">;</span>
+         <span class="o">++</span><span class="n">numEntries</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="k">else</span> <span class="o">{</span> <span class="c1">// Otherwise, replace the current pointer,</span>
+            <span class="c1">// entry with the new one.</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="n">current</span><span class="o">;</span>
+         <span class="c1">// in order to make Circular FIFO</span>
+         <span class="k">if</span> <span class="o">(++</span><span class="n">current</span> <span class="o">&gt;=</span> <span class="n">cache</span><span class="o">.</span><span class="na">length</span><span class="o">)</span>
+             <span class="n">current</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+         <span class="n">table</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">getObjectKey</span><span class="o">());</span>
+     <span class="o">}</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="n">table</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">]);</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p><strong>看看LFU缓存算法的实现</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">public</span> <span class="kd">synchronized</span> <span class="n">Object</span> <span class="nf">getElement</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span> <span class="n">obj</span><span class="o">;</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setHitCount</span><span class="o">(</span><span class="n">element</span><span class="o">.</span><span class="na">getHitCount</span><span class="o">()</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+         <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="na">getObjectValue</span><span class="o">();</span>
+     <span class="o">}</span>
+     <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+ <span class="o">}</span>
+ <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addElement</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="k">if</span> <span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span><span class="o">;</span> <span class="c1">// Just replace the value.</span>
+         <span class="n">element</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span> <span class="n">obj</span><span class="o">;</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+         <span class="n">element</span><span class="o">.</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+         <span class="k">return</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="k">if</span> <span class="o">(!</span><span class="n">isFull</span><span class="o">())</span>
+     <span class="o">{</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="n">numEntries</span><span class="o">;</span>
+         <span class="o">++</span><span class="n">numEntries</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="k">else</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span> <span class="o">=</span> <span class="n">removeLfuElement</span><span class="o">();</span>
+         <span class="n">index</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="na">getIndex</span><span class="o">();</span>
+         <span class="n">table</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">element</span><span class="o">.</span><span class="na">getObjectKey</span><span class="o">());</span>
+     <span class="o">}</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">].</span><span class="na">setIndex</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+     <span class="n">table</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">cache</span><span class="o">[</span><span class="n">index</span><span class="o">]);</span>
+ <span class="o">}</span>
+ <span class="kd">public</span> <span class="n">CacheElement</span> <span class="nf">removeLfuElement</span><span class="o">()</span>
+ <span class="o">{</span>
+     <span class="n">CacheElement</span><span class="o">[]</span> <span class="n">elements</span> <span class="o">=</span> <span class="n">getElementsFromTable</span><span class="o">();</span>
+     <span class="n">CacheElement</span> <span class="n">leastElement</span> <span class="o">=</span> <span class="n">leastHit</span><span class="o">(</span><span class="n">elements</span><span class="o">);</span>
+     <span class="k">return</span> <span class="n">leastElement</span><span class="o">;</span>
+ <span class="o">}</span>
+ <span class="kd">public</span> <span class="kd">static</span> <span class="n">CacheElement</span> <span class="nf">leastHit</span><span class="o">(</span><span class="n">CacheElement</span><span class="o">[]</span> <span class="n">elements</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="n">CacheElement</span> <span class="n">lowestElement</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+     <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">elements</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">element</span> <span class="o">=</span> <span class="n">elements</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+         <span class="k">if</span> <span class="o">(</span><span class="n">lowestElement</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+         <span class="o">{</span>
+             <span class="n">lowestElement</span> <span class="o">=</span> <span class="n">element</span><span class="o">;</span>
+         <span class="o">}</span>
+         <span class="k">else</span> <span class="o">{</span>
+             <span class="k">if</span> <span class="o">(</span><span class="n">element</span><span class="o">.</span><span class="na">getHitCount</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">lowestElement</span><span class="o">.</span><span class="na">getHitCount</span><span class="o">())</span>
+             <span class="o">{</span>
+                 <span class="n">lowestElement</span> <span class="o">=</span> <span class="n">element</span><span class="o">;</span>
+             <span class="o">}</span>
+         <span class="o">}</span>
+     <span class="o">}</span>
+     <span class="k">return</span> <span class="n">lowestElement</span><span class="o">;</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p>最重点的代码，就应该是 leastHit 这个方法，这段代码就是把hitCount 最低的元素找出来，然后删除，给新进的缓存元素留位置</p>
+
+<p><strong>看看LRU缓存算法实现</strong></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kd">private</span> <span class="kt">void</span> <span class="nf">moveToFront</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="kt">int</span> <span class="n">nextIndex</span><span class="o">,</span> <span class="n">prevIndex</span><span class="o">;</span>
+     <span class="k">if</span><span class="o">(</span><span class="n">head</span> <span class="o">!=</span> <span class="n">index</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">nextIndex</span> <span class="o">=</span> <span class="n">next</span><span class="o">[</span><span class="n">index</span><span class="o">];</span>
+         <span class="n">prevIndex</span> <span class="o">=</span> <span class="n">prev</span><span class="o">[</span><span class="n">index</span><span class="o">];</span>
+         <span class="c1">// Only the head has a prev entry that is an invalid index</span>
+         <span class="c1">// so we don't check.</span>
+         <span class="n">next</span><span class="o">[</span><span class="n">prevIndex</span><span class="o">]</span> <span class="o">=</span> <span class="n">nextIndex</span><span class="o">;</span>
+         <span class="c1">// Make sure index is valid. If it isn't, we're at the tail</span>
+         <span class="c1">// and don't set prev[next].</span>
+         <span class="k">if</span><span class="o">(</span><span class="n">nextIndex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span>
+             <span class="n">prev</span><span class="o">[</span><span class="n">nextIndex</span><span class="o">]</span> <span class="o">=</span> <span class="n">prevIndex</span><span class="o">;</span>
+         <span class="k">else</span>
+             <span class="n">tail</span> <span class="o">=</span> <span class="n">prevIndex</span><span class="o">;</span>
+         <span class="n">prev</span><span class="o">[</span><span class="n">index</span><span class="o">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+         <span class="n">next</span><span class="o">[</span><span class="n">index</span><span class="o">]</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span>
+         <span class="n">prev</span><span class="o">[</span><span class="n">head</span><span class="o">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">;</span>
+         <span class="n">head</span> <span class="o">=</span> <span class="n">index</span><span class="o">;</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+ <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">addElement</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span>
+ <span class="o">{</span>
+     <span class="kt">int</span> <span class="n">index</span><span class="o">;</span><span class="n">Object</span> <span class="n">obj</span><span class="o">;</span>
+     <span class="n">obj</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="k">if</span><span class="o">(</span><span class="n">obj</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+     <span class="o">{</span>
+         <span class="n">CacheElement</span> <span class="n">entry</span><span class="o">;</span>
+         <span class="c1">// Just replace the value, but move it to the front.</span>
+         <span class="n">entry</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheElement</span><span class="o">)</span><span class="n">obj</span><span class="o">;</span>
+         <span class="n">entry</span><span class="o">.</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+         <span class="n">entry</span><span class="o">.</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+         <span class="n">moveToFront</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getIndex</span><span class="o">());</span>
+         <span class="k">return</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="c1">// If we haven't filled the cache yet, place in next available</span>
+     <span class="c1">// spot and move to front.</span>
+     <span class="k">if</span><span class="o">(!</span><span class="n">isFull</span><span class="o">())</span>
+     <span class="o">{</span>
+         <span class="k">if</span><span class="o">(</span><span class="n">_numEntries</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span>
+         <span class="o">{</span>
+             <span class="n">prev</span><span class="o">[</span><span class="n">_numEntries</span><span class="o">]</span> <span class="o">=</span> <span class="n">tail</span><span class="o">;</span>
+             <span class="n">next</span><span class="o">[</span><span class="n">_numEntries</span><span class="o">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+             <span class="n">moveToFront</span><span class="o">(</span><span class="n">numEntries</span><span class="o">);</span>
+         <span class="o">}</span>
+         <span class="o">++</span><span class="n">numEntries</span><span class="o">;</span>
+     <span class="o">}</span>
+     <span class="k">else</span> <span class="o">{</span> <span class="c1">// We replace the tail of the list.</span>
+         <span class="n">table</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">cache</span><span class="o">[</span><span class="n">tail</span><span class="o">].</span><span class="na">getObjectKey</span><span class="o">());</span>
+         <span class="n">moveToFront</span><span class="o">(</span><span class="n">tail</span><span class="o">);</span>
+     <span class="o">}</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">head</span><span class="o">].</span><span class="na">setObjectValue</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+     <span class="n">cache</span><span class="o">[</span><span class="n">head</span><span class="o">].</span><span class="na">setObjectKey</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+     <span class="n">table</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">cache</span><span class="o">[</span><span class="n">head</span><span class="o">]);</span>
+ <span class="o">}</span>
+</code></pre></div></div>
+
+<p>这段代码的逻辑如 LRU算法 的描述一样，把再次用到的缓存提取到最前面，而每次删除的都是最后面的元素。</p>
+
+<p><strong>结论</strong></p>
+
+<p>我们已经看到 LFU缓存算法 和 LRU缓存算法的实现方式，至于如何实现，采用数组还是 LinkedHashMap，都由你决定，不够我一般是小的缓存容量用数组，大的用 LinkedHashMap。</p>
+
+<h3 id="联系我">联系我</h3>
+
+<ul>
+  <li>邮箱: xmusaber@163.com</li>
+  <li>QQ: 932191671</li>
+</ul>
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+</div>
+
+<blockquote>
+  <p>本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。</p>
+</blockquote>
+	
+  </article>
+</div>
+
+  <div class="prevandnext">
+    	  
+	    <div style="margin:0.5em;">
+	    <span>上一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/17/junit-assertthat.html"  title="Junit4中的新断言assertThat的方法">Junit4中的新断言assertThat的方法</a>
+	    </div>
+	  
+  	  
+	    <div style="margin:0.5em;">
+	    <span>下一篇 ：</span><a class="pjaxlink" href="http://localhost:4000/2016/06/15/sql-timestamp.html"  title="timestamp的两个属性CURRENT_TIMESTAMP和ON UPDATE CURRENT_TIMESTAMP">timestamp的两个属性CURRENT_TIMESTAMP和ON UPDATE CURRENT_TIMESTAMP</a>
+	    </div>
+	  
+	  	<div style="margin:0.5em;">
+			<span> 版权所有，转载时必须以链接形式注明原始出处</span>
+	    </div>
+	 
+  </div></div>		
+			</div>
+ 		</div>	
+	</div>
+    </div> 
+</div>
+	<div class="profile_social">
+		<a class="rss" href="/feed.xml" target="_blank"></a>
+		<a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+		<a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+	</div>
+    <div id="backtotop">
+    		<a href="#"><i class="fa fa-arrow-circle-up"></i></a>
+    </div>
+    <div class="pjax_loading"></div>
+    
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <h2 class="footer-heading">saber's blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>梦回少年</li>
+          <li><a href="mailto:xmusaber@163.com">xmusaber@163.com</a></li>
+          <li>闽ICP备15018990号</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a class="github" href="https://github.com/lemonjing"  target="_blank"></a>
+          </li>
+          
+
+          
+          <li>
+            <a class="weibo" href="http://weibo.com/u/1662536394"  target="_blank"></a>
+          </li>
+          
+        </ul>
+      </div>
+      <div class="footer-col  footer-col-3">
+        <p class="text">If,<br/>for example,<br/>you come at four o'clock in the afternoon,<br/>then at three o'clock I shall begin to be happy.</p>
+      </div>
+    </div>
+</div>
+    <div class="center sitedesc">
+    	Powered by <a href ="http://jekyllrb.com/">Jekyll</a>  |  © 2018 梦回少年  |  Hosted on <a href="https://github.com/lemonjing/lemonjing.github.io"> Github</a></div>
+    <div class="center sitedesc"><span id=span_dt_dt></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="busuanzi_container_site_pv" style='display:none'>本站总访问量<span id="busuanzi_value_site_pv"></span>次<br/>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259223523'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1259223523%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </div>
+
+<!-- 访问统计 -->
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 萌萌哒运行 -->
+  <SCRIPT language=javascript>          
+function show_date_time(){
+window.setTimeout("show_date_time()", 1000);
+BirthDay=new Date("8/15/2015 11:30:00");//这个日期是可以修改的
+today=new Date();
+timeold=(today.getTime()-BirthDay.getTime());
+sectimeold=timeold/1000
+secondsold=Math.floor(sectimeold);
+msPerDay=24*60*60*1000
+e_daysold=timeold/msPerDay
+daysold=Math.floor(e_daysold);
+e_hrsold=(e_daysold-daysold)*24;
+hrsold=Math.floor(e_hrsold);
+e_minsold=(e_hrsold-hrsold)*60;
+minsold=Math.floor((e_hrsold-hrsold)*60);
+seconds=Math.floor((e_minsold-minsold)*60);
+span_dt_dt.innerHTML="本站已萌萌哒运行"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}show_date_time();</SCRIPT>
+
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        TeX: {equationNumbers: {
+            autoNumber: ["AMS"], useLabelIds: true}},
+            "HTML-CSS": {linebreaks: {automatic: true}},
+            SVG: {linebreaks: {automatic: true}}
+    });
+   </script> -->
+
+  <!-- jQuery -->
+  <script src="//cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.pjax.js"></script>
+  <!-- Bootstrap Core JavaScript -->
+  <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/prettify/prettify.js"></script>
+  
+  <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+  <script type="text/javascript" src="/assets/js/ua-parser.js"></script>
+
+  <!-- jekyII search-->
+<div class="cb-search-tool" style="position: fixed; top: 0px ; bottom: 0px; left: 0px; right:  0px;
+      opacity: 0.95; background-color: #111111; z-index: 9999; display: none;">
+    <input type="text" class="form-control cb-search-content" id="cb-search-content" style="position: fixed; top: 60px" placeholder="文章标题 日期 标签" >
+
+    <div style="position: fixed; top: 16px; right: 16px;">
+        <img src="/search/img/cb-close.png"  id="cb-close-btn"/>
+    </div>
+</div>
+
+<!-- <div style="position: fixed; right: 16px; bottom: 20px;">
+    <img src="/search/img/cb-search.png"  id="cb-search-btn"  title="双击ctrl试一下"/>
+</div> -->
+
+<link rel="stylesheet" href="/search/css/cb-search.css">
+
+<script src="/search/js/bootstrap3-typeahead.min.js"></script>
+<script src="/search/js/cb-search.js"></script>
+<!-- jekyII search end -->
+
+  
+<script type="text/javascript" src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+<script type="text/javascript" src="/assets/js/embed.js"></script>
+<script type="text/javascript" src="/assets/js/stickUp.min.js"></script>
+<script type="text/javascript" src="/assets/js/main.js"></script>
+
+</footer>
+
+  </body>
+
+</html>
