@@ -7,15 +7,15 @@ category: 大数据
 
 目录：
 
-* [引言](#引言)
-* [Spark Streaming & Structured Streaming](#spark-streaming-and-structured-streaming)
-  * [Spark Streaming介绍](#spark-streaming)
-  * [Structured Streaming介绍和使用](#structured-streaming)
-    * [DataFrame & DataSet](#dataframe-dataset)
-    * [端到端的exactly-once保证](#end-to-end-exactly-once-guarantee)
+* [引言](#1-引言)
+* [Spark Streaming介绍](#2-spark-streaming)
+* [Structured Streaming介绍和使用](#structured-streaming)
+  * [DataFrame & DataSet](#dataframe-dataset)
+  * [端到端的exactly-once保证](#end-to-end-exactly-once-guarantee)
+  * [Structured Streaming其他特性](#structured-streaming-feature)
 * [Structured Streaimg总结与实践](#summary-structured-streaming)
 
-## 引言
+## 1-引言
 
 随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。基础平台大数据架构部这边的业务在spark2.0以前版本中一直是使用Spark Streaming作为流式和实时计算的框架。
  
@@ -23,9 +23,7 @@ category: 大数据
 
 ![](http://rannn.cc/assets/img/tech/spark_infra.png)
 
-## spark-streaming-and-structured-streaming
-
-### spark-streaming
+## 2-spark-streaming
 
 在介绍Structured Streaming之前，得先介绍下Spark Streaming。Spark Streaming 类似于 Apache Storm，用于流式数据的处理。根据官方文档介绍，Spark Streaming 有高吞吐量和容错能力强这两个特点。Spark Streaming 支持的数据输入源很多，例如：Kafka、Flume和 TCP Socket等。数据输入后可以用 Spark 的map、reduce、join、window 等相关算子进行计算。最终可以sink到 HDFS，数据库等。在 Spark Streaming 中，处理数据的单位是一批（一个batch），Spark Streaming 需要设置batch间隔使得数据汇总到一定的量后再进行操作。batch间隔是 Spark Streaming 的核心概念和关键参数，它决定了 Spark Streaming 提交作业的频率和数据处理的延迟，同时也影响着数据处理的吞吐量和性能。
  
@@ -58,11 +56,11 @@ ssc.awaitTermination()
 
 其他更复杂的Spark Streaming程序无外乎上述的几个重要步骤，区别和变化可能更多发生在计算的步骤。Spark Streaming有很多流式场景的应用，如ETL、多流join、BI监控数据流join等等。由于本篇文章主要针对新式的Structured Streaming结构化流式计算撰写，所以在此Spark Streaming的具体细节不在展开。
 
-### structured-streaming
+## structured-streaming
 
 自 Spark 2.x 开始，处理 structured data 的 Dateset/DataFrame 被扩展为同时处理 streaming data，DataFrame/Dataset成为了统一的API。在DataFrame/Dataset的基础上产生了Structured Streaming ，Structured Streaming 以unbounded table为编程模型，满足 end-to-end exactly-once guarantee(端到端的exactly-once保证).下面主要就从DataFrame/DataSet以及end-to-end exactly-once guarantee来展开。
  
-#### dataframe-dataset
+### dataframe-dataset
 
 Structured Streaming顾名思义是结构化流，为什么这么说呢，这是因为Structured Streaming是基于Spark2.x的DataFrame/Dataset API的（Spark Streaming是基于RDD），RDD 是一个一维、只有行概念的数据集，而DataFrame/Dataset是行列的数据集，是一张二维的数据表。RDD与DataFrame/DataSet的对比如下：
 
@@ -111,12 +109,12 @@ Structured Streaming 的做法是：
 所以 Structured Streaming 在编程模型上暴露给用户的是，每次query可以看做面对全量数据，但在具体实现上转换为增量的query（incremental query）。
 
 
-#### end-to-end-exactly-once-guarantee
+### end-to-end-exactly-once-guarantee
 
 Structured Streaming保证了端到端的exactly-once，具体来说，端到端在Structured Streaming指的是source-> stream excution -> sink，Structured Streaming 非常显式地提出了输入(Source)、执行(StreamExecution)、输出(Sink)的 3 个组件，也就是说这三个组件并非概念名称而是具体的类或接口，可参见
 
-![Github: org/apache/spark/sql/execution/streaming/Source.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Source.scala)
-![Github: org/apache/spark/sql/execution/streaming/Sink.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Sink.scala)
+[Github: org/apache/spark/sql/execution/streaming/Source.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Source.scala)
+[Github: org/apache/spark/sql/execution/streaming/Sink.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Sink.scala)
 
 并且Structured Streaming 为每个组件显式地做到 fault-tolerant，由此得到整个 streaming 程序的 end-to-end exactly-once guarantees.
  
@@ -134,7 +132,8 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
  
 这里重点说一下sink为kafka的情况，实际上在基础平台大数据架构部这边的业务中，我们更多的业务，是从上游的kafka topic到另一个topic，也就是source和sink均为kafka的情况。由于spark本身任务失败会重试，同一个数据可能被写入kafka一次以上。由于kafka目前不支持transactional write，所以多写入的数据不能被撤销，会造成一些重复。当然 kafka 自身的高可用写入（比如写入 broker 了的数据的 ack 消息没有成功送达 producer，导致 producer 重新发送数据时），也有可能造成重复。也就是说，在kafka支持幂等写入之前，可能需要下游实现去重机制。
 
-2.3 Structured Streaming其他特性
+### structured-streaming-feature
+
 实际上，Structured Streaming相较于Spark Streaming还提供了Event Time、Watermark的支持，具体细节后续文章会陆续呈现，欢迎关注！
 
 ## summary-structured-streaming
