@@ -9,29 +9,21 @@ Spark应用运行时的详细进度信息，性能指标等数据和信息对于
 
 目录：
 
-* [SparkWebUI](#页面)
-* [SparkWebUI流程图](#SparkWebUI流程图)
-* [SparkWebUI流程源码级细述](#SparkWebUI流程源码级细述)
-* [SparkWebUI数据获取和更新原理](#SparkWebUI数据获取和更新原理)
-
-* [代理模式定义](#代理模式定义)
-* [静态代理](#静态代理)
-* [动态代理](#动态代理)
-* [JDK动态代理源码分析（JDK7）](#JDK动态代理源码分析（JDK7）)
-* [参考文献](#参考文献)
-
-## 代理模式定义
-
+* [Spark WebUI页面](#页面)
+* [Spark WebUI流程图](#流程图)
+* [Spark WebUI流程源码级细述](#源码分析)
+* [Spark WebUI数据获取和更新原理](#数据获取和更新原理)
+* [Spark WebUI数据获取和更新原理](#Spark)
 
 ## 页面
 
 ![](http://rannn.cc/assets/img/tech/sparkui.png)
 
-## SparkWebUI流程图
+## 流程图
 
 ![](http://rannn.cc/assets/img/tech/procedure.png)
 
-## SparkWebUI流程源码级细述
+## 源码级分析
 
 Step1、SparkContext初始化时构建SparkUI
 
@@ -134,7 +126,7 @@ serverInfo = Some(startJettyServer(host, port, sslOptions, handlers, conf, name)
 Step5、接收UI请求，数据呈现
 当发起Spark WebUI的数据请求时，Spark引擎会进行Tab和Page数据的渲染然后返回给用户。
 
-## SparkWebUI数据获取和更新原理
+## 数据获取和更新原理
 
 因为Spark WebUI上的不同Tab项的数据实际上来源于不同的监听器对象，所以这边抛砖引玉，以JobProgressListener来说明。JobProgressListener中封装了Job和Stage运行状况以及运行进度等全部作业信息。
  
@@ -238,7 +230,9 @@ Job的，completedJobs，activeJobs，failedJobs，jobIdToData
 Stage的，pendingStages，activeStages，completedStages，failedStages等。
 
 至此JobProgressListener的各项数据就产生了，其他事件触发的时候，或下次同样事件到达的时候，JobProgressListener依然会进行同样的逻辑，然后对数据进行更新。对于Spark WebUI来说，便可以从JobProgressListener中取得数据进行页面呈现了。对于其他的listener，如EnvironmentListener，StorageListener，ExecutorListener等等，数据产生和更新的原理是一致的。
- 
+
+## Spark
+
 敲重点：明白了listener的数据产生和更新原理以后对于Spark应用的其他开发是很有意义的，比方说你想设计一个自定义metrics，设计metrics子系统，设计开发spark作业分析诊断系统等等，就可以从spark的各个后台listener中去获取数据啦。
 
 ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
