@@ -9,7 +9,7 @@ category: 大数据
 
 目录：
 
-* [引言](#1.引言)
+* [引言](#1-引言)
 * [Spark Streaming介绍](#2-spark-streaming)
 * [Structured Streaming介绍和使用](#3-structured-streaming)
   * [DataFrame & DataSet](#3-1-dataframe-dataset)
@@ -17,7 +17,7 @@ category: 大数据
   * [Structured Streaming其他特性](#3-3-structured-streaming-feature)
 * [Structured Streaimg总结与实践](#4-summary-structured-streaming)
 
-## 1.引言
+## 1-引言
 
 随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。
 
@@ -43,7 +43,7 @@ Spark Streaming正是基于batch的数据处理方式，底层用DStream的数�
 主要核心代码code-1:
 
 ```scala
-val conf = new SparkConf().setMaster("local[2]").setAppName("WordCount”) 
+val conf = new SparkConf().setMaster("local[2]").setAppName("WordCount") 
 //构建SparkStreamingContext 
 val ssc = new StreamingContext(conf, Seconds(1))
 //获取输入源 
@@ -85,7 +85,7 @@ DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，
  
 主要核心代码code-2：
 
-```scala
+```bash
 //Spark2.x无需使用SparkConf、SparkContext，而是SparkSession作为统一的切入点
 1.val spark = SparkSession.builder.appName("SocketWordCount").getOrCreate()
 //以TCP Socket流构建DataFrame
@@ -123,6 +123,7 @@ Structured Streaming 的做法是：
 Structured Streaming保证了端到端的exactly-once，具体来说，端到端在Structured Streaming指的是source-> stream excution -> sink，Structured Streaming 非常显式地提出了输入(Source)、执行(StreamExecution)、输出(Sink)的 3 个组件，也就是说这三个组件并非概念名称而是具体的类或接口，可参见
 
 [Github: org/apache/spark/sql/execution/streaming/Source.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Source.scala)
+
 [Github: org/apache/spark/sql/execution/streaming/Sink.scala](https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/streaming/Sink.scala)
 
 并且Structured Streaming 为每个组件显式地做到 fault-tolerant，由此得到整个 streaming 程序的 end-to-end exactly-once guarantees.
@@ -169,7 +170,7 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
 
 这边给出一个实际的例子，需求是按字段对topic分流。
 
-```java
+```text
 //入口
 val sparkSession = SparkSession.builder().appName("TopicSplitFlow").getOrCreate()
 import sparkSession.implicits._
