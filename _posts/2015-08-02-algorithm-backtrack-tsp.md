@@ -112,8 +112,10 @@ int main()
 	return 0;
 }
 ```
-```bash
+
 data.txt
+
+```sh
 4
 0 30 6 4
 30 0 5 10
@@ -130,7 +132,10 @@ data.txt
 600 5 0 20
 100 10 20 0
 ```
-![](http://7xlkoc.com1.z0.glb.clouddn.com/tracebackres.png)
+
+<div align="center">
+<img src="http://7xlkoc.com1.z0.glb.clouddn.com/tracebackres.png" />
+</div>
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
