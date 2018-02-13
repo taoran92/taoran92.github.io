@@ -5,9 +5,11 @@ tags: Spark
 category: 大数据
 ---
 
+本文主要介绍Spark2.x Structured Streaming流式计算。
+
 目录：
 
-* [引言](#1-引言)
+* [引言](#1.引言)
 * [Spark Streaming介绍](#2-spark-streaming)
 * [Structured Streaming介绍和使用](#3-structured-streaming)
   * [DataFrame & DataSet](#3-1-dataframe-dataset)
@@ -17,13 +19,14 @@ category: 大数据
 
 ## 1.引言
 
-随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。基础平台大数据架构部这边的业务在spark2.0以前版本中一直是使用Spark Streaming作为流式和实时计算的框架。
- 
-而在spark2.x以后，spark引入了新式的流计算框架——Structured Streaming，它是基于Spark SQL的，同样见下图，可以发现Spark SQL也是构建与Spark之上的，与Spark Streaming平行，都是核心的Spark上层框架。
+随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。
 
 <div align="center">
 <img src="http://rannn.cc/assets/img/tech/spark_infra.png" />
 </div>
+ 
+而在spark2.x以后，spark引入了新式的流计算框架——Structured Streaming，它是基于Spark SQL的，同样见下图，可以发现Spark SQL也是构建与Spark之上的，与Spark Streaming平行，都是核心的Spark上层框架。
+
 
 ## 2-spark-streaming
 
@@ -39,18 +42,18 @@ Spark Streaming正是基于batch的数据处理方式，底层用DStream的数�
  
 主要核心代码code-1:
 
-```java
+```scala
 val conf = new SparkConf().setMaster("local[2]").setAppName("WordCount”) 
 //构建SparkStreamingContext 
 val ssc = new StreamingContext(conf, Seconds(1))
- //获取输入源 
+//获取输入源 
 val lines = ssc.socketTextStream("localhost", 9999) 
 //逻辑计算 
 val wordCounts = lines.flatMap(_.split(""))
-. map(word => (word, 1))
-. reduceByKey(_ + _) 
+.map(word => (word, 1))
+.reduceByKey(_ + _) 
 //输出
-wordCounts.print() 
+wordCounts.print()
 //流式计算启动
 ssc.start() 
 ssc.awaitTermination()
@@ -66,19 +69,23 @@ ssc.awaitTermination()
 
 Structured Streaming顾名思义是结构化流，为什么这么说呢，这是因为Structured Streaming是基于Spark2.x的DataFrame/Dataset API的（Spark Streaming是基于RDD），RDD 是一个一维、只有行概念的数据集，而DataFrame/Dataset是行列的数据集，是一张二维的数据表。RDD与DataFrame/DataSet的对比如下：
 
-![](http://rannn.cc/assets/img/tech/dataframe.png)
+<div align="center">
+<img src="http://rannn.cc/assets/img/tech/dataframe.png" />
+</div>
 
 DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，schema信息描述了每行数据的字段和类型信息，如上图Person的name, age, height实际上在schema中描述了，这样每行数据必须依照schema的三列和数据类型的规定。相反RDD[Person]只是一行Person的数据，Person是作为一个整体的，spark框架并不知道Person的具体结构，也就无法进行作业的优化。并且，RDD默认采用的Java序列化方式，序列化结果比较大，并且数据存储在堆存，导致GC比较频繁。而DataFrame/Dataset由于schema信息已经保存，在序列化时就不必带上元数据信息，减少了序列化文件大小，并且数据保存在off heap（堆外内存），大大减少了GC。至于DataFrame和Dataset的区别，实际上在scala中DataFrame就是DataSet[Row]的别名，二者主要区别是Dataset是类型安全的，可以执行编译期检查，而实际二者内存存储是一致的，本质上无差别，可以按需求选择使用并相互转化。（值得注意的一点是scala中DataFrame需要转化为Dataset才可以执行诸如map的算子操作）
  
 因此，Spark2.x最终将流式计算以unbounded table（无界表）形式的结构化数据来呈现(二维表)，从而抽象出了统一的API，流式计算无外乎就是静态二维表的无限增长罢了（行列数据随着时间不断增长），如下图所示。自此，DataFrame/Dataset成为了统一的API，同时满足 structured data, streaming data, machine learning, graph等。
 
-![](http://rannn.cc/assets/img/tech/bounded.png)
+<div align="center">
+<img src="http://rannn.cc/assets/img/tech/bounded.png" />
+</div>
 
 同样是大数据领域经典的wordcount单词计数的例子，这次我们以Structured Streaming实现。（可以与上述Spark Streaming的wordcount例子进行对比）
  
 主要核心代码code-2：
 
-```java
+```scala
 //Spark2.x无需使用SparkConf、SparkContext，而是SparkSession作为统一的切入点
 1.val spark = SparkSession.builder.appName("SocketWordCount").getOrCreate()
 //以TCP Socket流构建DataFrame
