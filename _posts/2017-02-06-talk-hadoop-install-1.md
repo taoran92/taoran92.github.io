@@ -1,6 +1,6 @@
 ---
 layout: post
-title: [Hadoop]深入浅出Hadoop集群搭建补遗
+title: 【Hadoop】深入浅出Hadoop集群搭建补遗
 tags: 原创 Hadoop
 category: 大数据
 ---	

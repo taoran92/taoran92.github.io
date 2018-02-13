@@ -1,6 +1,6 @@
 ---
 layout: post
-title: [Spark]Spark WebUI 原理和工作方式
+title: 【Spark】Spark WebUI 原理和工作方式
 tags: Spark
 category: 大数据
 ---

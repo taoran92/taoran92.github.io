@@ -42,14 +42,8 @@ profile_desc : 技术<br>生活<br>和爱情<br>此刻与你分享<br>
 # 首页除了最新文章外显示分类
 cates: 
 - Essay
-- Python
-- OpenStack
-- Python
-- OpenStack
-- OpenStack
-- OpenStack
-- Python
-- OpenStack
+# - Python
+# - OpenStack
 
 # 中文本地化
 locals: 

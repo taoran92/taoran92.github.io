@@ -24,7 +24,7 @@ BeanFactory是不支持国际化功能的，因为BeanFactory没有扩展Spring�
 
 ApplicationContext的事件机制主要通过ApplicationEvent和ApplicationListener这两个接口来提供的，和java swing中的事件机制一样。即当ApplicationContext中发布一个事件的时，所有扩展了ApplicationListener的Bean都将会接受到这个事件，并进行相应的处理。 
 
-Spring提供了部分内置事件，主要有以下几种：  
+Spring提供了部分内置事件，主要有以下几种：
 
 - ContextRefreshedEvent ：ApplicationContext发送该事件时，表示该容器中所有的Bean都已经被装载完成，此ApplicationContext已就绪可用 
 - ContextStartedEvent：生命周期 beans的启动信号  
