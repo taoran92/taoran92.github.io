@@ -2,7 +2,7 @@
 layout: post
 title: 我只知道 如若是你 随时随地 我会如约而至
 tags: 爱情
-category: 爱情
+category: 随笔
 date: 2016-01-13 23:07:46
 ---
 

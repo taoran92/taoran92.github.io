@@ -2,7 +2,7 @@
 layout: post
 title: 13.Java NIO AND IO
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 原文地址：http://tutorials.jenkov.com/java-nio/nio-vs-io.html

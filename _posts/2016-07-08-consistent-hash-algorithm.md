@@ -2,7 +2,7 @@
 layout: post
 title: 对一致性哈希算法的深入研究
 tags: Java
-category: 技术
+category: Algorithm
 ---
 
 ## 一致性Hash算法

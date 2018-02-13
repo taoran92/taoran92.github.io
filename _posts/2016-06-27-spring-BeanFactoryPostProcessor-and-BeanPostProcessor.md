@@ -2,7 +2,7 @@
 layout: post
 title: spring后置处理器BeanFactoryPostProcessor和BeanPostProcessor的用法和区别
 tags: Java Spring
-category: 技术
+category: Java
 ---
 
 BeanFactoryPostProcessor和BeanPostProcessor都是Spring初始化bean的扩展点。两个接口非常相似。它们的主要区别是： BeanFactoryPostProcessor可以修改BEAN的配置信息而BeanPostProcessor不能，BeanFactoryPostProcessor的回调比BeanPostProcessor要早。

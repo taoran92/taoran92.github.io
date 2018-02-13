@@ -1,8 +1,8 @@
 ---
 layout: post
 title: HttpSession与Hibernate中Session的区别
-tags: session
-category: 技术
+tags: Java
+category: Java
 date: 2015-11-30 16:04:17
 ---
 

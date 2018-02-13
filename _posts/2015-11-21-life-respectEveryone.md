@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 否定别人是很愚蠢的
-category: 随笔
 tags: 随笔
+category: 随笔
 description: 慢慢才知道 否定别人是多么的愚蠢
 
 ---

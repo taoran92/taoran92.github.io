@@ -2,7 +2,7 @@
 layout: post
 title: Spring 的本质系列之IOC
 tags: Java Spring
-category: 技术
+category: Java
 ---
 
 前言： Spring 这个轻量级的框架已经成为Web开发事实上的标准，阅读本篇文章之前希望你对OO,设计模式，单元测试，XML，反射等技术有一定了解。

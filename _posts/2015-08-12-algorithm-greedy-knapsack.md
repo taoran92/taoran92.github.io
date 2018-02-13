@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』算法#8 贪心法求解背包问题（2种策略）
 tags: 背包
-category: 算法
+category: Algorithm
 date: 2015-08-12 21:14:42
 ---
 

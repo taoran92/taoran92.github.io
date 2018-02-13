@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』算法#11 迭代回溯法求解N皇后
 tags: 回溯法
-category: 算法
+category: Algorithm
 date: 2015-09-17 21:30:11
 ---
 

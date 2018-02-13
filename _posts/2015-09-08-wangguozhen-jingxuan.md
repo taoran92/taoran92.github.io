@@ -2,7 +2,7 @@
 layout: post
 title: 汪国真作品精选暨悼念大师逝世
 tags: 汪国真 诗
-category: 爱情
+category: 随笔
 date: 2015-09-08 03:22:01
 ---
 

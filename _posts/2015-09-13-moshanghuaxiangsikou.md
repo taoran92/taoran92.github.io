@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 陌上花，相思扣-仓央嘉措
-tags: 仓央嘉措
-category: 爱情
+tags: 仓央嘉措 爱情
+category: 随笔
 date: 2015-09-13 19:26:25
 ---
 

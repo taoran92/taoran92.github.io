@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』算法#2 模拟退火求解TSP问题
 tags: TSP 模拟退火
-category: 算法
+category: Algorithm
 date: 2015-08-14 16:48:06
 ---
 

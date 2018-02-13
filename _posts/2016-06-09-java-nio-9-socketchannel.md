@@ -2,7 +2,7 @@
 layout: post
 title: 9.Java NIO SocketChannel
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO中的SocketChannel是一个连接到TCP网络套接字的通道。可以通过以下2种方式创建SocketChannel：

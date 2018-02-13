@@ -2,7 +2,7 @@
 layout: post
 title: 3.Java NIO Channel
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO的通道类似流，但又有些不同：

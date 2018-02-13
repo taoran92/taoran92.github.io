@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 『原创』算法#1 C++ 信使
-category: 算法
 tags: Dijkstra 最短路径
+category: Algorithm
 date: 2015-08-05 22:55:40
 description: 最短路径问题
 ---

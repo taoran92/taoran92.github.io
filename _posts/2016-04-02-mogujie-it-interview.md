@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 『原创』校招季 - 我的蘑菇街面试
-tags: 校招 蘑菇街
-category: 技术
+tags: 校招
+category: 求职
 date: 2016-04-02 14:07:23
 ---
 

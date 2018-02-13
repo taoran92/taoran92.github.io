@@ -2,7 +2,7 @@
 layout: post
 title: 有一种爱 湿润了流年- 鳕落红炉
 tags: 爱情
-category: 爱情
+category: 随笔
 date: 2015-09-14 19:58:31
 ---
 

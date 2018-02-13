@@ -2,7 +2,7 @@
 layout: post
 title: 5.Java NIO Scatter/Gather
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO开始支持scatter/gather，scatter/gather用于描述从Channel（译者注：Channel在中文经常翻译为通道）中读取或者写入到Channel的操作。

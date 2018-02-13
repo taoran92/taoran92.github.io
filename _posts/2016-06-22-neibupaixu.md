@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』九种内部排序算法的Java实现及其性能测试
 tags: Java
-category: 算法
+category: Algorithm
 description: 内部排序算法的Java实现及其性能测试
 ---
 

@@ -2,7 +2,7 @@
 layout: post
 title: 青春是场风驰电掣的雷阵雨
 tags: 厦门 随笔 青春
-category: 随笔
+category: 厦门
 date: 2015-08-05 21:03:05
 ---
 

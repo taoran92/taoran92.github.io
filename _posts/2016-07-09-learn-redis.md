@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Redis学习日记
-tags: Java
+tags: Redis
 category: 技术
 ---
 

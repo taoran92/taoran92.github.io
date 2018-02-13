@@ -2,7 +2,7 @@
 layout: post
 title: 如果有一天我突然疏远了你
 tags: 爱情
-category: 爱情
+category: 随笔
 date: 2015-09-10 21:22:04
 ---
 

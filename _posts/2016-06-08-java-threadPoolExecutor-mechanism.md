@@ -2,7 +2,7 @@
 layout: post
 title: JAVA进阶--ThreadPoolExecutor机制
 tags: Java
-category: 技术
+category: Java
 ---
 
 ### 一、概述 

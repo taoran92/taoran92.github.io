@@ -2,7 +2,7 @@
 layout: post
 title: Hadoop2.6的Snappy、OpenSSL等本地库错误
 tags: Hadoop
-category: 技术
+category: 大数据
 ---
 
 ```

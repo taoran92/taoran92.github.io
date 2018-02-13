@@ -2,7 +2,7 @@
 layout: post
 title: 译文-缓存、缓存算法和缓存框架简介
 tags: Java
-category: 技术
+category: Java
 ---
 
 > 原文出处： [jtraining](http://www.jtraining.com/component/content/article/35-jtraining-blog/98.html)   译文出处：[Lixiang](http://www.leexiang.com/cache-algorithm) 更新:[Saber](http://taoxiaoran.top/2016/06/16/cache-and-cache-algorithm.html)

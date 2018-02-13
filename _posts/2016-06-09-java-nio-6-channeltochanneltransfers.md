@@ -2,7 +2,7 @@
 layout: post
 title: 6.Java NIO Channel to Channel Transfers
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 In Java NIO you can transfer data directly from one channel to another, if one of the channels is a FileChannel. The FileChannel class has a transferTo() and a transferFrom() method which does this for you.

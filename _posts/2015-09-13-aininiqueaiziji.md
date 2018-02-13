@@ -2,7 +2,7 @@
 layout: post
 title: 有人爱你全心全意，你却客套地爱自己-夏苏末
 tags: 爱情
-category: 爱情
+category: 随笔
 date: 2015-09-13 17:56:10
 ---
 

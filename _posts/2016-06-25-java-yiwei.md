@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』JAVA移位运算符简介
 tags: Java
-category: 技术
+category: Java
 ---
 
 ### 移位规则

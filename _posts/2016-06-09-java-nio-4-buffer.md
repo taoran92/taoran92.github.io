@@ -2,7 +2,7 @@
 layout: post
 title: 4.Java NIO Buffer
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO中的Buffer用于和NIO通道进行交互。如你所知，数据是从通道读入缓冲区，从缓冲区写入到通道中的。

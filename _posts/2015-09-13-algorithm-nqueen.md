@@ -2,7 +2,7 @@
 layout: post
 title: 『原创』算法#10 递归回溯法求解N皇后
 tags: N皇后
-category: 算法
+category: Algorithm
 date: 2015-09-13 21:25:40
 ---
 

@@ -2,7 +2,7 @@
 layout: post
 title: Junit4中的新断言assertThat的方法
 tags: Java
-category: 技术
+category: Java
 ---
 
 > 原文出处：http://www.gn00.com/t-184116-1-1.html

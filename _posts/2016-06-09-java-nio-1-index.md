@@ -2,7 +2,7 @@
 layout: post
 title: 1.Java NIO Tutorial
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 ---

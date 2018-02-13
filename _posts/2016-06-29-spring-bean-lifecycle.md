@@ -2,7 +2,7 @@
 layout: post
 title: 精-Spring Bean生命周期
 tags: Java Spring
-category: 技术
+category: Java
 ---
 
 Spring作为当前Java最流行、最强大的轻量级框架，受到了程序员的热烈欢迎。准确的了解Spring Bean的生命周期是非常必要的。我们通常使用ApplicationContext作为Spring容器。这里，我们讲的也是 ApplicationContext中Bean的生命周期。而实际上BeanFactory也是差不多的，只不过处理器需要手动注册。

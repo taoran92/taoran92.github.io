@@ -2,7 +2,7 @@
 layout: post
 title: 精-Spring事务管理（详解+实例)
 tags: Java Spring
-category: 技术
+category: Java
 ---
 
 ### 1、初步理解

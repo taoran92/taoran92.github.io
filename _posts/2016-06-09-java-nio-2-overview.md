@@ -2,7 +2,7 @@
 layout: post
 title: 2.Java NIO Overview
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO 由以下几个核心部分组成：

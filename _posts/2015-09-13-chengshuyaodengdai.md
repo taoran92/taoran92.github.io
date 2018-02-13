@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 所有的成熟都需要静静等待-七微
-tags: 随笔
-category: 爱情
+tags: 爱情
+category: 随笔
 date: 2015-09-13 17:47:51
 ---
 

@@ -2,7 +2,7 @@
 layout: post
 title: Object中getClass方法详解
 tags: Java
-category: 技术
+category: Java
 ---
 
 ### Object中getClass方法详解

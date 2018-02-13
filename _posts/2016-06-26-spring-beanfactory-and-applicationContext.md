@@ -2,7 +2,7 @@
 layout: post
 title: Spring中ApplicationContext和Beanfactory区别
 tags: Spring
-category: 技术
+category: Java
 ---
 
 BeanFacotry是spring中比较原始的Factory。如XMLBeanFactory就是一种典型的BeanFactory。原始的BeanFactory无法支持spring的许多插件，如AOP功能、Web应用等。 

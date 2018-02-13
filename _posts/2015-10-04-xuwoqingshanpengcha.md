@@ -1,9 +1,9 @@
 ---
 layout: post
 title: 有故人，许我青山夜烹茶
+tags: 爱情
 category: 随笔
 date: 2015-10-04 21:11:31
-tags: 爱情
 ---
 
 文/林蔻生

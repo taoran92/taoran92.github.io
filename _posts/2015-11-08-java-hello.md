@@ -1,8 +1,8 @@
 ---
 layout: post
 title: hello world
-category: 随笔
 tags: 技术
+category: 随笔
 description: 开博第一篇
 ---
 

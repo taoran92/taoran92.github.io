@@ -2,7 +2,7 @@
 layout: post
 title: 10.Java NIO ServerSocketChannel
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO (New IO) is an alternative IO API for Java (from Java 1.4), meaning alternative to Java NIO中的 ServerSocketChannel 是一个可以监听新进来的TCP连接的通道, 就像标准IO中的ServerSocket一样。ServerSocketChannel类在 java.nio.channels包中。

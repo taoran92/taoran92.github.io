@@ -2,7 +2,7 @@
 layout: post
 title: Spring本质系列之AOP
 tags: Java Spring
-category: 技术
+category: Java
 ---
 
 ### 问题来源

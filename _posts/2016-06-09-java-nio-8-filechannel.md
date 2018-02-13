@@ -2,7 +2,7 @@
 layout: post
 title: 8.Java NIO FileChannel
 tags: Java NIO
-category: 技术
+category: Java
 ---
 
 Java NIO中的FileChannel是一个连接到文件的通道。可以通过文件通道读写文件。
