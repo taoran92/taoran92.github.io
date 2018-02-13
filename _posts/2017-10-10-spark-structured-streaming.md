@@ -7,7 +7,7 @@ category: 大数据
 
 目录：
 
-* [引言](#1-引言)
+* [引言](#1.引言)
 * [Spark Streaming介绍](#2-spark-streaming)
 * [Structured Streaming介绍和使用](#structured-streaming)
   * [DataFrame & DataSet](#dataframe-dataset)
@@ -120,11 +120,15 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
  
 注意到e.g.2例子程序中source和sink的过程都有一个format的参数，值是socket，实际上Structured Streaming支持多种source类型，具体参见下述表格：
 
-![](http://rannn.cc/assets/img/tech/source_table.png)
+<div align="center">
+<img src="http://rannn.cc/assets/img/tech/source_table.png" width="380" height="400" />
+</div>
 
 同样的，sink也有多个支持。
 
-![](http://rannn.cc/assets/img/tech/sink_table.png)
+<div align="center">
+<img src="http://rannn.cc/assets/img/tech/sink_table.png" width="380" height="400" />
+</div>
 
 那么，有了source和sink，Structured Streaming是如何确保end-to-end exactly-once的呢？简单来说，offset tracking in WAL + state management + fault-tolerant source and sink = end-to-end exactly-once。offset tracking in WAL是指在source和sink端，执行引擎会把offset持久化到WAL日志中，用作恢复； state management是指全局高可用的StateStore进行的状态管理;fault-tolerant source and sink是指可靠容错的source和sink。
  
