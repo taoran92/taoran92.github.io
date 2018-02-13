@@ -6,6 +6,7 @@ category: 随笔
 date: 2015-08-05 21:03:05
 ---
 
+<div align="center">
 别驼着背 大气层很轻 害怕看你 渐渐变透明
 
 如果你就褪色消失殆尽
@@ -41,9 +42,9 @@ date: 2015-08-05 21:03:05
 青春是场风驰电掣的雷阵雨
 
 我只需要雨滴溅起一瞬的美丽
+</div>
 
-_歌词来源：厦门大学《厦至45.8》微电影
-整理：陶柠檬 微博@不能卖萌心塞塞_
+> 歌词来源：厦门大学《厦至45.8》微电影 整理：梦回少年 微博@梦回少年rannn
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
