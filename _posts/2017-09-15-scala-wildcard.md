@@ -150,7 +150,7 @@ trait PlaceholderExample {
 }
 ```
 
-```
+```text
 In the first case, process _ represents a method; Scala takes the polymorphic method and attempts to make it monomorphic by filling in the type parameter, but realizes that there is no type that can be filled in for A that will give the type (_ => Unit) => ? (Existential _ is not a type).
 In the second case, process(_) is a lambda; when writing a lambda with no explicit argument type, Scala infers the type from the argument that foreach expects, and _ => Unit is a type (whereas just plain _ isn't), so it can be substituted and inferred.
 This may well be the trickiest gotcha in Scala I have ever encountered.

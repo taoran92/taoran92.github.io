@@ -14,8 +14,8 @@ category: 大数据
 建议使用 
 
 ```
-import scala.collection.JavaConverters._ 显示转换而不是
-import scala.collection.JavaConversions._ （旧版本）
+import scala.collection.JavaConverters._ 显示转换
+import scala.collection.JavaConversions._ （旧版本不推荐）
 ```
 
 3、Scala Map(immutable) 与 mutable Map
