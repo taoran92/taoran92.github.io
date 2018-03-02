@@ -84,7 +84,7 @@ configureCheckpointing方法，进行checkpoint配置。该方法一个非常重
 
 1.1 JobGraph生成后会被提交给JobManager。
 
-```basic
+```java
 private void configureCheckpointing() {
     CheckpointConfig cfg = streamGraph.getCheckpointConfig(); //取出Checkpoint的配置
     
