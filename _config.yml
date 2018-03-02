@@ -4,13 +4,13 @@ permalink: /:year/:month/:day/:title.html
 paginate: 10
 markdown: redcarpet
 
-kramdown:
-  input: GFM
+# kramdown:
+#   input: GFM
 
 redcarpet:
   input: GFM
 
-highlighter: rouge
+# highlighter: rouge
 # pygments: true
 
 # 作者信息
