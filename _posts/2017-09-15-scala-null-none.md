@@ -18,7 +18,7 @@ case object None extends Option[Nothing] {
 }
 ``` 
 
-scala推荐在可能返回空的方法使用Option[X]作为返回类型。如果有值就返回Some[x](Some也是Option的子类)，否则返回None，例如 
+scala推荐在可能返回空的方法使用Option[X]作为返回类型。如果有值就返回Some\[x\](Some也是Option的子类)，否则返回None，例如 
 
 ```
 def get(key: A): Option[B] = {
