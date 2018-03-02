@@ -8,7 +8,7 @@ kramdown:
   input: GFM
 
 # highlighter: rouge
-# pygments: true
+pygments: true
 
 # 作者信息
 author: 

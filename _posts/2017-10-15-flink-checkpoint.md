@@ -9,9 +9,9 @@ category: 大数据
 
 * [Flink Checkpoint简介](#简介)
 * [Flink Checkpoint几个基本问题](#几个基本问题)
-	* [哪些对象需要容错？](#哪些对象需要容错)
-	* [State是什么？](#State是什么)
-	* [Barrier是什么？](#Barrier是什么)
+	* [哪些对象需要容错](#哪些对象需要容错)
+	* [State是什么](#State是什么)
+	* [Barrier是什么](#Barrier是什么)
 * [Flink Checkpoint过程](#FlinkCheckpoint过程)
 	* [第一阶段](#第一阶段)
 	* [第二阶段](#第二阶段)
