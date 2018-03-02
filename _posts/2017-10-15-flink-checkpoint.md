@@ -84,7 +84,7 @@ configureCheckpointing方法，进行checkpoint配置。该方法一个非常重
 
 1.1 JobGraph生成后会被提交给JobManager。
 
-```text
+```java
 private void configureCheckpointing() {
     CheckpointConfig cfg = streamGraph.getCheckpointConfig(); //取出Checkpoint的配置
     
@@ -135,7 +135,7 @@ private void configureCheckpointing() {
 
 ExecutionGraph创建CheckpointCoordinator
 
-```
+```java
 // create the coordinator that triggers and commits checkpoints and holds the state
 		checkpointCoordinator = new CheckpointCoordinator(
 			jobInformation.getJobId(),
@@ -172,7 +172,7 @@ ExecutionGraph创建CheckpointCoordinator
 
 ExecutionGraph初始化完毕后，JobManager的submit方法后续将ExecutionGraph异步提交。
 
-```
+```java
 // execute the recovery/writing the jobGraph into the SubmittedJobGraphStore asynchronously
 // because it is a blocking operation
 future {
@@ -202,7 +202,7 @@ future {
 
 2.2 提交的flink job运行起来，job状态变动后，CheckpointCoordinatorDeActivator持续监听Job的状态。当监听到Job处于RUNNING的时候，将timer定时任务启动。
 
-```
+```java
 public class CheckpointCoordinatorDeActivator implements JobStatusListener {
 
 	private final CheckpointCoordinator coordinator;
@@ -226,7 +226,7 @@ public class CheckpointCoordinatorDeActivator implements JobStatusListener {
 
 startCheckpointScheduler启动时做一些前置检查
 
-```
+```java
 public void startCheckpointScheduler() {
 		synchronized (lock) {
 			if (shutdown) {
@@ -246,7 +246,7 @@ public void startCheckpointScheduler() {
 
 timer运行注册的任务，该任务是一个ScheduledTrigger
 
-```
+```java
 private final class ScheduledTrigger implements Runnable {
 
 		@Override
@@ -266,7 +266,7 @@ private final class ScheduledTrigger implements Runnable {
 
 triggerCheckpoint方法会进行多次检查，其中对checkpoint检查的几个条件包括当前正在处理的并发检查点数目是否超过阈值，两次checkpoint的间隔时间是否过小等。如果这些条件不满足，则将当前检查点的触发请求不会执行。
 
-```
+```java
 CheckpointTriggerResult triggerCheckpoint(
 			long timestamp,
 			CheckpointProperties props,
@@ -334,7 +334,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 接着检查需要被触发检查点的task是否都处于运行状态：
 
-```
+```java
 // check if all tasks that we need to trigger are running.
 		// if not, abort the checkpoint
 		Execution[] executions = new Execution[tasksToTrigger.length];
@@ -354,7 +354,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 然后检查是否所有需要ack检查点的task都处于运行状态：
 
-```
+```java
 // next, check if all tasks that need to acknowledge the checkpoint are running.
 		// if not, abort the checkpoint
 		Map<ExecutionAttemptID, ExecutionVertex> ackTasks = new HashMap<>(tasksToWaitFor.length);
@@ -373,7 +373,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 如果有一个task不满足条件，则不会触发检查点，并立即返回。当以上条件都满足后就具备了具备触发一个检查点的基本条件。然后进入下一步，生成checkpointId：
 
-```
+```java
 final long checkpointID;
 			try {
 				// this must happen outside the coordinator-wide lock, because it communicates
@@ -389,7 +389,7 @@ final long checkpointID;
 
 接着创建一个PendingCheckpoint对象：
 
-```
+```java
 final PendingCheckpoint checkpoint = new PendingCheckpoint(
 				job,
 				checkpointID,
@@ -408,7 +408,7 @@ final PendingCheckpoint checkpoint = new PendingCheckpoint(
 
 检查后，如果触发检查点的条件仍然是满足的，那么将上面创建的PendingCheckpoint对象加入集合中，同时会启动针对当前检查点的超时取消器：
 
-```
+```java
 pendingCheckpoints.put(checkpointID, checkpoint);
 
 ScheduledFuture<?> cancellerHandle = timer.schedule(
@@ -419,7 +419,7 @@ ScheduledFuture<?> cancellerHandle = timer.schedule(
 
 2.4 接下来会发送消息给task以真正触发检查点（基于Akka机制）：
 
-```
+```java
 // send the messages to the tasks that trigger their checkpoint
 	for (Execution execution: executions) {
 	execution.triggerCheckpoint(checkpointID, timestamp, checkpointOptions);
@@ -432,7 +432,7 @@ ScheduledFuture<?> cancellerHandle = timer.schedule(
 
 3.1 TaskManager收到上一阶段的triggerCheckpoint消息后，进行处理。主要是触发检查点屏障Barrier。
 
-```
+```java
 private def handleCheckpointingMessage(actorMessage: AbstractCheckpointMessage): Unit = {
 
     actorMessage match {
@@ -475,7 +475,7 @@ private def handleCheckpointingMessage(actorMessage: AbstractCheckpointMessage):
 
 task的triggerCheckpointBarrier也是一个核心方法，该方法在这一步骤主要是为source端打状态并发射初始barrier到下游。
 
-```
+```java
 public void triggerCheckpointBarrier(
 			final long checkpointID,
 			long checkpointTimestamp,
@@ -556,7 +556,7 @@ org.apache.flink.streaming.runtime.tasks.StreamTask.triggerCheckpoint(StreamTask
 
 即Task的triggerCheckpointBarrier会调用StreamTask.triggerCheckpoint方法，该方法只会在source端的trigger请求中被触发到，它会设置barrier对齐的一些参数并调用performCheckpoint去实际做checkpoint工作。performCheckpoint最终会调用算子的snapshotState方法，也就是最开始提到的state状态需要实现的抽象方法。该方法进行最终的打snapShot的过程，并存储到状态后端。
 
-```
+```java
 @Override
 	public final OperatorSnapshotResult snapshotState(long checkpointId, long timestamp, CheckpointOptions checkpointOptions) throws Exception {
 
@@ -619,7 +619,7 @@ org.apache.flink.streaming.runtime.tasks.StreamTask.triggerCheckpoint(StreamTask
 
 4.1 第四阶段发生在JobManager收到Task的checkpoint消息后的处理。
 
-```
+```java
 private def handleCheckpointMessage(actorMessage: AbstractCheckpointMessage): Unit = {
     actorMessage match {
       case ackMessage: AcknowledgeCheckpoint =>
@@ -706,7 +706,7 @@ for (ExecutionVertex ev : tasksToCommitTo) {
 
 4.3 Taskmanager收到notifyCheckpointComplete消息后触发task的notifyCheckpointComplete方法并最终调用到task上的所有operator的notifyCheckpointComplete。
 
-```
+```java
 case message: NotifyCheckpointComplete =>
         val taskExecutionId = message.getTaskExecutionId
         val checkpointId = message.getCheckpointId
@@ -731,7 +731,7 @@ case message: NotifyCheckpointComplete =>
 
 BarrierBuffer的核心方法是重写的getNextNonBlocked方法。
 
-```
+```java
 public BufferOrEvent getNextNonBlocked() throws IOException, InterruptedException {
         while (true) {
             // process buffered BufferOrEvents before grabbing new ones
@@ -804,7 +804,7 @@ public BufferOrEvent getNextNonBlocked() throws IOException, InterruptedExceptio
 
 方法调用processBarrier进行barrier的处理。
 
-```
+```java
 private void processBarrier(CheckpointBarrier receivedBarrier, int channelIndex) throws Exception {
 		final long barrierId = receivedBarrier.getId();
 

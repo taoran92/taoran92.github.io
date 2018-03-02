@@ -7,8 +7,8 @@ markdown: kramdown
 kramdown:
   input: GFM
 
-# highlighter: rouge
-pygments: true
+highlighter: rouge
+# pygments: true
 
 # 作者信息
 author: 
