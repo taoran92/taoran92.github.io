@@ -2,14 +2,10 @@ encoding: UTF-8
 
 permalink: /:year/:month/:day/:title.html
 paginate: 10
-# markdown: redcarpet
+markdown: kramdown
 
-markdown: redcarpet2
-redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
-
-# kramdown:
-#   input: GFM
+kramdown:
+  input: GFM
 
 # highlighter: rouge
 # pygments: true
