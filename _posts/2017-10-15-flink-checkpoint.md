@@ -1,5 +1,6 @@
 ---
 layout: post
+	againg
 title: 【Flink】Flink容错之Checkpoint机制源码分析
 tags: Flink 原创
 category: 大数据
