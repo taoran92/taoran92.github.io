@@ -2,9 +2,12 @@ encoding: UTF-8
 
 permalink: /:year/:month/:day/:title.html
 paginate: 10
-markdown: kramdown
+markdown: redcarpet
 
 kramdown:
+  input: GFM
+
+redcarpet:
   input: GFM
 
 highlighter: rouge

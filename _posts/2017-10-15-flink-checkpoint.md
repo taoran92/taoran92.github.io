@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 【Flink】Flink容错之Checkpoint机制源码分析
-tags: Flink
+tags: Flink 原创
 category: 大数据
 ---
 
@@ -9,9 +9,9 @@ category: 大数据
 
 * [Flink Checkpoint简介](#简介)
 * [Flink Checkpoint几个基本问题](#几个基本问题)
-	* [哪些对象需要容错？](#哪些对象需要容错？)
-	* [State是什么？](#State是什么？)
-	* [Barrier是什么？](#Barrier是什么？)
+	* [哪些对象需要容错？](#哪些对象需要容错)
+	* [State是什么？](#State是什么)
+	* [Barrier是什么？](#Barrier是什么)
 * [Flink Checkpoint过程](#FlinkCheckpoint过程)
 	* [第一阶段](#第一阶段)
 	* [第二阶段](#第二阶段)
@@ -23,17 +23,17 @@ category: 大数据
 
 Apache Flink 提供了Flink应用exactly-once保证的容错机制。Flink的容错机制是基于异步的分布式快照来实现的，参见论文[Lightweight Asynchronous Snapshots for Distributed Dataflows](https://arxiv.org/abs/1506.08603)。这些分布式快照可存储在JobManager或HDFS等可配置的存储后端。在遇到程序错误（或其他硬件错误）时，Flink停止分布式数据流，重置到最近成功的checkpoint，重放输入流和各算子的状态。保证被重启的并行数据流中处理的任何一个记录都不是checkpoint 状态之前的一部分，实现正好一次的容错机制。
 
-在我看来，Flink基于分布式快照的Checkpoint容错机制是Flink最大的亮点之一。（其他还有Flink的Window机制，乱序记录的处理等等）。接下来，本文从源码层面分析整个Flink Checkpoint的过程。
+Flink基于分布式快照的Checkpoint容错机制是Flink最大的亮点之一。（其他还有Flink的Window机制，乱序记录的处理等等）。接下来，本文从源码层面分析整个Flink Checkpoint的过程。
 
 ## 几个基本问题
 
 在Checkpoint源码分析前首先介绍和Checkpoint相关的几个基本问题。
 
-### 哪些对象需要容错？
+### 哪些对象需要容错
 
-在Flink中，需要具备容错能力的有这样两类对象：function 和 operator。其中function通过实现Checkpointed接口（新版本改由CheckpointedFunction）来进行snapShot，operator通过实现StreamOperator接口来进行snapShot。这两个接口都包含了与快照有关的方法，如 snapshotState。
+在Flink中，需要具备容错能力的有这样两类对象：function 和 operator。其中function通过实现Checkpointed接口（新版本改由CheckpointedFunction）来进行snapShot，operator通过实现StreamOperator接口来进行snapShot。这两个接口都包含了与快照有关的方法，如 snapshotState等。
 
-### State是什么？
+### State是什么
 
 state一般指一个具体的task/operator的状态。而checkpoint则表示了一个Flink Job在某一时刻的一份全局状态快照，包含了所有task/operator的状态。Flink中包含两种基础的状态：Keyed State和Operator State。
 
@@ -51,7 +51,7 @@ Keyed State和Operator State在Flink中可以以两种形式存在：原始状�
 
 托管状态是由Flink框架管理的状态，如ValueState, ListState, MapState等，通过框架提供的接口，我们来更新和管理状态的值。而raw state即原始状态，由用户自行管理状态具体的数据结构，框架在做checkpoint的时候，读写状态内容使用的是字节流，对其内部数据结构一无所知（也就无法做一些优化）。通常在DataStream上的状态建议使用托管的状态，当实现一个用户自定义的operator时，会使用到原始状态。详细的State描述请参见官网文档。
 
-## Barrier是什么？
+## Barrier是什么
 
 Flink 分布式快照的核心概念之一就是数据栅栏（barrier）。这些 barrier 被插入到数据流中，作为数据流的一部分和数据一起向下流动。barrier 不会干扰正常数据，数据流严格有序。一个 barrier 把数据流分割成两部分：一部分进入到当前快照，另一部分进入下一个快照。每一个 barrier 都带有快照 ID，并且 barrier 之前的数据都进入了此快照。barrier 不会干扰数据流处理，所以非常轻量。多个不同快照的多个 barrier 会在流中同时出现，即多个快照可能同时创建。
 
@@ -75,7 +75,7 @@ barrier 在数据源端插入，当快照n的 barrier 插入后，系统会记�
 
 先放上自己根据源码和文档画出的流程图。图中的1.1 2.2等过程与下文是一一对应的。
 
-![](../assets/img/tech/checkpoint.png)
+![](http://rannn.cc/assets/img/tech/checkpoint.png)
 
 ### 第一阶段
 
@@ -84,7 +84,7 @@ configureCheckpointing方法，进行checkpoint配置。该方法一个非常重
 
 1.1 JobGraph生成后会被提交给JobManager。
 
-```java
+```text
 private void configureCheckpointing() {
     CheckpointConfig cfg = streamGraph.getCheckpointConfig(); //取出Checkpoint的配置
     
@@ -135,7 +135,7 @@ private void configureCheckpointing() {
 
 ExecutionGraph创建CheckpointCoordinator
 
-```java
+```
 // create the coordinator that triggers and commits checkpoints and holds the state
 		checkpointCoordinator = new CheckpointCoordinator(
 			jobInformation.getJobId(),
@@ -172,7 +172,7 @@ ExecutionGraph创建CheckpointCoordinator
 
 ExecutionGraph初始化完毕后，JobManager的submit方法后续将ExecutionGraph异步提交。
 
-```java
+```
 // execute the recovery/writing the jobGraph into the SubmittedJobGraphStore asynchronously
 // because it is a blocking operation
 future {
@@ -202,7 +202,7 @@ future {
 
 2.2 提交的flink job运行起来，job状态变动后，CheckpointCoordinatorDeActivator持续监听Job的状态。当监听到Job处于RUNNING的时候，将timer定时任务启动。
 
-```java
+```
 public class CheckpointCoordinatorDeActivator implements JobStatusListener {
 
 	private final CheckpointCoordinator coordinator;
@@ -226,7 +226,7 @@ public class CheckpointCoordinatorDeActivator implements JobStatusListener {
 
 startCheckpointScheduler启动时做一些前置检查
 
-```java
+```
 public void startCheckpointScheduler() {
 		synchronized (lock) {
 			if (shutdown) {
@@ -246,7 +246,7 @@ public void startCheckpointScheduler() {
 
 timer运行注册的任务，该任务是一个ScheduledTrigger
 
-```java
+```
 private final class ScheduledTrigger implements Runnable {
 
 		@Override
@@ -266,7 +266,7 @@ private final class ScheduledTrigger implements Runnable {
 
 triggerCheckpoint方法会进行多次检查，其中对checkpoint检查的几个条件包括当前正在处理的并发检查点数目是否超过阈值，两次checkpoint的间隔时间是否过小等。如果这些条件不满足，则将当前检查点的触发请求不会执行。
 
-```java
+```
 CheckpointTriggerResult triggerCheckpoint(
 			long timestamp,
 			CheckpointProperties props,
@@ -334,7 +334,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 接着检查需要被触发检查点的task是否都处于运行状态：
 
-```java
+```
 // check if all tasks that we need to trigger are running.
 		// if not, abort the checkpoint
 		Execution[] executions = new Execution[tasksToTrigger.length];
@@ -354,7 +354,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 然后检查是否所有需要ack检查点的task都处于运行状态：
 
-```java
+```
 // next, check if all tasks that need to acknowledge the checkpoint are running.
 		// if not, abort the checkpoint
 		Map<ExecutionAttemptID, ExecutionVertex> ackTasks = new HashMap<>(tasksToWaitFor.length);
@@ -373,7 +373,7 @@ CheckpointTriggerResult triggerCheckpoint(
 
 如果有一个task不满足条件，则不会触发检查点，并立即返回。当以上条件都满足后就具备了具备触发一个检查点的基本条件。然后进入下一步，生成checkpointId：
 
-```java
+```
 final long checkpointID;
 			try {
 				// this must happen outside the coordinator-wide lock, because it communicates
@@ -389,7 +389,7 @@ final long checkpointID;
 
 接着创建一个PendingCheckpoint对象：
 
-```java
+```
 final PendingCheckpoint checkpoint = new PendingCheckpoint(
 				job,
 				checkpointID,
@@ -408,7 +408,7 @@ final PendingCheckpoint checkpoint = new PendingCheckpoint(
 
 检查后，如果触发检查点的条件仍然是满足的，那么将上面创建的PendingCheckpoint对象加入集合中，同时会启动针对当前检查点的超时取消器：
 
-```java
+```
 pendingCheckpoints.put(checkpointID, checkpoint);
 
 ScheduledFuture<?> cancellerHandle = timer.schedule(
@@ -419,7 +419,7 @@ ScheduledFuture<?> cancellerHandle = timer.schedule(
 
 2.4 接下来会发送消息给task以真正触发检查点（基于Akka机制）：
 
-```java
+```
 // send the messages to the tasks that trigger their checkpoint
 	for (Execution execution: executions) {
 	execution.triggerCheckpoint(checkpointID, timestamp, checkpointOptions);
@@ -432,7 +432,7 @@ ScheduledFuture<?> cancellerHandle = timer.schedule(
 
 3.1 TaskManager收到上一阶段的triggerCheckpoint消息后，进行处理。主要是触发检查点屏障Barrier。
 
-```java
+```
 private def handleCheckpointingMessage(actorMessage: AbstractCheckpointMessage): Unit = {
 
     actorMessage match {
@@ -475,7 +475,7 @@ private def handleCheckpointingMessage(actorMessage: AbstractCheckpointMessage):
 
 task的triggerCheckpointBarrier也是一个核心方法，该方法在这一步骤主要是为source端打状态并发射初始barrier到下游。
 
-```java
+```
 public void triggerCheckpointBarrier(
 			final long checkpointID,
 			long checkpointTimestamp,
@@ -544,18 +544,19 @@ public void triggerCheckpointBarrier(
 
 该方法内部的调用栈如下：
 
-```java
-       org.apache.flink.streaming.api.operators.AbstractStreamOperator.snapshotState(AbstractStreamOperator.java:407)
-       org.apache.flink.streaming.runtime.tasks.StreamTask$CheckpointingOperation.checkpointStreamOperator(StreamTask.java:1162)
-       org.apache.flink.streaming.runtime.tasks.StreamTask$CheckpointingOperation.executeCheckpointing(StreamTask.java:1094)
-       org.apache.flink.streaming.runtime.tasks.StreamTask.checkpointState(StreamTask.java:654)
-       org.apache.flink.streaming.runtime.tasks.StreamTask.performCheckpoint(StreamTask.java:590)
-       org.apache.flink.streaming.runtime.tasks.StreamTask.triggerCheckpoint(StreamTask.java:543)
+```
+org.apache.flink.streaming.api.operators.AbstractStreamOperator.snapshotState(AbstractStreamOperator.java:407)
+org.apache.flink.streaming.runtime.tasks.StreamTask$CheckpointingOperation.checkpointStreamOperator(
+StreamTask.java:1162)
+org.apache.flink.streaming.runtime.tasks.StreamTask$CheckpointingOperation.executeCheckpointing(StreamTask.java:1094)
+org.apache.flink.streaming.runtime.tasks.StreamTask.checkpointState(StreamTask.java:654)
+org.apache.flink.streaming.runtime.tasks.StreamTask.performCheckpoint(StreamTask.java:590)
+org.apache.flink.streaming.runtime.tasks.StreamTask.triggerCheckpoint(StreamTask.java:543)
 ```
 
 即Task的triggerCheckpointBarrier会调用StreamTask.triggerCheckpoint方法，该方法只会在source端的trigger请求中被触发到，它会设置barrier对齐的一些参数并调用performCheckpoint去实际做checkpoint工作。performCheckpoint最终会调用算子的snapshotState方法，也就是最开始提到的state状态需要实现的抽象方法。该方法进行最终的打snapShot的过程，并存储到状态后端。
 
-```java
+```
 @Override
 	public final OperatorSnapshotResult snapshotState(long checkpointId, long timestamp, CheckpointOptions checkpointOptions) throws Exception {
 
@@ -618,7 +619,7 @@ public void triggerCheckpointBarrier(
 
 4.1 第四阶段发生在JobManager收到Task的checkpoint消息后的处理。
 
-```java
+```
 private def handleCheckpointMessage(actorMessage: AbstractCheckpointMessage): Unit = {
     actorMessage match {
       case ackMessage: AcknowledgeCheckpoint =>
@@ -684,7 +685,7 @@ private def handleCheckpointMessage(actorMessage: AbstractCheckpointMessage): Un
 
 如果收到是task端确认的AcknowledgeCheckpoint消息，将会调用CheckpointCoordinator的receiveAcknowledgeMessage方法并在方法中等待所有task的ack消息的确认.
 
-```java
+```
 if (checkpoint.isFullyAcknowledged()) {
 	completePendingCheckpoint(checkpoint);
 }
@@ -694,7 +695,7 @@ if (checkpoint.isFullyAcknowledged()) {
 
 4.2 如果正确转化为completedCheckpoint则再次向task发送notifyCheckpointComplete消息告诉task该checkpoint已完成并被JobManager记录。
 
-```java
+```
 for (ExecutionVertex ev : tasksToCommitTo) {
 			Execution ee = ev.getCurrentExecutionAttempt();
 			if (ee != null) {
@@ -705,8 +706,7 @@ for (ExecutionVertex ev : tasksToCommitTo) {
 
 4.3 Taskmanager收到notifyCheckpointComplete消息后触发task的notifyCheckpointComplete方法并最终调用到task上的所有operator的notifyCheckpointComplete。
 
-
-```java
+```
 case message: NotifyCheckpointComplete =>
         val taskExecutionId = message.getTaskExecutionId
         val checkpointId = message.getCheckpointId
@@ -731,7 +731,7 @@ case message: NotifyCheckpointComplete =>
 
 BarrierBuffer的核心方法是重写的getNextNonBlocked方法。
 
-```java
+```
 public BufferOrEvent getNextNonBlocked() throws IOException, InterruptedException {
         while (true) {
             // process buffered BufferOrEvents before grabbing new ones
@@ -804,7 +804,7 @@ public BufferOrEvent getNextNonBlocked() throws IOException, InterruptedExceptio
 
 方法调用processBarrier进行barrier的处理。
 
-```java
+```
 private void processBarrier(CheckpointBarrier receivedBarrier, int channelIndex) throws Exception {
 		final long barrierId = receivedBarrier.getId();
 
@@ -885,6 +885,8 @@ at org.apache.flink.streaming.runtime.tasks.StreamTask.triggerCheckpointOnBarrie
 ```
 
 可以看到与3.1步骤的区别在于触发的方法是triggerCheckpointOnBarrier，后续的步骤是一致的。一旦barrier对齐处理完毕，打完算子状态，该Task也会向JobManager发送ACK消息。当barrier发射到sink端，sink端处理完，所有sink端的算子状态的ACK消息也被确认才会调用4.1步骤对PendingCheckpoint的最终转化，并真正完成一次Checkpoint的过程。
+
+本人系作者原创，欢迎Spark、Flink等大数据技术方面的探讨。
 
 ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 
