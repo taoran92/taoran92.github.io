@@ -166,7 +166,6 @@ ExecutionGraph创建CheckpointCoordinator
 		if (interval != Long.MAX_VALUE) {
 			registerJobStatusListener(checkpointCoordinator.createActivatorDeactivator());
 		}
-
 ```
 
 
@@ -470,7 +469,6 @@ private def handleCheckpointingMessage(actorMessage: AbstractCheckpointMessage):
       case _ => unhandled(actorMessage)
     }
   }
-
 ```
 
 task的triggerCheckpointBarrier也是一个核心方法，该方法在这一步骤主要是为source端打状态并发射初始barrier到下游。
