@@ -161,8 +161,6 @@ ExecutionGraph创建CheckpointCoordinator
 		}
 
 		checkpointCoordinator.setCheckpointStatsTracker(checkpointStatsTracker);
-
-		value
 		if (interval != Long.MAX_VALUE) {
 			registerJobStatusListener(checkpointCoordinator.createActivatorDeactivator());
 		}
