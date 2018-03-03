@@ -80,7 +80,7 @@ barrier 在数据源端插入，当快照n的 barrier 插入后，系统会记�
 ### 第一阶段
 
 Client端StreamGraph生成并转化为JobGraph的过程。这里不展开阐述了。注意到一点的是在JobGraph生成的时候会调用
-configureCheckpointing方法，进行checkpoint配置。该方法一个非常重要的地方是triggerVertices.add(vertex.getID())这个操作，它只会将input的JobVertex加入到触发checkpoint的triggerVertices集合。这一步决定了后续CheckpointCoordinator发起的triggerCheckpoint的一系列逻辑只针对source端，注意点这一点非常重要。
+configureCheckpointing方法，进行checkpoint配置。**该方法一个非常重要的地方是triggerVertices.add(vertex.getID())这个操作，它只会将input的JobVertex加入到触发checkpoint的triggerVertices集合。这一步决定了后续CheckpointCoordinator发起的triggerCheckpoint的一系列逻辑只针对source端，注意到这一点非常重要。**
 
 1.1 JobGraph生成后会被提交给JobManager。
 
@@ -127,7 +127,7 @@ private void configureCheckpointing() {
 }
 ```
 
-小结：第一阶段主要是client端的JobGraph的生成并拿到所有checkpoint的配置信息。
+小结：第一阶段主要是client端的JobGraph的生成并拿到所有checkpoint的配置信息，然后提交任务给JobManager。
 
 ### 第二阶段
 
@@ -262,7 +262,7 @@ private final class ScheduledTrigger implements Runnable {
 ```
 
 
-2.3 并走到triggerCheckpoint这一核心方法，触发一次checkpoint（注意这里针对source）
+2.3 **并走到triggerCheckpoint这一核心方法，触发一次checkpoint（注意这里针对source）**
 
 triggerCheckpoint方法会进行多次检查，其中对checkpoint检查的几个条件包括当前正在处理的并发检查点数目是否超过阈值，两次checkpoint的间隔时间是否过小等。如果这些条件不满足，则将当前检查点的触发请求不会执行。
 
@@ -704,7 +704,7 @@ for (ExecutionVertex ev : tasksToCommitTo) {
 }
 ```
 
-4.3 Taskmanager收到notifyCheckpointComplete消息后触发task的notifyCheckpointComplete方法并最终调用到task上的所有operator的notifyCheckpointComplete。
+4.3 Taskmanager收到notifyCheckpointComplete消息后触发task的notifyCheckpointComplete方法并最终调用到task上的所有operator的notifyCheckpointComplete。这样一次完整的Checkpoint过程就结束了。
 
 ```java
 case message: NotifyCheckpointComplete =>
@@ -725,7 +725,7 @@ case message: NotifyCheckpointComplete =>
 
 ### 运行时Checkpoint触发
 
-注意到在4.1步JobManager收到Task的checkpoint消息后的处理，如果当前的消息是ACK的消息，JobManager必须等待所有task的ACK到达才会做PendingCheckpoint到CompletedCheckpoint的过程。上述Task内部触发Checkpoint过程，并列出的调用栈同样是基于Source的。那么Source的下游的Task是如何触发Checkpoint的呢？
+注意到在4.1步JobManager收到Task的checkpoint消息后的处理，如果当前的消息是ACK的消息，JobManager必须等待所有task的ACK到达才会做PendingCheckpoint到CompletedCheckpoint的过程。而3.1步说明的是Source处Task触发Checkpoint过程，列出的调用栈同样是基于Source的。那么Source的下游的Task是如何触发Checkpoint的呢？
 
 注意到前文我们叙述到Source端触发Checkpoint后会创建初始barrier并发射出去。而这个就是下游Task触发Checkpoint的关键。与Source端是由CheckpointCoordinator的timer定时器主动触发不同，下游的算子是在运行时触发的。当下游的算子收到上游的barrier后，它将会意识到当前正处于前一个检查点和后一个检查点之间。会进行基本问题3中说明的barrier对齐（exactly-once需要）。Flink中提供了CheckpointBarrierHandler类进行barrier事件的处理。在Exactly-Once要求的应用中，会使用CheckpointBarrierHandler的实现类BarrierBuffer进行barrier对齐和barrier事件的处理。
 
