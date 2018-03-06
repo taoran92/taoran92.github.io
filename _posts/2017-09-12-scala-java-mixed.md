@@ -22,6 +22,10 @@ import scala.collection.JavaConversions._ （旧版本不推荐）
 
 immutable使用var的+=, mutable使用val的put或者+=
 
+4、Java与Scala的同名集合框架选择问题
+
+scala涉及到与Java库打交道时（如json转换之类的）使用Java的集合框架。局限于scala代码内部请使用scala原生集合框架
+
 > 持续更新
 
 ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
