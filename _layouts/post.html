@@ -14,13 +14,27 @@ layout: default
 		{% endfor %}
 		</span>
 	    {% endif %}
-	    本文访问量<span id="busuanzi_value_page_pv"></span>	
+	    <!-- 本文访问量<span id="busuanzi_value_page_pv"></span>	 -->
     </div>
   </header>
 
   <article class="post-content">
     {{ content }}	
   </article>
+  <div id="container"></div>
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: window.location.pathname, // 可选。默认为 location.href
+  owner: '{{site.author.github_username}}',
+  repo: '{{site.author.github_page}}',
+  oauth: {
+    client_id: 'd434df4970edfd9beba6',
+    client_secret: '',
+  },
+})
+gitment.render('container')
+</script>
 </div>
 
   <div class="prevandnext">
