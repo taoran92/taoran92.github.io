@@ -43,6 +43,8 @@ $(document).ready(function() {
 
         prettyPrint();
 
+        alert("prettyPrint end")
+
         pajx_loadDuoshuo(); //pjax加载完成之后调用重载多说函数
 
         $(".pjax_loading").css("display", "none");
@@ -91,6 +93,8 @@ function pajx_loadDuoshuo() {
         DUOSHUO.EmbedThread(el);
         $(dus).html(el);
     }
+    $.getScript("https://imsun.github.io/gitment/dist/gitment.browser.js")
+    alert("pajx_loadDuoshuo end")
 }
 
 function pjax_loadChart() {
