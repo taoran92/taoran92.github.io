@@ -39,6 +39,7 @@ $(document).ready(function() {
     });
 
     $(document).on('pjax:complete', function() {
+    	alert("pjax:complete")
         $("pre").addClass("prettyprint linenums");
 
         prettyPrint();
