@@ -83,7 +83,6 @@ $(document).ready(function() {
 });
 
 function pajx_loadDuoshuo() {
-	alert("load duoshuo")
     var dus = $('.ds-thread');
     if ($(dus).length == 1) {
         var el = document.createElement('div');
