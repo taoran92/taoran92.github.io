@@ -18,7 +18,7 @@ $(document).ready(function() {
         pjax_loadChart();
 
         // $('.navbar-wrapper').stickUp();
-        $("a#single_image").fancybox();
+        // $("a#single_image").fancybox();
         $("a.group").fancybox({
             'transitionIn': 'elastic',
             'transitionOut': 'elastic',
