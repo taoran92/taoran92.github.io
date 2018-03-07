@@ -91,7 +91,8 @@ function pajx_loadDuoshuo() {
         DUOSHUO.EmbedThread(el);
         $(dus).html(el);
     }
-
+    var pageView = $("#busuanzi_value_page_pv").html();
+    alert(pageView)
 }
 
 function pjax_loadChart() {
