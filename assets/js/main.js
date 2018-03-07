@@ -30,7 +30,7 @@ $(document).ready(function() {
 
     $(document).pjax('.pjaxlink', '#pjax', {
         fragment: "#pjax",
-        timeout: 10000
+        timeout: 5000
     });
 
 
