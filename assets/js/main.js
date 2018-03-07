@@ -91,8 +91,14 @@ function pajx_loadDuoshuo() {
         DUOSHUO.EmbedThread(el);
         $(dus).html(el);
     }
-    var pageView = $("#busuanzi_value_page_pv").html();
-    alert(pageView)
+
+    // $.getScript("https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js")
+
+
+    var busuanzi = document.getElementById("busuanzi_value_page_pv").innerText
+    alert(busuanzi)
+    $('#busuanzi_value_page_pv').html(busuanzi);
+
 }
 
 function pjax_loadChart() {
