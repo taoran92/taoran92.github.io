@@ -83,6 +83,7 @@ $(document).ready(function() {
 });
 
 function pajx_loadDuoshuo() {
+	alert("load duoshuo")
     var dus = $('.ds-thread');
     if ($(dus).length == 1) {
         var el = document.createElement('div');
@@ -92,9 +93,7 @@ function pajx_loadDuoshuo() {
         $(dus).html(el);
     }
 
-    // $.getScript("https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js")
-
-
+    $.getScript("https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js")
     var busuanzi = document.getElementById("busuanzi_value_page_pv").innerText
     alert(busuanzi)
     $('#busuanzi_value_page_pv').html(busuanzi);
