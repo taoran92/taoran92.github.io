@@ -33,7 +33,6 @@ $(document).ready(function() {
         timeout: 10000
     });
 
-
     $(document).on('pjax:send', function() { //pjax链接点击后显示加载动画；
         $(".pjax_loading").css("display", "block");
     });
