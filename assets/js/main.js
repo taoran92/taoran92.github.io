@@ -89,9 +89,7 @@ function pajx_loadDuoshuo() {
         DUOSHUO.EmbedThread(el);
         $(dus).html(el);
     }
-    $.getScript("https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js", function() {
-    	alert("load busuanzi success");
-    })
+    $.getScript("https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js")
 }
 
 function pjax_loadChart() {
