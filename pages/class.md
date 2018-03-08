@@ -12,12 +12,11 @@ permalink: /pages/class.html
 			                 <a  href='{{ post.url }}'  class="list-group-item clearfix pjaxlink">
 				            {{post.title}}
 				            <span class="badge">{{ post.date | date:"%Y年%m月%d日" }}</span>
-				     </a>
-			               {% endfor %}
-			</div>
+				             </a>
+			              {% endfor %}
+			   </div>
 	{% endfor %}
 	
 </div>
-
 <div>
 </div>
