@@ -2,7 +2,7 @@
 layout: post
 title: 【Spark】Spark本地调试时ExceptionInInitializerError错误解决方法
 tags: 原创 Spark
-category: 大数据
+category: Big Data
 ---
 
 Spark引擎修改时，我们经常需要进行测试套件。在测试套件运行过程中会通过SparkBuildInfo读取（下面报错日志NPE位置）

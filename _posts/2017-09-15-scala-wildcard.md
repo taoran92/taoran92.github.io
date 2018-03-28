@@ -2,7 +2,7 @@
 layout: post
 title: 【Scala】Scala 中下划线的用途
 tags: 原创 Spark Scala
-category: 大数据
+category: Big Data
 ---
 
 1、存在性类型：Existential types

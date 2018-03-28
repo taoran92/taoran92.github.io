@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Hadoop】深入浅出Hadoop集群搭建补遗
+title: 【Hadoop】深入浅出Hadoop集群搭建补遗
 tags: 原创 Hadoop
-category: 大数据
+category: Big Data
 ---	
 
 搭建此环境主要用来跑实验和论文相关，因此我们的操作直接在root用户下，不可用于生产环境。且下文命令、文件均特指Ubuntu14.04 Linux发行版操作系统下。

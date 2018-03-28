@@ -2,7 +2,7 @@
 layout: post
 title: 【Spark】Spark WebUI 原理和工作方式
 tags: 原创 Spark
-category: 大数据
+category: Big Data
 ---
 
 Spark应用运行时的详细进度信息，性能指标等数据和信息对于我们分析Spark应用是十分重要的。而Spark的WebUI便是观测应用、作业运行情况的一个很重要的窗口。本文主要从源码层面分析下Spark WebUI原理和工作方式。并从Job信息的一个切面阐述WebUI数据获取和更新的过程。
