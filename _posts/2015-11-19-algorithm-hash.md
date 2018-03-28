@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 数组中只出现一次的数字
-category: 算法
-tags: Algorithm
+tags: 算法
+category: Algorithm
 description: 一类问题
 ---
 
