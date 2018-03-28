@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』Java中的向下转型与向上转型
-tags: Java
+tags: 原创 JavaSE
 category: Java
 date: 2015-09-05 23:20:41
 ---

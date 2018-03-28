@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 当我们谈论故乡的时候
+title: 『原创』当我们谈论故乡的时候
 tags: 原创 随笔
 category: 随笔
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Object中getClass方法详解
-tags: Java
+tags: JavaSE
 category: Java
 ---
 

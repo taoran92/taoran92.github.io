@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』Two Sum - Leetcode
-tags: 算法 leetcode
+tags: 原创 算法 LeetCode
 category: Algorithm
 date: 2015-10-16 16:36:01
 ---

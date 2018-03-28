@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 折木的节能主义
+title: 『原创』折木的节能主义
 tags: 原创 随笔
 category: 随笔
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: HttpSession与Hibernate中Session的区别
-tags: javaweb
+tags: JavaWeb
 category: Java
 date: 2015-11-30 16:04:17
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Junit4中的新断言assertThat的方法
-tags: 测试
+tags: Junit
 category: Java
 ---
 

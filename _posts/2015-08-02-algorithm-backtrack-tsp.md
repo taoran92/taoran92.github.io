@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』算法#9 回溯法求解TSP
-tags: TSP 算法
+tags: 原创 算法 TSP
 category: Algorithm
 date: 2015-08-02 21:22:26
 ---

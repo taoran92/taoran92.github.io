@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 浮动小人改造计划2:接入一言api
-tags: 一言 浮动小人
+tags: 浮动小人
 category: 技术
 date: 2015-11-09 15:12:49
 ---

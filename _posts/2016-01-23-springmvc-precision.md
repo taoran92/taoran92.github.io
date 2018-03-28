@@ -1,7 +1,7 @@
 ---
 layout: post
 title: SpringMVC利用Column 注解约束double类型的精度
-tags: javaweb
+tags: Spring
 category: Java
 date: 2016-01-23 19:39:08
 ---

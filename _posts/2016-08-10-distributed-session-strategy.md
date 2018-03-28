@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 分布式环境中三种Session管理方法的使用场景及优缺点
-tags: Java
+tags: JavaWeb
 category: 技术
 ---
 

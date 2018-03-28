@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』深入浅出IOC
-tags: ioc
+tags: 原创 IoC
 category: Java
 date: 2016-02-19 11:52:14
 ---

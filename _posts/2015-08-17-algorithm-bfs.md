@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』算法#4 广度优先搜索（BFS）+路径打印
-tags: 算法 BFS
+tags: 原创 算法 BFS
 category: Algorithm
 date: 2015-08-17 20:55:27
 ---

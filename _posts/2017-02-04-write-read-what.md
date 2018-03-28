@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 写什么作读什么书
-tags: 原创 读书
+title: 『原创』写什么作读什么书
+tags: 原创 随笔
 category: 随笔
 ---
 

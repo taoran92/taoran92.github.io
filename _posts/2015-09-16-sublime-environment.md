@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』sublime text3 安装与配置java环境
-tags: sublime
+tags: 原创 IDE
 category: 技术
 date: 2015-09-16 16:21:35
 ---

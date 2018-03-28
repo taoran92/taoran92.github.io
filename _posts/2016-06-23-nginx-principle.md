@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Nginx工作原理简介
-tags: nginx
+tags: Nginx
 category: 技术
 ---
 

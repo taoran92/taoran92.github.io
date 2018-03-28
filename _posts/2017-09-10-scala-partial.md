@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 【Scala】偏函数和偏应用函数
+title: 『原创』【Scala】偏函数和偏应用函数
 tags: Spark
 category: 大数据
 ---

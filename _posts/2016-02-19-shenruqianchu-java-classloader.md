@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』深入浅出类装载器ClassLoader
-tags: jvm
+tags: 原创 JVM
 category: Java
 date: 2016-02-19 20:50:01
 ---

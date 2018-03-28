@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』青春是场风驰电掣的雷阵雨
-tags: 原创 厦门
+tags: 厦门
 category: 随笔
 date: 2015-09-22 22:11:52
 ---

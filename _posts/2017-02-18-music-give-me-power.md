@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 音乐给予的力量
+title: 『原创』音乐给予的力量
 tags: 原创 随笔
 category: 随笔
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 理解Java中的内存分配
-tags: Java
+tags: JavaSE
 category: Java
 date: 2015-09-16 16:16:39
 ---

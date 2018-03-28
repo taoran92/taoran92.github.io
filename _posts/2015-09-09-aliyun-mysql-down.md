@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 阿里云服务器MySQL频繁挂掉解决办法
-tags: mysql 阿里云
+tags: 阿里云 MySQL
 category: 技术
 date: 2015-09-09 21:06:21
 ---

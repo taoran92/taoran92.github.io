@@ -1,10 +1,9 @@
 ---
 layout: post
 title: 数组中只出现一次的数字
-category: 技术
+category: 算法
 tags: Algorithm
 description: 一类问题
-
 ---
 
 > 在牛客上看到了很多这种题目 今天总结一下吧

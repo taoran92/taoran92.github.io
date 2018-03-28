@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』深入理解Java注解 － 注解处理器
-tags: 注解
+tags: 原创 JavaSE 注解
 category: Java
 date: 2016-02-05 15:47:11
 ---

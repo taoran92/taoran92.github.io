@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 湘琴之于植树的爱情
-tags: 原创 随笔
+title: 『原创』湘琴之于植树的爱情
+tags: 原创 爱情
 category: 随笔
 ---
 

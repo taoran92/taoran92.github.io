@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 【Spark】Spark本地调试时ExceptionInInitializerError错误解决方法
-tags: Spark 原创
+title: 『原创』【Spark】Spark本地调试时ExceptionInInitializerError错误解决方法
+tags: 原创 Spark
 category: 大数据
 ---
 

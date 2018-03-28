@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』算法#1 C++ 信使
-tags: 算法 最短路径
+tags: 原创 算法 最短路径
 category: Algorithm
 date: 2015-08-05 22:55:40
 description: 最短路径问题

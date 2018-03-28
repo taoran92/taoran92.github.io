@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』算法#6 矩阵连乘（动态规划）
-tags: 算法 动态规划
+tags: 原创 算法 动态规划
 category: Algorithm
 date: 2015-08-20 13:21:00
 ---

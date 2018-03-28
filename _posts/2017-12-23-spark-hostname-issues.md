@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 【Spark】Spark针对https和IPv6的主机名处理的两个issue分析
-tags: Spark 原创
+title: 『原创』【Spark】Spark针对https和IPv6的主机名处理的两个issue分析
+tags: 原创 Spark
 category: 大数据
 ---
 
