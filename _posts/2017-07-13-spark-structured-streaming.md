@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 『原创』【Spark】Spark2.x Structured Streaming流式计算介绍
+title: 【Spark】Spark2.x Structured Streaming流式计算介绍
 tags: 原创 Spark
 category: 大数据
 ---

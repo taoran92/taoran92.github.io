@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 『原创』【Scala】Scala与Java混合编程最佳实践
+title: 【Scala】Scala与Java混合编程最佳实践
 tags: 原创 Spark Scala
 category: 大数据
 ---

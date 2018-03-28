@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 『原创』【Scala】Scala 中下划线的用途
+title: 【Scala】Scala 中下划线的用途
 tags: 原创 Spark Scala
 category: 大数据
 ---
