@@ -1,6 +1,6 @@
 ---
 layout: post
-title:【Scala】None,Nothing,Null,Nil的区别
+title: 【Scala】None,Nothing,Null,Nil的区别
 tags: Spark Scala
 category: 大数据
 ---
