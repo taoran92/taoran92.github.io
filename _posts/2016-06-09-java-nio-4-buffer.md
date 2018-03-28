@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 4.Java NIO Buffer
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 5.Java NIO Scatter/Gather
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

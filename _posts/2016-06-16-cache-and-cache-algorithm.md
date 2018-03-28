@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 译文-缓存、缓存算法和缓存框架简介
-tags: Java
+tags: 缓存
 category: Java
 ---
 

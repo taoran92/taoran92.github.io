@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 12.Java NIO Pipe
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

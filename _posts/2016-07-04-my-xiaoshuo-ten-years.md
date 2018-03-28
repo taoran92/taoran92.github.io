@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』我的小说十年
-tags: 随笔
+tags: 原创 随笔
 category: 随笔
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 3.Java NIO Channel
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

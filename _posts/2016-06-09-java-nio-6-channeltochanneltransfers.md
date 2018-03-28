@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 6.Java NIO Channel to Channel Transfers
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

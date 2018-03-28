@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 11.Java NIO DatagramChannel
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

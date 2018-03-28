@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』Java序列化
-tags: Java 序列化
+tags: 序列化
 category: Java
 date: 2015-12-23 21:29:22
 ---

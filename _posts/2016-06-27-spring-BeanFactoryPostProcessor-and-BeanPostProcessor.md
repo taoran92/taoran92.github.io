@@ -1,7 +1,7 @@
 ---
 layout: post
 title: spring后置处理器BeanFactoryPostProcessor和BeanPostProcessor的用法和区别
-tags: Java Spring
+tags: Spring
 category: Java
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 精-Spring Bean生命周期
-tags: Java Spring
+tags: Spring
 category: Java
 ---
 

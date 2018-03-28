@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』算法#3 深度优先搜索+拓扑排序
-tags: DFS
+tags: 算法 DFS
 category: Algorithm
 date: 2015-08-22 20:45:05
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 图示SpringMVC请求流程和拦截器执行次序
-tags: Java Spring
+tags: Spring
 category: Java
 ---
 

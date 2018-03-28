@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 8.Java NIO FileChannel
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

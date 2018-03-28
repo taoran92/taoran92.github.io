@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 7.Java NIO Selector
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

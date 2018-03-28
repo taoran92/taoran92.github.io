@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 2017年我打算实现的13个愿望
-tags: 随笔
+tags: 原创 随笔
 category: 随笔
 ---
 

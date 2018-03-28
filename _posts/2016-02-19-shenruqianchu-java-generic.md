@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 深入浅出Java泛型
-tags: Java 泛型
+tags: 泛型
 category: Java
 date: 2016-02-19 13:16:37
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Spring本质系列之AOP
-tags: Java Spring
+tags: Spring
 category: Java
 ---
 

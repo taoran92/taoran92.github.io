@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 对一致性哈希算法的深入研究
-tags: Java
+tags: 算法
 category: Algorithm
 ---
 

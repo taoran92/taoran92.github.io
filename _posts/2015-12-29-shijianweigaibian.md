@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 时间从未改变，是我们一直在流逝
-tags: 爱情 随笔 音乐
+tags: 爱情
 category: 随笔
 date: 2015-12-29 20:42:43
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』校招季 - 我的网易游戏面试
-tags: 网易游戏 校招
+tags: 校招
 category: 求职
 date: 2016-04-04 11:00:08
 ---

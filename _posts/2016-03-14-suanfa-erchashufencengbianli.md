@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』二叉树的分层遍历
-tags: 二叉树
+tags: 算法
 category: Algorithm
 ---
 

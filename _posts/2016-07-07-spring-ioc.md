@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Spring 的本质系列之IOC
-tags: Java Spring
+tags: Spring
 category: Java
 ---
 

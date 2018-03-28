@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 10.Java NIO ServerSocketChannel
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

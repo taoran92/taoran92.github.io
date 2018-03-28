@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 【Hadoop】Hadoop2.6的Snappy、OpenSSL等本地库错误
-tags: Hadoop
+tags: Hadoop 原创
 category: 大数据
 ---
 

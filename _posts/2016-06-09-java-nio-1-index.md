@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 1.Java NIO Tutorial
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

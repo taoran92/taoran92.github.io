@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 13.Java NIO AND IO
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

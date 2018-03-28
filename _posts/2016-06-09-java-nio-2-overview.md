@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 2.Java NIO Overview
-tags: Java NIO
+tags: NIO
 category: Java
 ---
 

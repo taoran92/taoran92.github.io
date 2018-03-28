@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Redis学习日记
-tags: Redis
+tags: 原创 缓存 Redis
 category: 技术
 ---
 

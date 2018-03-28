@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 『原创』IntelliJ IDEA JavaDoc生成
-tags: Java
+tags: IDE
 category: 技术
 ---
 
