@@ -2,7 +2,7 @@
 layout: post
 title: 【Scala】偏函数和偏应用函数
 tags: Spark
-category: Big Data
+category: BigData
 ---
 
 ## 偏函数

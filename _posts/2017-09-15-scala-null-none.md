@@ -2,7 +2,7 @@
 layout: post
 title: 【Scala】None,Nothing,Null,Nil的区别
 tags: Spark Scala
-category: Big Data
+category: BigData
 ---
 
 在scala中这四个类型名称很类似，作用确实完全不同的。 
