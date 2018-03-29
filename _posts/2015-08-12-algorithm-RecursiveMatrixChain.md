@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 『原创』算法#7 矩阵连乘（递归法）
-tags: 原创 算法 递归
-category: Algorithm
+tags: 原创 Algorithm 递归
+category: 算法
 date: 2015-08-12 21:08:27
 ---
 

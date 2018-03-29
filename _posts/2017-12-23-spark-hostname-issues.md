@@ -2,7 +2,7 @@
 layout: post
 title: 【Spark】Spark针对https和IPv6的主机名处理的两个issue分析
 tags: 原创 Spark
-category: BigData
+category: 大数据
 ---
 
 我们知道Java中获取主机名有getCanonicalHostName, getHostName两种，同时有getHostAddress返回IP地址。实际上，在不同的平台和网络环境下它们是有一些问题的。看看在Spark中会有哪些问题以及如何解决的。

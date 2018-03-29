@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 『原创』算法#12 动态规划求解0-1背包
-tags: 原创 算法 背包
-category: Algorithm
+tags: 原创 Algorithm 背包
+category: 算法
 date: 2015-08-12 21:34:56
 ---
 

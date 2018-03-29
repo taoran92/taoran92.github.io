@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 对一致性哈希算法的深入研究
-tags: 算法
-category: Algorithm
+tags: Algorithm
+category: 算法
 ---
 
 ## 一致性Hash算法

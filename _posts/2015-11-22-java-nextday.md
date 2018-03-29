@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 计算nextDay的实现
-tags: 算法
-category: Algorithm
+tags: Algorithm
+category: 算法
 description: 实现nextDay算法
 ---
 

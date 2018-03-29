@@ -1,8 +1,8 @@
 ---
 layout: post
 title: 『原创』算法#5 矩阵链乘法（备忘录法）
-tags: 原创 算法 备忘录法
-category: Algorithm
+tags: 原创 Algorithm 备忘录法
+category: 算法
 date: 2015-08-25 21:01:13
 ---
 
