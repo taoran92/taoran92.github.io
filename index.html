@@ -3,12 +3,10 @@ layout: default
 ---
 
 <div>
-
    {% for post in paginator.posts %}
-
 		<div class="postbox">
 			<div class="post-format-icon">
-                <a class="item-date pjaxlink" href="http://rannn.cc/pages/class.html#{{post.category}}"><span>{{post.category}}</span></a>
+                <a class="item-date" href="http://rannn.cc/pages/class.html#{{post.category}}"><span>{{post.category}}</span></a>
             </div>
 			<div class="allpost">
 				<div class="title"><a class="pjaxlink" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></div>
@@ -24,7 +22,7 @@ layout: default
 					</span>
 					{% endif %}
 				</div>
-				<div class="contentAbstract">{{ post.excerpt }}</div>				
+				<div class="contentAbstract">{{ post.excerpt }}</div>
 			</div>
 			<a href="{{ post.url | prepend: site.baseurl }}"  class="readmore pjaxlink">Read More <i class="glyphicon glyphicon-chevron-right"></i></a>
 		</div>
