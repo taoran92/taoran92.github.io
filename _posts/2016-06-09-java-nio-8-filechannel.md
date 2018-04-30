@@ -101,7 +101,7 @@ force()方法有一个boolean类型的参数，指明是否同时将文件元数
 ```channel.force(true);```
 
 
-Next: [Java-NIO-9-SocketChannel](http://rannn.cc/2016/06/09/java-nio-9-socketchannel.html)
+Next: [Java-NIO-9-SocketChannel](http://rann.cc/2016/06/09/java-nio-9-socketchannel.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

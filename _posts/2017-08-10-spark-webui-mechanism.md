@@ -16,11 +16,11 @@ Spark应用运行时的详细进度信息，性能指标等数据和信息对于
 
 ## 页面
 
-![](http://rannn.cc/assets/img/tech/sparkui.png)
+![](http://rann.cc/assets/img/tech/sparkui.png)
 
 ## 流程图
 
-![](http://rannn.cc/assets/img/tech/procedure.png)
+![](http://rann.cc/assets/img/tech/procedure.png)
 
 ## 源码分析
 
@@ -68,7 +68,7 @@ appName, basePath, startTime)
 
 上述的几个监听对象分别与UI上的
 
-![](http://rannn.cc/assets/img/tech/sparkbanner.png)
+![](http://rann.cc/assets/img/tech/sparkbanner.png)
 
 这几个Tab项的是对应的，具体是：
 
@@ -83,7 +83,7 @@ Step3、执行SparkUI的initialize初始化方法
 
 当实例化SparkUI的过程中会执行初始化方法，绑定如下的tab项对应的对象数据以及注册页面处理句柄
 
-![](http://rannn.cc/assets/img/tech/sparkbanner.png)
+![](http://rann.cc/assets/img/tech/sparkbanner.png)
 
 即
 

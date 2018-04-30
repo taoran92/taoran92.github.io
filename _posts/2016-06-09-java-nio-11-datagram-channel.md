@@ -62,7 +62,7 @@ int bytesRead = channel.read(buf);
 int bytesWritten = channel.write(buf);
 ```
 
-Next: [Java-NIO-12-pipe](http://rannn.cc/2016/06/09/java-nio-12-pipe.html)
+Next: [Java-NIO-12-pipe](http://rann.cc/2016/06/09/java-nio-12-pipe.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

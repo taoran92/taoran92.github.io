@@ -76,7 +76,7 @@ permalink: /pages/about.html
 				微博：
 			</td> 
 			<td>
-				<a href="{{ site.author.weibo }}" target="_blank">梦回少年rannn</a>
+				<a href="{{ site.author.weibo }}" target="_blank">梦回少年rann</a>
 			</td> 
 		</tr>
 
@@ -85,7 +85,7 @@ permalink: /pages/about.html
 				网易云音乐：
 			</td> 
 			<td>
-				<a href="{{ site.author.netease }}" target="_blank">梦回少年rannn</a>
+				<a href="{{ site.author.netease }}" target="_blank">梦回少年rann</a>
 			</td> 
 		</tr>
 		<tr>

@@ -470,7 +470,7 @@ RSA公开密钥密码体制
 
 完，作者：、insomnia
 
-[微博@梦回少年rannn](http://weibo.com/u/1662536394)
+[微博@梦回少年rann](http://weibo.com/u/1662536394)
 
 To Be Continued...
 

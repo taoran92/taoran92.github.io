@@ -23,11 +23,11 @@
 
 &lt;h2 id=&quot;页面&quot;&gt;页面&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkui.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/tech/sparkui.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;流程图&quot;&gt;流程图&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/procedure.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/tech/procedure.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;源码分析&quot;&gt;源码分析&lt;/h2&gt;
 
@@ -72,7 +72,7 @@
 
 &lt;p&gt;上述的几个监听对象分别与UI上的&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;这几个Tab项的是对应的，具体是：&lt;/p&gt;
 
@@ -87,7 +87,7 @@
 
 &lt;p&gt;当实例化SparkUI的过程中会执行初始化方法，绑定如下的tab项对应的对象数据以及注册页面处理句柄&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/tech/sparkbanner.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;即&lt;/p&gt;
 
@@ -1439,7 +1439,7 @@ Vmnet8 NAT模式
         <link>http://localhost:4000/2017/01/31/talk-about-hometown.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/01/31/talk-about-hometown.html</guid>
         <pubDate>Tue, 31 Jan 2017 00:00:00 +0800</pubDate>
-        <description>&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;今日封面图：蝴蝶飞不过沧海（拍摄于厦门外海）&lt;/p&gt;
 
@@ -1483,7 +1483,7 @@ Vmnet8 NAT模式
         <link>http://localhost:4000/2017/01/28/my-new-year-hope.html</link>
         <guid isPermaLink="true">http://localhost:4000/2017/01/28/my-new-year-hope.html</guid>
         <pubDate>Sat, 28 Jan 2017 00:00:00 +0800</pubDate>
-        <description>&lt;p&gt;&lt;img src=&quot;http://rannn.cc/assets/img/blogimg/WechatIMG4.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+        <description>&lt;p&gt;&lt;img src=&quot;http://rann.cc/assets/img/blogimg/WechatIMG4.jpeg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;​今日封面图：杭州茅家埠（自拍直出）&lt;/p&gt;
 

@@ -5,7 +5,7 @@ tags: 原创 随笔
 category: 随笔
 ---
 
-![](http://rannn.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg)
+![](http://rann.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg)
 
 今日封面图：蝴蝶飞不过沧海（拍摄于厦门外海）
 

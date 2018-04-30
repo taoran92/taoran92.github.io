@@ -229,7 +229,7 @@ while(true) {
 }
 ```
 
-Next: [Java-NIO-8-FileChannel](http://rannn.cc/2016/06/09/java-nio-8-filechannel.html)
+Next: [Java-NIO-8-FileChannel](http://rann.cc/2016/06/09/java-nio-8-filechannel.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />

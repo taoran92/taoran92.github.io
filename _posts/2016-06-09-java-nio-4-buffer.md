@@ -220,7 +220,7 @@ compareTo()方法比较两个Buffer的剩余元素(byte、char等)，如果满�
 
 （译注：剩余元素是从 position到limit之间的元素）
 
-Next: [Java-NIO-5-Scatter-Gather](http://rannn.cc/2016/06/09/java-nio-5-scatter-gather.html)
+Next: [Java-NIO-5-Scatter-Gather](http://rann.cc/2016/06/09/java-nio-5-scatter-gather.html)
 
 <div align="center">
 <img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
