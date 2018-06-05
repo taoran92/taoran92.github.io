@@ -5,9 +5,11 @@ tags: 原创 Spark
 category: 大数据
 ---
 
+问题：多个不同流根据一定规则join的问题（例如：网约车中订单发单流与接单流join问题）
+
 ## 问题
 
-问题：多个不同流根据一定规则join的问题（例如：网约车中订单发单流与接单流join问题）
+描述：多个不同流根据一定规则join的问题（例如：网约车中订单发单流与接单流join问题）
 
 特点：
 - 不同流需要join的数据时间跨度较长（例如：发单与接单时间跨度最长一周之久）
@@ -27,7 +29,7 @@ category: 大数据
 
 为了解决上述的多流Join问题，进行了如下的方案实现。
 
-![](https://github.com/Lemonjing/DevUtil/blob/master/github/join.png)
+![](https://raw.githubusercontent.com/Lemonjing/DevUtil/master/github/join.png)
 
 1.通过在Spark Streaming引擎中封装一套Cache服务（可读写外部KV存储，如Fusion、HBase），对先到达的数据流Cache住。2.将各种Join的规则配置化引入引擎，根据Join的场景按序选择规则进行应用。在Join过程中，缓存流Join上之前一直保持，Join上后进行释放。（这里可能会涉及到KV存储remove操作的性能问题，可进行put的替代或假删除）
 
