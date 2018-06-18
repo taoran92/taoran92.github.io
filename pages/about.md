@@ -104,7 +104,10 @@ permalink: /pages/about.html
 	<hr>
 	<br>
 	<p>
-	在校学生，爱coding，爱生活。目前在网易实习。
+	在校学生，爱coding，爱生活。<br>
+	2016.04 ~ 2016.09月 网易杭州研究院实习<br>
+	2017.06 ~ 至今  滴滴出行大数据开发Spark和Flink RD<br>
+	目前主要从事Flink StreamSQL的开发<br>
 	</p>
 	<br>
 
