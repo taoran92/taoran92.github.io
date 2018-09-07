@@ -17,7 +17,7 @@ category: 大数据
 1.查询优化器是什么
 ----------------
 数据库主要由三部分组成，分别是解析器、优化器和执行引擎，如下图所示：
-![](http://rann.cc/assets/img/tech/sql.jpeg)
+![](http://rann.cc/assets/img/tech/sql.jpg)
 
 其中优化器是数据库中用于把关系表达式转换成执行计划的核心组件，很大程度上决定了一个系统的性能。
 
@@ -46,6 +46,7 @@ RBO中包含了一套有着严格顺序的优化规则，同样一条SQL，无�
 在这些优化规则的基础上，就能对关系表达式做相应的等价转换，从而生成执行计划。下面将介绍RBO和CBO两种优化器的执行过程。
 
 - RBO
+
 RBO的执行过程比较简单，主要包含两个步骤：
 
 1）Transformation
@@ -77,7 +78,7 @@ CBO实现有两种模型，即Volcano模型[1]和Cascades模型[2]，其中Calci
 -------------------
 Apache Calcite 是一个独立于存储与执行的SQL优化引擎，广泛应用于开源大数据计算引擎中，如Flink、Drill、Hive、Kylin等。另外，MaxCompute也使用了Calcite作为优化器框架。Calcite的架构如下图所示：
 
-![](http://rann.cc/assets/img/tech/calcite.jpeg)
+![](http://rann.cc/assets/img/tech/calcite.jpg)
 
 其中Operator Expressions 指的是关系表达式，一个关系表达式在Calcite中被表示为RelNode，往往以根节点代表整个查询树。Calcite中有两种方法生成RelNode：
 
@@ -99,7 +100,7 @@ Query Optimizer 根据优化规则(Pluggable Rules)对Operator Expressions进行
 - [2] The Cascades Framework for Query Optimization
 - [3] Orca: A Modular Query Optimizer Architecture for Big Data
 
-本文作者：勿烦，阿里计算平台事业部数据研发工程师， 转自阿里云
+本文作者：勿烦，阿里计算平台事业部数据研发工程师，转自阿里云
 
 ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 
