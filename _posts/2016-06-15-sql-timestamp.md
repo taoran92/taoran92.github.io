@@ -16,7 +16,7 @@ timestamp有两个属性，分别是CURRENT_TIMESTAMP 和ON UPDATE CURRENT_TIMES
 当执行update操作是，并且字段有ON UPDATE CURRENT_TIMESTAMP属性。则字段无论值有没有变化，它的值也会跟着更新为当前UPDATE操作时的时间。
 
 <div align="center">
-<img src="assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

@@ -210,7 +210,7 @@ public class FruitRun {
 本文转自博客园 地址 http://www.cnblogs.com/peida 本人略有修改。2015-11-2
 
 <div align="center">
-<img src="assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
