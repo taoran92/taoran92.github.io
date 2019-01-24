@@ -65,7 +65,7 @@ The issue with SocketChannel is also present with the `transferTo()` method. The
 Next: [Java-NIO-7-Selector](http://rann.cc/2016/06/09/java-nio-7-selector.html)
 
 <div align="center">
-<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+<img src="assets/img/qrcode-logo.png" width="400" height="320" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

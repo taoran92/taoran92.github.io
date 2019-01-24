@@ -45,7 +45,7 @@ date: 2015-09-22 22:11:52
 整理：梦回少年 微博@梦回少年rann
 
 <div align="center">
-<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+<img src="assets/img/qrcode-logo.png" width="400" height="320" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

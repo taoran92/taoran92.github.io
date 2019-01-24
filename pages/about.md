@@ -93,7 +93,7 @@ permalink: /pages/about.html
 				微信公众号：
 			</td> 
 			<td>
-				<a href="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" target="_blank">梦回少年</a>
+				<a href="assets/img/qrcode-logo.png" target="_blank">梦回少年</a>
 			</td> 
 		</tr>
 	</table>

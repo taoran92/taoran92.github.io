@@ -38,7 +38,7 @@ category: 随笔
 人如尘埃，渺渺茫茫，珍惜一切，不沉浸在逝去的过去，努力拼搏，不忘初心，方得始终。
 
 <div align="center">
-<img src="http://7xlkoc.com1.z0.glb.clouddn.com/qrcodenew.jpg" width="400" height="320" />
+<img src="assets/img/qrcode-logo.png" width="400" height="320" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
