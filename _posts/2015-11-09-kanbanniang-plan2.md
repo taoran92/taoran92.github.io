@@ -167,7 +167,7 @@ msgs = [$("#hitokoto").text()];
 暂时这个项目做到这里告一段落了，也已经连续通宵几个晚上了。以后不排除增加新的功能，也不保证会增加新的功能，欢迎各位和我一样初入此路的萌新和久经沙场的前辈能一起交流。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

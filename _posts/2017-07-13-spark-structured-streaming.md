@@ -220,7 +220,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

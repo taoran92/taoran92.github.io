@@ -138,7 +138,7 @@ Spring采用的就是(1) +(2) 的方式，限于篇幅，这里不再展开各�
 - QQ: 932191671
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

@@ -351,7 +351,7 @@ public void heapSort(int[] a) {
 性能测试代码地址 https://github.com/Lemonjing/TinyCoding/tree/master/src/test/java/com/tinymood/sort
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

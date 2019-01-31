@@ -63,7 +63,7 @@ Selector允许单线程处理多个 Channel。如果你的应用打开了多个�
 Next: [Java-NIO-3-Channel](http://rann.cc/2016/06/09/java-nio-3-channel.html)
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

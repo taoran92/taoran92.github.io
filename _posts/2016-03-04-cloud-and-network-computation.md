@@ -25,7 +25,7 @@ date: 2016-03-04 10:40:05
 总之，云计算是以相对集中的资源，运行分散的应用（大量分散的应用在若干大的中心执行）；而网格计算则是聚合分散的资源，支持大型集中式应用（一个大的应用分到多处执行）。但从根本上来说，从应对Internet的应用的特征特点来说，他们是一致的，为了完成在Internet情况下支持应用，解决异构性、资源共享等等问题。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

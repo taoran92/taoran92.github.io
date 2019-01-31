@@ -190,7 +190,7 @@ Course Object courseName:null credit:4
 可知Student中的age属性被标注为transient后，在序列化对象时，age属性就没有被序列化了; Course中的name属性被static后，Course的name静态属性就没有被序列化;虽然是序列化Student对象，但是Student所引用的Course对象也被初始化了。 
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="400" height="320" />
+<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
