@@ -154,7 +154,7 @@ public enum EasySingleton{
 
 **代码打包**
 
-完整代码 [Singleton](https://github.com/Lemonjing/designpattern/tree/master/src/com/tinymood/designpattern/singleton)
+完整代码 [Singleton](https://github.com/ferrari014/designpattern/tree/master/src/com/tinymood/designpattern/singleton)
 
 **Read More**
 

@@ -346,9 +346,9 @@ public void heapSort(int[] a) {
 }
 ```
 
-排序代码地址 https://github.com/Lemonjing/TinyCoding/tree/master/src/main/java/com/tinymood/sort
+排序代码地址 https://github.com/ferrari014/TinyCoding/tree/master/src/main/java/com/tinymood/sort
 
-性能测试代码地址 https://github.com/Lemonjing/TinyCoding/tree/master/src/test/java/com/tinymood/sort
+性能测试代码地址 https://github.com/ferrari014/TinyCoding/tree/master/src/test/java/com/tinymood/sort
 
 <div align="center">
 <img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
