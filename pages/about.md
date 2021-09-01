@@ -33,7 +33,7 @@ permalink: /pages/about.html
 		</tr>
 		<tr>
 			<td>学  历：</td>    
-			<td>硕士在读</td>
+			<td>硕士</td>
 		</tr>
 		<tr>
 			<td>学  校：</td>    
@@ -45,7 +45,7 @@ permalink: /pages/about.html
 		</tr>
 		<tr>
 			<td>时  间：</td>    
-			<td>2014年入学至今</td>
+			<td>2014-2017</td>
 		</tr>
 	</table>
 
@@ -58,7 +58,7 @@ permalink: /pages/about.html
 				Email：
 			</td>  
 			<td>
-				<A href="mailto:xmusaber@163.com">xmusaber@163.com</A>
+				<A href="mailto:chucheng.tr@qq.com">chucheng.tr@qq.com</A>
 			</td>
 		</tr>
 
@@ -106,8 +106,9 @@ permalink: /pages/about.html
 	<p>
 	爱coding，爱生活。<br><br>
 	2016.04 ~ 2016.09月 网易杭州研究院实习。<br><br>
-	2017.06 ~ 至今  滴滴出行大数据开发Spark和Flink RD。<br><br>
-	目前主要从事Flink StreamSQL的开发。
+	2017.06 ~ 2018.7  滴滴出行大数据开发Spark和Flink RD。<br><br>
+    2018.7 ~ 至今  蚂蚁集团实时计算平台研发。<br><br>
+	目前主要从事 Flink 和阿里 Blink 的开发。
 	</p>
 	<br>
 
