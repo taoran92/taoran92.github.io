@@ -1,6 +1,6 @@
 ### 我的博客
 
-地址：[http://ferrari014.github.io/](http://ferrari014.github.io/)
+地址：[http://chucheng92.github.io/](http://chucheng92.github.io/)
 
 ### 安装说明
 

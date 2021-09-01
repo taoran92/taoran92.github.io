@@ -40,9 +40,9 @@ apt-get install autoconf automake libtool
 
 点击下面链接下载。
 
-[snappy](https://github.com/ferrari014/dev-repo/blob/master/hadoop/snappy-1.1.1.tar.gz) 
+[snappy](https://github.com/chucheng92/dev-repo/blob/master/hadoop/snappy-1.1.1.tar.gz) 
 
-[hadoop-snappy.tar.gz](https://github.com/ferrari014/dev-repo/blob/master/hadoop/hadoop-snappy.tar.gz)
+[hadoop-snappy.tar.gz](https://github.com/chucheng92/dev-repo/blob/master/hadoop/hadoop-snappy.tar.gz)
 
 ### 2.openssl
 
