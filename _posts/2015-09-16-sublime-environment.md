@@ -98,7 +98,7 @@ java %~n1
 可以用来学习java基础语法。要做工程的话还是用eclipse。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

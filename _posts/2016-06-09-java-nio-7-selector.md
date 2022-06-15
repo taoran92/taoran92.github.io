@@ -229,10 +229,10 @@ while(true) {
 }
 ```
 
-Next: [Java-NIO-8-FileChannel](http://rann.cc/2016/06/09/java-nio-8-filechannel.html)
+Next: [Java-NIO-8-FileChannel](https://chucheng92.github.io/2016/06/09/java-nio-8-filechannel.html)
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

@@ -55,10 +55,10 @@ channel.write(bufferArray);
 
 buffers数组是write()方法的入参，write()方法会按照buffer在数组中的顺序，将数据写入到channel，注意只有position和limit之间的数据才会被写入。因此，如果一个buffer的容量为128byte，但是仅仅包含58byte的数据，那么这58byte的数据将被写入到channel中。因此与Scattering Reads相反，Gathering Writes能较好的处理动态消息。
 
-Next: [Java-NIO-6-Channel to Channel Transfers](http://rann.cc/2016/06/09/java-nio-6-channeltochanneltransfers.html)
+Next: [Java-NIO-6-Channel to Channel Transfers](https://chucheng92.github.io/2016/06/09/java-nio-6-channeltochanneltransfers.html)
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

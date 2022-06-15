@@ -22,7 +22,7 @@ category: 大数据
 随着大数据生态的不断完善，大数据技术的不断发展，基于传统的Map-Reduce计算模型的批处理框架在某些特定场景下的能力发挥越发捉襟见肘。比如说在对实时性要求较高的场景，如实时的用户行为分析，用户推荐等，因此诞生了如samza、storm这样的流式、实时计算框架。而Spark 由于其内部优秀的调度机制、快速的分布式计算能力，以及快速迭代计算的能力使得Spark 能够在某些程度上进行实时处理，Spark Streaming 正是构建在spark之上的流式框架，如下图。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/tech/spark_infra.png" />
+<img src="https://chucheng92.github.io/assets/img/tech/spark_infra.png" />
 </div>
  
 而在spark2.x以后，spark引入了新式的流计算框架——Structured Streaming，它是基于Spark SQL的，同样见下图，可以发现Spark SQL也是构建与Spark之上的，与Spark Streaming平行，都是核心的Spark上层框架。
@@ -36,7 +36,7 @@ Spark Streaming正是基于batch的数据处理方式，底层用DStream的数�
  
 其流式处理可以用下面这张图形象展示：
 
-![](http://rann.cc/assets/img/tech/streaming_concept.png)
+![](https://chucheng92.github.io/assets/img/tech/streaming_concept.png)
 
 即将输入数据按batch进行处理，每个batch依次处理（各种算子的运算）并输出结果。一个wordcount的典型作业过程如下：
  
@@ -70,7 +70,7 @@ ssc.awaitTermination()
 Structured Streaming顾名思义是结构化流，为什么这么说呢，这是因为Structured Streaming是基于Spark2.x的DataFrame/Dataset API的（Spark Streaming是基于RDD），RDD 是一个一维、只有行概念的数据集，而DataFrame/Dataset是行列的数据集，是一张二维的数据表。RDD与DataFrame/DataSet的对比如下：
 
 <div align="center">
-<img src="http://rann.cc/assets/img/tech/dataframe.png" />
+<img src="https://chucheng92.github.io/assets/img/tech/dataframe.png" />
 </div>
 
 DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，schema信息描述了每行数据的字段和类型信息，如上图Person的name, age, height实际上在schema中描述了，这样每行数据必须依照schema的三列和数据类型的规定。相反RDD[Person]只是一行Person的数据，Person是作为一个整体的，spark框架并不知道Person的具体结构，也就无法进行作业的优化。并且，RDD默认采用的Java序列化方式，序列化结果比较大，并且数据存储在堆存，导致GC比较频繁。而DataFrame/Dataset由于schema信息已经保存，在序列化时就不必带上元数据信息，减少了序列化文件大小，并且数据保存在off heap（堆外内存），大大减少了GC。至于DataFrame和Dataset的区别，实际上在scala中DataFrame就是DataSet[Row]的别名，二者主要区别是Dataset是类型安全的，可以执行编译期检查，而实际二者内存存储是一致的，本质上无差别，可以按需求选择使用并相互转化。（值得注意的一点是scala中DataFrame需要转化为Dataset才可以执行诸如map的算子操作）
@@ -78,7 +78,7 @@ DataFrame/Dataset是是一个行列的数据结构，并且具有schema信息，
 因此，Spark2.x最终将流式计算以unbounded table（无界表）形式的结构化数据来呈现(二维表)，从而抽象出了统一的API，流式计算无外乎就是静态二维表的无限增长罢了（行列数据随着时间不断增长），如下图所示。自此，DataFrame/Dataset成为了统一的API，同时满足 structured data, streaming data, machine learning, graph等。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/tech/bounded.png" />
+<img src="https://chucheng92.github.io/assets/img/tech/bounded.png" />
 </div>
 
 同样是大数据领域经典的wordcount单词计数的例子，这次我们以Structured Streaming实现。（可以与上述Spark Streaming的wordcount例子进行对比）
@@ -102,7 +102,7 @@ query.awaitTermination()
 
 上述例程对应的流程图如下：
 
-![](http://rann.cc/assets/img/tech/structured_procedure.png)
+![](https://chucheng92.github.io/assets/img/tech/structured_procedure.png)
 
 从上图可以很直观的理解unbounded input table的概念，并且注意到在Structured Streaming中batch以trigger interval来控制，如上述例子中是每1min作为一个触发间隔，每一次触发间隔到达，数据被追加到input table作为新行，经过query的处理从而更新result table。Result Table结果表也是一个unbounded table。Result Table更新后我们可以根据需求将数据以complete模式（全部结果表数据）或者update模式（结果表中更新的行数据）sink到外部存储。（hdfs、kafka等）
  
@@ -131,13 +131,13 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
 注意到e.g.2例子程序中source和sink的过程都有一个format的参数，值是socket，实际上Structured Streaming支持多种source类型，具体参见下述表格：
 
 <div align="center">
-<img src="http://rann.cc/assets/img/tech/source_table.png" width="380" height="400" />
+<img src="https://chucheng92.github.io/assets/img/tech/source_table.png" width="380" height="400" />
 </div>
 
 同样的，sink也有多个支持。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/tech/sink_table.png" width="380" height="400" />
+<img src="https://chucheng92.github.io/assets/img/tech/sink_table.png" width="380" height="400" />
 </div>
 
 那么，有了source和sink，Structured Streaming是如何确保end-to-end exactly-once的呢？简单来说，offset tracking in WAL + state management + fault-tolerant source and sink = end-to-end exactly-once。offset tracking in WAL是指在source和sink端，执行引擎会把offset持久化到WAL日志中，用作恢复； state management是指全局高可用的StateStore进行的状态管理;fault-tolerant source and sink是指可靠容错的source和sink。
@@ -220,7 +220,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

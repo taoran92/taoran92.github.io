@@ -62,10 +62,10 @@ The issue with SocketChannel is also present with the `transferTo()` method. The
 是不是发现这个例子和前面那个例子特别相似？除了调用方法的FileChannel对象不一样外，其他的都一样。
 上面所说的关于SocketChannel的问题在transferTo()方法中同样存在。SocketChannel会一直传输数据直到目标buffer被填满。
 
-Next: [Java-NIO-7-Selector](http://rann.cc/2016/06/09/java-nio-7-selector.html)
+Next: [Java-NIO-7-Selector](https://chucheng92.github.io/2016/06/09/java-nio-7-selector.html)
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

@@ -11,8 +11,8 @@ Spring作为当前Java最流行、最强大的轻量级框架，受到了程序�
 
 Spring Bean的完整生命周期从创建Spring容器开始，直到最终Spring容器销毁Bean，这其中包含了一系列关键点。
 
-![](http://rann.cc/assets/img/tech/181453414212066.png)
-![](http://rann.cc/assets/img/tech/181454040628981.png)
+![](https://chucheng92.github.io/assets/img/tech/181453414212066.png)
+![](https://chucheng92.github.io/assets/img/tech/181454040628981.png)
 
 若容器注册了以上各种接口，程序那么将会按照以上的流程进行。下面将仔细讲解各接口作用。
 
@@ -345,7 +345,7 @@ OVER
 - QQ: 932191671
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

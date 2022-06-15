@@ -93,7 +93,7 @@ permalink: /pages/about.html
 				微信公众号：
 			</td> 
 			<td>
-				<a href="http://rann.cc/assets/img/qrcode-logo.png" target="_blank">梦回少年</a>
+				<a href="https://chucheng92.github.io/assets/img/qrcode-logo.png" target="_blank">梦回少年</a>
 			</td> 
 		</tr>
 	</table>

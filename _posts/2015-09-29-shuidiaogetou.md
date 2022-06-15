@@ -45,7 +45,7 @@ _后记_
 其实，每个人都承受着孤独，只不过每个人表现的方式都不一样。不疯狂，怎青春？但可以选择自己的疯狂方式，音乐和自由可以，运动和健身亦可，甚至安安静静地学习与阅读都是可以的，好好当自己就好了。仿照刘同所说，一路上经历这样的孤独后，也算是一种虽败犹荣了。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

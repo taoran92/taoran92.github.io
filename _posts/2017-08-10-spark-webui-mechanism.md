@@ -16,11 +16,11 @@ Spark应用运行时的详细进度信息，性能指标等数据和信息对于
 
 ## 页面
 
-![](http://rann.cc/assets/img/tech/sparkui.png)
+![](https://chucheng92.github.io/assets/img/tech/sparkui.png)
 
 ## 流程图
 
-![](http://rann.cc/assets/img/tech/procedure.png)
+![](https://chucheng92.github.io/assets/img/tech/procedure.png)
 
 ## 源码分析
 
@@ -68,7 +68,7 @@ appName, basePath, startTime)
 
 上述的几个监听对象分别与UI上的
 
-![](http://rann.cc/assets/img/tech/sparkbanner.png)
+![](https://chucheng92.github.io/assets/img/tech/sparkbanner.png)
 
 这几个Tab项的是对应的，具体是：
 
@@ -83,7 +83,7 @@ Step3、执行SparkUI的initialize初始化方法
 
 当实例化SparkUI的过程中会执行初始化方法，绑定如下的tab项对应的对象数据以及注册页面处理句柄
 
-![](http://rann.cc/assets/img/tech/sparkbanner.png)
+![](https://chucheng92.github.io/assets/img/tech/sparkbanner.png)
 
 即
 
@@ -237,7 +237,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

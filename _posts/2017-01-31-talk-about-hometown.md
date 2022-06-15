@@ -5,7 +5,7 @@ tags: 原创 随笔
 category: 随笔
 ---
 
-![](http://rann.cc/assets/img/blogimg/当我们谈论故乡的时候.jpeg)
+![](https://chucheng92.github.io/assets/img/blogimg/当我们谈论故乡的时候.jpeg)
 
 今日封面图：蝴蝶飞不过沧海（拍摄于厦门外海）
 
@@ -38,7 +38,7 @@ category: 随笔
 人如尘埃，渺渺茫茫，珍惜一切，不沉浸在逝去的过去，努力拼搏，不忘初心，方得始终。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

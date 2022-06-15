@@ -39,7 +39,7 @@ date: 2016-04-04 11:58:35
 <span style="color: #00ccff;"> 眨啊眨 对着它们笑啊笑</span></center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

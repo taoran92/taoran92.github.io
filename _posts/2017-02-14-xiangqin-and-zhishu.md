@@ -65,7 +65,7 @@ category: 随笔
 > 关于爱情的定义，谁也不能给谁一个确切的答案。但是，看到江直树和袁湘琴，看到张小凡和碧瑶，看到拓跋野和雨师妾，看到他们，你们，更多的人拼命在努力寻找。途中会迷茫，会失落，会绝望…… 但是，展现给我的却是- - -爱情，也是一种信仰。
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

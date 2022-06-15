@@ -17,7 +17,7 @@ category: 大数据
 1.查询优化器是什么
 ----------------
 数据库主要由三部分组成，分别是解析器、优化器和执行引擎，如下图所示：
-![](http://rann.cc/assets/img/tech/sql.jpg)
+![](https://chucheng92.github.io/assets/img/tech/sql.jpg)
 
 其中优化器是数据库中用于把关系表达式转换成执行计划的核心组件，很大程度上决定了一个系统的性能。
 
@@ -78,7 +78,7 @@ CBO实现有两种模型，即Volcano模型[1]和Cascades模型[2]，其中Calci
 -------------------
 Apache Calcite 是一个独立于存储与执行的SQL优化引擎，广泛应用于开源大数据计算引擎中，如Flink、Drill、Hive、Kylin等。另外，MaxCompute也使用了Calcite作为优化器框架。Calcite的架构如下图所示：
 
-![](http://rann.cc/assets/img/tech/calcite.jpg)
+![](https://chucheng92.github.io/assets/img/tech/calcite.jpg)
 
 其中Operator Expressions 指的是关系表达式，一个关系表达式在Calcite中被表示为RelNode，往往以根节点代表整个查询树。Calcite中有两种方法生成RelNode：
 
@@ -107,5 +107,5 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>

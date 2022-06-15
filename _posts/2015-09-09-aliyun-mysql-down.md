@@ -34,7 +34,7 @@ swapon /swapfile**
 结语：以上解决方法来自 http://hongjiang.info/aliyun-vps-mysql-aborting/，相关说明则是个人理解，不代表完全正确，欢迎交流！ 
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

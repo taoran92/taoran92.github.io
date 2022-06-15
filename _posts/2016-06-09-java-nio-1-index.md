@@ -27,10 +27,10 @@ Java NIO contains the concept of "selectors". A selector is an object that can m
 
 How all this works is explained in more detail in the next text in this series - the Java NIO overview.
 
-Next: [Java-NIO-2-概述](http://rann.cc/2016/06/09/java-nio-2-overview.html)
+Next: [Java-NIO-2-概述](https://chucheng92.github.io/2016/06/09/java-nio-2-overview.html)
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

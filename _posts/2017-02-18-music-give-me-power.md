@@ -22,7 +22,7 @@ category: 随笔
 人有两个方面，精神和物质。多挣钱，物质自由。而音乐、文字想来也是一种不错的精神享受。你说呢？
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

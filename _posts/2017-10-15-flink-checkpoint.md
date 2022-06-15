@@ -75,7 +75,7 @@ barrier 在数据源端插入，当快照n的 barrier 插入后，系统会记�
 
 先放上自己根据源码和文档画出的流程图。图中的1.1 2.2等过程与下文是一一对应的。
 
-![](http://rann.cc/assets/img/tech/checkpoint.png)
+![](https://chucheng92.github.io/assets/img/tech/checkpoint.png)
 
 ### 第一阶段
 
@@ -889,7 +889,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="http://rann.cc/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
