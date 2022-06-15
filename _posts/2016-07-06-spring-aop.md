@@ -134,7 +134,7 @@ Spring采用的就是(1) +(2) 的方式，限于篇幅，这里不再展开各�
 
 ### 联系我
 
-- 邮箱: xmusaber@163.com
+- 邮箱: chucheng.tr@qq.com
 - QQ: 932191671
 
 <div align="center">

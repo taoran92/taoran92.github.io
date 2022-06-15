@@ -165,7 +165,7 @@ IoC和DI由什么关系呢？其实它们是同一个概念的不同角度描述
 
 ### 联系我
 
-- 邮箱: xmusaber@163.com
+- 邮箱: chucheng.tr@qq.com
 - QQ: 932191671
 
 <div align="center">
