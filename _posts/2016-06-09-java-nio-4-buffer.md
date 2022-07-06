@@ -223,7 +223,7 @@ compareTo()方法比较两个Buffer的剩余元素(byte、char等)，如果满�
 Next: [Java-NIO-5-Scatter-Gather](https://chucheng92.github.io/2016/06/09/java-nio-5-scatter-gather.html)
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

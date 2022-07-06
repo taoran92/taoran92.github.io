@@ -25,7 +25,7 @@ category: 随笔
 爱像水墨青花，何惧刹那芳华。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

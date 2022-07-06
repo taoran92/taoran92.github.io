@@ -58,7 +58,7 @@ buffers数组是write()方法的入参，write()方法会按照buffer在数组�
 Next: [Java-NIO-6-Channel to Channel Transfers](https://chucheng92.github.io/2016/06/09/java-nio-6-channeltochanneltransfers.html)
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

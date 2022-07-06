@@ -64,7 +64,7 @@ com.cignacmc.knowledge.inheritance.Cartoon@182f0db
 结论：当调用getClass()时，返回这个对象真实的Class对象。从3个继承对象相等的情况和输出可知，这三个对象有相同的this指针，即内存地址一致。**而getClass()返回的就是this指针所代表的最真实的Class的对象，也即最上层的子类。并不是父类。**
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

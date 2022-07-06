@@ -30,7 +30,7 @@ category: 随笔
 更重要的是，即使做到了「节能主义」，当你命定的千反田来到时，把你的人生从「灰色」「节能」变成「彩色」，一切似乎已经不在重要。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode-logo.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
