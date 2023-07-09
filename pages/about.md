@@ -81,6 +81,14 @@ permalink: /pages/about.html
 		</tr>
 		<tr>
 			<td>
+				微信：
+			</td> 
+			<td>
+				chucheng92
+			</td> 
+		</tr>
+		<tr>
+			<td>
 				微信公众号：
 			</td> 
 			<td>
