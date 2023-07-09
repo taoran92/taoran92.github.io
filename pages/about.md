@@ -14,15 +14,6 @@ permalink: /pages/about.html
 	</p>
 	<p>写干净的文字，过简单的生活。欢迎勾搭 ︿(￣︶￣)︿</p>
 	<br>
-	
-	<h3><i class="fa fa-laptop"></i>&nbsp;IT技能</h3>
-	<hr>
-	<br>
-    <div class="skills">
-   	<div id="main" style="height:400px"></div>
-    </div>	
-
-	
 	<br>
 	<h3><i class="fa fa-user"></i>&nbsp;基本信息</h3>
 	<hr>
