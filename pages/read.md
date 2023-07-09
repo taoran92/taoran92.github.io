@@ -7,7 +7,7 @@ permalink: /pages/read.html
 <div class="home">
 	<div class="bookpiclist">
 		<p>纵使寂寞开成海 我会一直在 即便风景都尘埃 我会一直爱。<br>
-		日常微信读书出没，Wechat：932191671</p>
+		日常微信读书出没，Wechat：chucheng92</p>
 		{% for page in site.posts %}
 				{% if page.categories[0] == '读书' %}
 					{% for book in page.books %}
