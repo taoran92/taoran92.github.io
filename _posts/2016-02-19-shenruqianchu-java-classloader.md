@@ -88,7 +88,7 @@ name参数指定类装载器需要装载类的名字，必须使用全限定类�
 3. 加入类中存在初始化语句（如static变量和static块），那就依次执行这些初始化语句。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="340" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

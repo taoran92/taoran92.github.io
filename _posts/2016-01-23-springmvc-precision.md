@@ -33,7 +33,7 @@ http://stackoverflow.com/questions/4078559/how-to-specify-doubles-precision-on-h
 http://stackoverflow.com/questions/197045/setting-default-values-for-columns-in-jpa
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="400" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="340" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
