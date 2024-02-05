@@ -107,5 +107,5 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="340" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="182" />
 </div>

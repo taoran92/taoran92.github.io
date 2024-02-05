@@ -131,13 +131,13 @@ Structured Streaming保证了端到端的exactly-once，具体来说，端到端
 注意到e.g.2例子程序中source和sink的过程都有一个format的参数，值是socket，实际上Structured Streaming支持多种source类型，具体参见下述表格：
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/tech/source_table.png" width="380" height="340" />
+<img src="https://chucheng92.github.io/assets/img/tech/source_table.png" width="380" height="182" />
 </div>
 
 同样的，sink也有多个支持。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/tech/sink_table.png" width="380" height="340" />
+<img src="https://chucheng92.github.io/assets/img/tech/sink_table.png" width="380" height="182" />
 </div>
 
 那么，有了source和sink，Structured Streaming是如何确保end-to-end exactly-once的呢？简单来说，offset tracking in WAL + state management + fault-tolerant source and sink = end-to-end exactly-once。offset tracking in WAL是指在source和sink端，执行引擎会把offset持久化到WAL日志中，用作恢复； state management是指全局高可用的StateStore进行的状态管理;fault-tolerant source and sink是指可靠容错的source和sink。
@@ -220,7 +220,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="340" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
