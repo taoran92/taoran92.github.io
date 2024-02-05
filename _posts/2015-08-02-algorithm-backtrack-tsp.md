@@ -134,10 +134,6 @@ data.txt
 ```
 
 <div align="center">
-<img src="http://7xlkoc.com1.z0.glb.clouddn.com/tracebackres.png" />
-</div>
-
-<div align="center">
 <img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
