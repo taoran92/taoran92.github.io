@@ -40,7 +40,7 @@ Java为什么慢?JVM的存在当然是一个原因,但有人说,在Java中,除�
 上面的体会是我看了TIJ.3rdEdition.Revision4.0中第四章之后得出的,内容和前面的有些不同.我没有看过侯捷的中文版本,但我觉得,在关键问题上,原版的TIJ的确更值得一读.所以和中文版配合起来学习是比较不错的选择.
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="182" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

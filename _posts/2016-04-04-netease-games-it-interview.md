@@ -54,7 +54,7 @@ date: 2016-04-04 11:00:08
 最近更新：答得不是很好，在等通知。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="182" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

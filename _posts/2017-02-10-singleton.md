@@ -167,7 +167,7 @@ public enum EasySingleton{
 [10 Singleton Pattern Interview questions in Java](http://javarevisited.blogspot.com/2011/03/10-interview-questions-on-singleton.html)
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="340" height="182" />
+<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
