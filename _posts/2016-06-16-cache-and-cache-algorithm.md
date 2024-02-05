@@ -466,7 +466,6 @@ public class CacheElement
 ### 联系我
 
 - 邮箱: chucheng.tr@qq.com
-- QQ: 932191671
 
 <div align="center">
 <img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />

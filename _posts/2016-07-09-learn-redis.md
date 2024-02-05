@@ -596,7 +596,6 @@ Redis在很早的版本中就已经提供了对命令管线的支持。在给出
 ### 联系我
 
 - 邮箱: chucheng.tr@qq.com
-- QQ: 932191671
 
 <div align="center">
 <img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
