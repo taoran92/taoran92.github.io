@@ -103,12 +103,12 @@ ps 收到原创申请后不烦回来给我点个赞。哈哈
 
 -END-
 
-我的GitHub账号：chucheng92
+我的GitHub账号：taoran92
 
 > 本文系本人个人公众号「梦回少年」原创发布，转载请联系。
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

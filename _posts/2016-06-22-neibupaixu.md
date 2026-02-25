@@ -346,12 +346,12 @@ public void heapSort(int[] a) {
 }
 ```
 
-排序代码地址 https://github.com/chucheng92/TinyCoding/tree/master/src/main/java/com/tinymood/sort
+排序代码地址 https://github.com/taoran92/TinyCoding/tree/master/src/main/java/com/tinymood/sort
 
-性能测试代码地址 https://github.com/chucheng92/TinyCoding/tree/master/src/test/java/com/tinymood/sort
+性能测试代码地址 https://github.com/taoran92/TinyCoding/tree/master/src/test/java/com/tinymood/sort
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

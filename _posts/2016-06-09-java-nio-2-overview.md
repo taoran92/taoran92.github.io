@@ -60,10 +60,10 @@ Selector允许单线程处理多个 Channel。如果你的应用打开了多个�
 
 要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。
 
-Next: [Java-NIO-3-Channel](https://chucheng92.github.io/2016/06/09/java-nio-3-channel.html)
+Next: [Java-NIO-3-Channel](https://taoran92.github.io/2016/06/09/java-nio-3-channel.html)
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
