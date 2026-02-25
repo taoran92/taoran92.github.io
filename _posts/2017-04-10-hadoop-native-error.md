@@ -40,9 +40,9 @@ apt-get install autoconf automake libtool
 
 点击下面链接下载。
 
-[snappy](https://github.com/chucheng92/dev-repo/blob/master/hadoop/snappy-1.1.1.tar.gz) 
+[snappy](https://github.com/taoran92/dev-repo/blob/master/hadoop/snappy-1.1.1.tar.gz) 
 
-[hadoop-snappy.tar.gz](https://github.com/chucheng92/dev-repo/blob/master/hadoop/hadoop-snappy.tar.gz)
+[hadoop-snappy.tar.gz](https://github.com/taoran92/dev-repo/blob/master/hadoop/hadoop-snappy.tar.gz)
 
 ### 2.openssl
 
@@ -65,7 +65,7 @@ ps：公众号已正式接入图灵机器人，快去和我聊聊吧。
 <center>-END-</center>
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

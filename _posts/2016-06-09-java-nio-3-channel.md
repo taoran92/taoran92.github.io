@@ -61,10 +61,10 @@ aFile.close();
 
 注意 buf.flip() 的调用，首先读取数据到Buffer，然后反转Buffer,接着再从Buffer中读取数据。下一节会深入讲解Buffer的更多细节。
 
-Next: [Java-NIO-4-Buffer](https://chucheng92.github.io/2016/06/09/java-nio-4-buffer.html)
+Next: [Java-NIO-4-Buffer](https://taoran92.github.io/2016/06/09/java-nio-4-buffer.html)
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

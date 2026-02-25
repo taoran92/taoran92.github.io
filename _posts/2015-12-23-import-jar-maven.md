@@ -8,7 +8,7 @@ date: 2015-12-23 15:22:05
 
 ### Maven基础[1]
 
-全文托管于GitHub，[全文阅读](https://github.com/chucheng92/TinyMood/blob/master/技术文章/Maven基础.md)
+全文托管于GitHub，[全文阅读](https://github.com/taoran92/TinyMood/blob/master/技术文章/Maven基础.md)
 
 **1.什么是maven?**
 
@@ -73,7 +73,7 @@ pom.xml中引用
 ```
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。

@@ -58,7 +58,7 @@ permalink: /pages/about.html
 				github：
 			</td>  
 			<td>
-				<a href="{{ site.author.github }}" target="_blank">github.com/chucheng92</a>
+				<a href="{{ site.author.github }}" target="_blank">github.com/taoran92</a>
 			</td>  
 		</tr>
 
@@ -84,7 +84,7 @@ permalink: /pages/about.html
 				微信：
 			</td> 
 			<td>
-				chucheng92
+				taoran92
 			</td> 
 		</tr>
 		<tr>
@@ -92,7 +92,7 @@ permalink: /pages/about.html
 				微信公众号：
 			</td> 
 			<td>
-				<a href="https://chucheng92.github.io/assets/img/qrcode.png" target="_blank">梦回少年</a>
+				<a href="https://taoran92.github.io/assets/img/qrcode.png" target="_blank">梦回少年</a>
 			</td> 
 		</tr>
 	</table>

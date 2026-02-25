@@ -168,7 +168,7 @@ IoC和DI由什么关系呢？其实它们是同一个概念的不同角度描述
 - 邮箱: chucheng.tr@qq.com
 
 <div align="center">
-<img src="https://chucheng92.github.io/assets/img/qrcode.png" width="180" height="182" />
+<img src="https://taoran92.github.io/assets/img/qrcode.png" width="180" height="182" />
 </div>
 
 > 本文系本人个人公众号「梦回少年」原创发布，扫一扫加关注。
