@@ -12,7 +12,7 @@ permalink: /pages/about.html
 	<p>
 	博客用<a href="http://jekyllrb.com/"><code>jekyll</code></a>（可将纯文本转化为静态网站）构建。博客部署在<code>github</code>服务器上，前端采用<code>bootstrap</code>，移动端自适应。
 	</p>
-	<p>写干净的文字，过简单的生活。欢迎勾搭 ︿(￣︶￣)︿</p>
+	<p>写干净的文字，过简单的生活。欢迎勾搭</p>
 	<br>
 	<br>
 	<h3><i class="fa fa-user"></i>&nbsp;基本信息</h3>
@@ -49,7 +49,7 @@ permalink: /pages/about.html
 				Email：
 			</td>  
 			<td>
-				<A href="mailto:chucheng.tr@qq.com">chucheng.tr@qq.com</A>
+				<A href="mailto:chucheng.tr@qq.com">chucheng.tr@gmail.com</A>
 			</td>
 		</tr>
 
@@ -73,18 +73,10 @@ permalink: /pages/about.html
 
 		<tr>
 			<td>
-				网易云音乐：
-			</td> 
-			<td>
-				<a href="{{ site.author.netease }}" target="_blank">梦回少年rann</a>
-			</td> 
-		</tr>
-		<tr>
-			<td>
 				微信：
 			</td> 
 			<td>
-				taoran92
+				chucheng92
 			</td> 
 		</tr>
 		<tr>
