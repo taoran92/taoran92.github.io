@@ -76,7 +76,7 @@ permalink: /pages/about.html
 				微信：
 			</td> 
 			<td>
-				chucheng92
+				taoran_core
 			</td> 
 		</tr>
 		<tr>
