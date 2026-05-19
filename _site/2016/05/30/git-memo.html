@@ -411,13 +411,13 @@ git clone</p>
 
 <p>2.分支管理策略</p>
 
-<p>通常合并分支时，git一般使用”Fast forward”模式，在这种模式下，删除分支后，会丢掉分支信息，现在我们来使用带参数 –no-ff来禁用”Fast forward”模式。首先我们来做demo演示下：</p>
+<p>通常合并分支时，git一般使用"Fast forward"模式，在这种模式下，删除分支后，会丢掉分支信息，现在我们来使用带参数 –no-ff来禁用"Fast forward"模式。首先我们来做demo演示下：</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>创建一个dev分支。
 修改readme.txt内容。
 添加到暂存区。
 切换回主分支<span class="o">(</span>master<span class="o">)</span>。
-合并dev分支，使用命令 git merge –no-ff  <span class="nt">-m</span> “注释” dev
+合并dev分支，使用命令 git merge –no-ff  <span class="nt">-m</span> "注释" dev
 查看历史记录
 </code></pre></div></div>
 

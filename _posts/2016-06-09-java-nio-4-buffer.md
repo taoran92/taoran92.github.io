@@ -77,7 +77,7 @@ position和limit的含义取决于Buffer处在读模式还是写模式。不管B
 
 **capacity**
 
-作为一个内存块，Buffer有一个固定的大小值，也叫“capacity”.你只能往里写capacity个byte、long，char等类型。一旦Buffer满了，需要将其清空（通过读数据或者清除数据）才能继续写数据往里写数据。
+作为一个内存块，Buffer有一个固定的大小值，也叫"capacity".你只能往里写capacity个byte、long，char等类型。一旦Buffer满了，需要将其清空（通过读数据或者清除数据）才能继续写数据往里写数据。
 
 **position**
 
@@ -177,7 +177,7 @@ Buffer.rewind()将position设回0，所以你可以重读Buffer中的所有数�
 
 如果调用的是clear()方法，position将被设回0，limit被设置成 capacity的值。换句话说，Buffer 被清空了。Buffer中的数据并未清除，只是这些标记告诉我们可以从哪里开始往Buffer里写数据。
 
-如果Buffer中有一些未读的数据，调用clear()方法，数据将“被遗忘”，意味着不再有任何标记会告诉你哪些数据被读过，哪些还没有。
+如果Buffer中有一些未读的数据，调用clear()方法，数据将"被遗忘"，意味着不再有任何标记会告诉你哪些数据被读过，哪些还没有。
 
 如果Buffer中仍有未读的数据，且后续还需要这些数据，但是此时想要先先写些数据，那么使用compact()方法。
 
@@ -211,7 +211,7 @@ buffer.reset();  //set position back to mark.
 
 **compareTo()方法**
 
-compareTo()方法比较两个Buffer的剩余元素(byte、char等)，如果满足下列条件，则认为一个Buffer“小于”另一个Buffer：
+compareTo()方法比较两个Buffer的剩余元素(byte、char等)，如果满足下列条件，则认为一个Buffer"小于"另一个Buffer：
 
 ```
 1.第一个不相等的元素小于另一个Buffer中对应的元素。（按字典序）
