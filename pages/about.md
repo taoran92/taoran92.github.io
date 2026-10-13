@@ -22,22 +22,6 @@ permalink: /pages/about.html
 			<td>姓  名：</td>    
 			<td>梦回少年</td>
 		</tr>
-		<tr>
-			<td>学  历：</td>    
-			<td>硕士</td>
-		</tr>
-		<tr>
-			<td>学  校：</td>    
-			<td>XMU</td>
-		</tr>
-		<tr>
-			<td>专  业：</td>    
-			<td>计算机科学与技术</td>
-		</tr>
-		<tr>
-			<td>时  间：</td>    
-			<td>2014-2017</td>
-		</tr>
 	</table>
 
 	<br>
@@ -52,39 +36,12 @@ permalink: /pages/about.html
 				<A href="mailto:chucheng.tr@qq.com">chucheng.tr@gmail.com</A>
 			</td>
 		</tr>
-
-		<tr>
-			<td>
-				github：
-			</td>  
-			<td>
-				<a href="{{ site.author.github }}" target="_blank">github.com/taoran92</a>
-			</td>  
-		</tr>
-
-		<tr>
-			<td>
-				微博：
-			</td> 
-			<td>
-				<a href="{{ site.author.weibo }}" target="_blank">梦回少年rann</a>
-			</td> 
-		</tr>
-
 		<tr>
 			<td>
 				微信：
 			</td> 
 			<td>
 				taoran_core
-			</td> 
-		</tr>
-		<tr>
-			<td>
-				微信公众号：
-			</td> 
-			<td>
-				<a href="https://taoran92.github.io/assets/img/qrcode.png" target="_blank">梦回少年</a>
 			</td> 
 		</tr>
 	</table>
@@ -96,7 +53,6 @@ permalink: /pages/about.html
 	<br>
 	<p>
 	爱coding，爱生活。<br><br>
-	2016.04 ~ 2016.09月 网易杭州研究院实习。<br><br>
 	2017.06 ~ 2018.7  滴滴出行大数据开发 Spark 和 Flink RD。<br><br>
     2018.7 ~ 至今  蚂蚁集团实时计算平台研发。<br><br>
 	目前主要从事 Flink 和阿里 Blink 的开发。
