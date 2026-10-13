@@ -36,14 +36,6 @@ permalink: /pages/about.html
 				<A href="mailto:chucheng.tr@qq.com">chucheng.tr@gmail.com</A>
 			</td>
 		</tr>
-		<tr>
-			<td>
-				微信：
-			</td> 
-			<td>
-				taoran_core
-			</td> 
-		</tr>
 	</table>
 
 
