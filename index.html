@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f6f5ef">
-    <meta name="description" content="梦回少年 · 实时计算开发者。专注 Flink、Spark 与 Blink，爱 coding，也爱生活。">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="梦回少年，实时计算开发者。主要从事 Flink 与 Blink 开发，具有 Spark 研发经历。">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="梦回少年 · 爱 coding，也爱生活">
-    <meta property="og:description" content="在数据的流动中探索技术，在日常的点滴里记录生活。">
+    <meta property="og:title" content="梦回少年 · 实时计算开发者">
+    <meta property="og:description" content="个人简介、技术方向与工作经历。Flink / Spark / Blink。">
     <meta property="og:url" content="https://taoran92.github.io/">
-    <title>梦回少年 · 爱 coding，也爱生活</title>
+    <title>梦回少年 · 实时计算开发者</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -17,93 +17,56 @@
     <a class="skip-link" href="#main">跳至正文</a>
     <div class="site-shell">
       <header class="site-header">
-        <a class="identity" href="#" aria-label="梦回少年，返回顶部">
-          <span class="identity-mark" aria-hidden="true">梦</span>
-          <span>梦回少年<span class="identity-subtitle">A PERSONAL SPACE</span></span>
-        </a>
+        <a class="identity" href="#about" aria-label="taoran92，个人简介">taoran92<span aria-hidden="true"> /</span></a>
         <nav aria-label="主导航">
-          <a href="#about">关于</a>
-          <a href="#experience">经历</a>
-          <a href="#contact">联系 <span aria-hidden="true">↗</span></a>
+          <a href="#experience">工作经历</a>
+          <a href="#contact">联系方式</a>
         </nav>
       </header>
 
       <main id="main">
-        <section class="hero" aria-labelledby="hero-title">
-          <div class="hero-copy">
-            <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> HELLO, WORLD. / 你好，世界</p>
-            <h1 id="hero-title">爱 <span class="coding">coding</span>，<br>也爱生活<span class="period">。</span></h1>
-            <p class="hero-description">我是梦回少年，一名实时计算开发者。<br>在数据的流动中探索技术，在日常的点滴里记录生活。</p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="https://github.com/taoran92">我的 GitHub <span aria-hidden="true">↗</span></a>
-              <a class="text-link" href="mailto:chucheng.tr@gmail.com">打个招呼 <span aria-hidden="true">↗</span></a>
-            </div>
-            <div class="hero-note"><span class="short-rule" aria-hidden="true"></span> 保持好奇，持续生长。</div>
-          </div>
-
-          <div class="flow-art" role="img" aria-label="多条数据流汇合又向前延伸，象征持续探索的实时计算之路">
-            <div class="art-heading"><span>DATA IN MOTION</span><span>FIG. 01</span></div>
-            <svg class="flow-drawing" viewBox="0 0 440 390" fill="none" aria-hidden="true">
-              <defs>
-                <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#b9c6b5" opacity=".55"/></pattern>
-                <linearGradient id="stream" x1="30" y1="100" x2="410" y2="300" gradientUnits="userSpaceOnUse"><stop stop-color="#a8b89d"/><stop offset=".52" stop-color="#3f624e"/><stop offset="1" stop-color="#a8b89d"/></linearGradient>
-              </defs>
-              <rect x="0" y="0" width="440" height="390" fill="url(#dots)"/>
-              <circle cx="220" cy="191" r="127" stroke="#a9b9a2" stroke-opacity=".4" stroke-dasharray="3 7"/>
-              <circle cx="220" cy="191" r="83" stroke="#a9b9a2" stroke-opacity=".3"/>
-              <path d="M-10 66C102 66 85 192 220 192S340 316 450 316" stroke="url(#stream)" stroke-width="2"/>
-              <path d="M-10 120C100 120 109 192 220 192S345 262 450 262" stroke="url(#stream)" stroke-width="2"/>
-              <path d="M-10 192H450" stroke="#3f624e" stroke-width="2"/>
-              <path d="M-10 264C100 264 109 192 220 192S345 122 450 122" stroke="url(#stream)" stroke-width="2"/>
-              <path d="M-10 318C102 318 85 192 220 192S340 68 450 68" stroke="url(#stream)" stroke-width="2"/>
-              <circle cx="220" cy="192" r="28" fill="#e6ebdf" stroke="#82977b"/>
-              <circle cx="220" cy="192" r="18" fill="#294e3e"/>
-              <path d="M212 192H228M222 186L228 192L222 198" stroke="#f6f5ef" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="83" cy="192" r="5" fill="#bf7855" stroke="#edf0e5" stroke-width="3"/>
-              <circle cx="350" cy="99" r="5" fill="#bf7855" stroke="#edf0e5" stroke-width="3"/>
-              <circle cx="329" cy="192" r="5" fill="#3f624e" stroke="#edf0e5" stroke-width="3"/>
-              <path d="M220 46V65M220 319V338M65 191H84M356 191H375" stroke="#82977b"/>
-              <text x="220" y="32" text-anchor="middle" fill="#75816e" font-family="monospace" font-size="10" letter-spacing="2">CONTINUOUS EXPLORATION</text>
-              <text x="220" y="367" text-anchor="middle" fill="#75816e" font-family="monospace" font-size="10" letter-spacing="2">EVERY STREAM HAS A STORY</text>
-            </svg>
-            <div class="art-caption"><span class="art-title">Keep flowing.</span><span>思考不止，步履不停。</span></div>
-          </div>
+        <section id="about" class="profile" aria-labelledby="profile-title">
+          <p class="eyebrow">STREAM PROCESSING ENGINEER</p>
+          <h1 id="profile-title">梦回少年</h1>
+          <p class="role">实时计算开发者</p>
+          <p class="profile-description">主要从事 Flink 和阿里 Blink 的开发，曾参与 Spark 相关研发。</p>
+          <ul class="technologies" aria-label="技术方向">
+            <li>Apache Flink</li>
+            <li>Apache Spark</li>
+            <li>Blink</li>
+          </ul>
+          <a class="github-link" href="https://github.com/taoran92">GitHub <span aria-hidden="true">↗</span></a>
         </section>
 
-        <section id="about" class="about-section section" aria-labelledby="about-title">
-          <div class="section-label"><span class="section-number">01 / ABOUT</span><h2 id="about-title">技术之外，也是生活。</h2></div>
-          <div class="about-content">
-            <p>你好，我是梦回少年。我的工作围绕实时计算展开，主要从事 Flink 和阿里 Blink 的开发，也曾参与 Spark 相关研发。</p>
-            <p>技术、生活，都是值得认真对待的日常。写干净的文字，过简单的生活，记录点滴，珍藏回忆。</p>
-            <ul class="topics" aria-label="技术方向"><li>实时计算</li><li>Apache Flink</li><li>Apache Spark</li><li>Blink</li></ul>
-          </div>
-        </section>
-
-        <section id="experience" class="experience-section section" aria-labelledby="experience-title">
-          <div class="section-label"><span class="section-number">02 / JOURNEY</span><h2 id="experience-title">走过的路。</h2><p class="section-aside">在实践中积累，在探索中前行。</p></div>
-          <div class="timeline">
+        <section id="experience" class="section" aria-labelledby="experience-title">
+          <h2 id="experience-title">工作经历</h2>
+          <div class="experience-list">
             <article class="experience-item">
-              <div class="experience-topline"><span class="experience-date">2018.07 — 至今</span><span class="experience-index">01</span></div>
-              <h3>蚂蚁集团</h3>
+              <div class="experience-heading">
+                <h3>蚂蚁集团</h3>
+                <p class="experience-date"><time datetime="2018-07">2018.07</time> — 至今</p>
+              </div>
               <p class="experience-role">实时计算平台研发</p>
               <p class="experience-description">主要从事 Flink 和阿里 Blink 的开发。</p>
             </article>
             <article class="experience-item">
-              <div class="experience-topline"><span class="experience-date">2017.06 — 2018.07</span><span class="experience-index">02</span></div>
-              <h3>滴滴出行</h3>
+              <div class="experience-heading">
+                <h3>滴滴出行</h3>
+                <p class="experience-date"><time datetime="2017-06">2017.06</time> — <time datetime="2018-07">2018.07</time></p>
+              </div>
               <p class="experience-role">大数据开发</p>
               <p class="experience-description">参与 Spark 和 Flink 研发。</p>
             </article>
           </div>
         </section>
 
-        <section id="contact" class="contact-section" aria-labelledby="contact-title">
-          <div><span class="section-number">03 / SAY HELLO</span><h2 id="contact-title">聊聊技术，也聊聊生活。</h2><p>很高兴在这里遇见你，欢迎来信交流。</p></div>
-          <a class="contact-link" href="mailto:chucheng.tr@gmail.com"><span>chucheng.tr@gmail.com</span><span class="contact-arrow" aria-hidden="true">↗</span></a>
+        <section id="contact" class="section contact-section" aria-labelledby="contact-title">
+          <h2 id="contact-title">联系方式</h2>
+          <a class="email-link" href="mailto:chucheng.tr@gmail.com">chucheng.tr@gmail.com <span aria-hidden="true">↗</span></a>
         </section>
       </main>
 
-      <footer class="site-footer"><p>任风雨飘摇，人生不惧。</p><a href="https://github.com/taoran92">© 梦回少年 <span aria-hidden="true">↗</span></a></footer>
+      <footer class="site-footer">© 梦回少年</footer>
     </div>
   </body>
 </html>
