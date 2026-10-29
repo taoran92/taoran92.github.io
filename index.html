@@ -7,7 +7,7 @@
     <meta name="description" content="梦回少年，实时计算开发者。主要从事 Flink 与 Blink 开发，具有 Spark 研发经历。">
     <meta property="og:type" content="website">
     <meta property="og:title" content="梦回少年 · 实时计算开发者">
-    <meta property="og:description" content="个人简介、技术方向与工作经历。Flink / Spark / Blink。">
+    <meta property="og:description" content="个人简介、工作经历与 Apache Flink、Flink CDC、Calcite、Paimon 社区贡献。">
     <meta property="og:url" content="https://taoran92.github.io/">
     <title>梦回少年 · 实时计算开发者</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -20,6 +20,7 @@
         <a class="identity" href="#about" aria-label="taoran92，个人简介">taoran92<span aria-hidden="true"> /</span></a>
         <nav aria-label="主导航">
           <a href="#experience">工作经历</a>
+          <a href="#community">社区经历</a>
           <a href="#contact">联系方式</a>
         </nav>
       </header>
@@ -56,6 +57,71 @@
               </div>
               <p class="experience-role">大数据开发</p>
               <p class="experience-description">参与 Spark 和 Flink 研发。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="community" class="section community-section" aria-labelledby="community-title">
+          <div>
+            <h2 id="community-title">社区经历</h2>
+            <p class="section-note">代表性已合并贡献</p>
+          </div>
+          <div class="community-list">
+            <article class="community-project" aria-labelledby="flink-title">
+              <div class="project-heading">
+                <img class="project-logo" src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy">
+                <h3 id="flink-title"><a href="https://flink.apache.org/">Apache Flink</a></h3>
+                <span class="community-role">Contributor</span>
+              </div>
+              <p class="project-summary">SQL 元数据语句与连接器能力。</p>
+              <ul class="contribution-list">
+                <li>增强 SHOW FUNCTIONS 与 SHOW CATALOGS，支持模式匹配过滤。<span class="pr-links"><a href="https://github.com/apache/flink/pull/22903" aria-label="Flink PR 22903：增强 SHOW FUNCTIONS">#22903</a> · <a href="https://github.com/apache/flink/pull/22179" aria-label="Flink PR 22179：增强 SHOW CATALOGS">#22179</a></span></li>
+                <li>为 DataGen 连接器补充 BINARY / VARBINARY 类型支持。<span class="pr-links"><a href="https://github.com/apache/flink/pull/19827" aria-label="Flink PR 19827：DataGen 二进制类型支持">#19827</a></span></li>
+              </ul>
+              <a class="all-contributions" href="https://github.com/apache/flink/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="community-project" aria-labelledby="cdc-title">
+              <div class="project-heading">
+                <img class="project-logo" src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy">
+                <h3 id="cdc-title"><a href="https://nightlies.apache.org/flink/flink-cdc-docs-stable/">Apache Flink CDC</a></h3>
+                <span class="community-role">Contributor</span>
+              </div>
+              <p class="project-summary">大规模表同步性能与分布式 Schema 演进。</p>
+              <ul class="contribution-list">
+                <li>缓存 MySQL 表过滤结果，降低多表同步中重复正则匹配的 CPU 开销。<span class="pr-links"><a href="https://github.com/apache/flink-cdc/pull/4422" aria-label="Flink CDC PR 4422：缓存 MySQL 表过滤结果">#4422</a></span></li>
+                <li>修正分布式 FlushEvent 的源分区标识，保持 Schema 变更与下游刷新链路一致。<span class="pr-links"><a href="https://github.com/apache/flink-cdc/pull/4400" aria-label="Flink CDC PR 4400：修正 FlushEvent 源分区标识">#4400</a></span></li>
+              </ul>
+              <a class="all-contributions" href="https://github.com/apache/flink-cdc/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="community-project" aria-labelledby="calcite-title">
+              <div class="project-heading">
+                <img class="project-logo" src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy">
+                <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
+                <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members" aria-label="查看 Calcite 官方成员页中的 Committer 身份">Committer</a>
+              </div>
+              <p class="project-summary">Spark SQL 函数兼容与复杂类型语义。</p>
+              <ul class="contribution-list">
+                <li>为 Spark 函数库增加 MAP、ARRAY_INSERT，补齐复杂类型操作。<span class="pr-links"><a href="https://github.com/apache/calcite/pull/3459" aria-label="Calcite PR 3459：MAP 函数">#3459</a> · <a href="https://github.com/apache/calcite/pull/3320" aria-label="Calcite PR 3320：ARRAY_INSERT 函数">#3320</a></span></li>
+                <li>修复 ARRAY 子查询含 ORDER BY、无 LIMIT 时排序丢失的问题。<span class="pr-links"><a href="https://github.com/apache/calcite/pull/3644" aria-label="Calcite PR 3644：保留 ARRAY 子查询排序">#3644</a></span></li>
+              </ul>
+              <a class="all-contributions" href="https://github.com/apache/calcite/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="community-project" aria-labelledby="paimon-title">
+              <div class="project-heading">
+                <img class="project-logo" src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy">
+                <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
+                <span class="community-role">Contributor</span>
+              </div>
+              <p class="project-summary">部分更新语义、投影读取正确性与 Spark 集成。</p>
+              <ul class="contribution-list">
+                <li>支持为 partial-update 的 sequence group 独立配置排序方向。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10547" aria-label="Paimon PR 10547：可配置 sequence group 排序方向">#10547</a></span></li>
+                <li>修复列裁剪后删除语义丢失，使投影查询和 COUNT(*) 正确排除已删除记录。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10135" aria-label="Paimon PR 10135：保留投影读取的删除语义">#10135</a></span></li>
+                <li>支持 Spark 合并读取时查询分区和桶元数据。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10481" aria-label="Paimon PR 10481：合并读取中的分区与桶元数据">#10481</a></span></li>
+              </ul>
+              <a class="all-contributions" href="https://github.com/apache/paimon/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
             </article>
           </div>
         </section>
