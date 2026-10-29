@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#f7f8fa">
     <meta name="description" content="梦回少年，实时计算开发者。主要从事 Flink 与 Blink 开发，具有 Spark 研发经历。">
     <meta property="og:type" content="website">
     <meta property="og:title" content="梦回少年 · 实时计算开发者">
@@ -17,30 +17,109 @@
     <a class="skip-link" href="#main">跳至正文</a>
     <div class="site-shell">
       <header class="site-header">
-        <a class="identity" href="#about" aria-label="taoran92，个人简介">taoran92<span aria-hidden="true"> /</span></a>
+        <a class="identity" href="#about" aria-label="taoran92，个人简介"><span class="identity-symbol" aria-hidden="true">/</span> taoran92</a>
         <nav aria-label="主导航">
-          <a href="#experience">工作经历</a>
           <a href="#community">社区经历</a>
-          <a href="#contact">联系方式</a>
+          <a href="#experience">工作经历</a>
+          <a href="#contact">联系</a>
         </nav>
       </header>
 
       <main id="main">
         <section id="about" class="profile" aria-labelledby="profile-title">
-          <p class="eyebrow">STREAM PROCESSING ENGINEER</p>
-          <h1 id="profile-title">梦回少年</h1>
-          <p class="role">实时计算开发者</p>
-          <p class="profile-description">主要从事 Flink 和阿里 Blink 的开发，曾参与 Spark 相关研发。</p>
-          <ul class="technologies" aria-label="技术方向">
-            <li>Apache Flink</li>
-            <li>Apache Spark</li>
-            <li>Blink</li>
-          </ul>
-          <a class="github-link" href="https://github.com/taoran92">GitHub <span aria-hidden="true">↗</span></a>
+          <div class="profile-heading">
+            <p class="eyebrow">RAN TAO / TAORAN92</p>
+            <h1 id="profile-title">梦回少年</h1>
+            <p class="role">实时计算 · SQL 引擎</p>
+          </div>
+          <div class="profile-details">
+            <p class="profile-description">专注实时计算与数据系统研发，<br class="desktop-break">参与 Apache 开源社区建设。</p>
+            <a class="profile-credential" href="https://calcite.apache.org/community/#project-members">Apache Calcite Committer <span aria-hidden="true">↗</span></a>
+            <div class="profile-links">
+              <a href="https://github.com/taoran92">GitHub <span aria-hidden="true">↗</span></a>
+              <a href="mailto:chucheng.tr@gmail.com">Email <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section id="community" class="section community-section" aria-labelledby="community-title">
+          <div class="section-heading">
+            <h2 id="community-title">社区经历</h2>
+            <p>精选已合并贡献</p>
+          </div>
+          <div class="community-grid">
+            <article class="project-card" aria-labelledby="flink-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="flink-title"><a href="https://flink.apache.org/">Apache Flink</a></h3>
+                  <span class="community-role">Contributor</span>
+                </div>
+              </div>
+              <p class="project-summary">SQL 元数据与连接器</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/flink/pull/22903" aria-label="Apache Flink PR 22903：增强 SHOW FUNCTIONS 语法"><span class="contribution-copy"><span class="contribution-title">增强 SHOW FUNCTIONS 语法</span><span class="contribution-description">支持指定 Catalog、Database 与模式过滤。</span></span><span class="pr-number">#22903 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/flink/pull/22179" aria-label="Apache Flink PR 22179：增强 SHOW CATALOGS 语法"><span class="contribution-copy"><span class="contribution-title">增强 SHOW CATALOGS 语法</span><span class="contribution-description">支持 LIKE / ILIKE 模式过滤。</span></span><span class="pr-number">#22179 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/flink/pull/19827" aria-label="Apache Flink PR 19827：扩展 DataGen 类型支持"><span class="contribution-copy"><span class="contribution-title">扩展 DataGen 类型支持</span><span class="contribution-description">支持 BINARY / VARBINARY 数据生成。</span></span><span class="pr-number">#19827 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <a class="project-footer" href="https://github.com/apache/flink/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="project-card" aria-labelledby="cdc-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="cdc-title"><a href="https://nightlies.apache.org/flink/flink-cdc-docs-stable/">Apache Flink CDC</a></h3>
+                  <span class="community-role">Contributor</span>
+                </div>
+              </div>
+              <p class="project-summary">同步性能与 Schema 一致性</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/flink-cdc/pull/4422" aria-label="Apache Flink CDC PR 4422：缓存 MySQL 表过滤结果"><span class="contribution-copy"><span class="contribution-title">缓存 MySQL 表过滤结果</span><span class="contribution-description">减少多表同步中的重复正则匹配开销。</span></span><span class="pr-number">#4422 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/flink-cdc/pull/4400" aria-label="Apache Flink CDC PR 4400：修正分布式 Schema 刷新标识"><span class="contribution-copy"><span class="contribution-title">修正分布式 Schema 刷新标识</span><span class="contribution-description">使用源分区标识，保持变更与刷新链路一致。</span></span><span class="pr-number">#4400 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <a class="project-footer" href="https://github.com/apache/flink-cdc/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="project-card" aria-labelledby="calcite-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
+                  <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members">Committer</a>
+                </div>
+              </div>
+              <p class="project-summary">SQL 函数与复杂类型语义</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/calcite/pull/3459" aria-label="Apache Calcite PR 3459：新增 Spark MAP 函数"><span class="contribution-copy"><span class="contribution-title">新增 Spark MAP 函数</span><span class="contribution-description">支持 Spark 风格构造语法及空 MAP。</span></span><span class="pr-number">#3459 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3320" aria-label="Apache Calcite PR 3320：新增 ARRAY_INSERT 函数"><span class="contribution-copy"><span class="contribution-title">新增 ARRAY_INSERT 函数</span><span class="contribution-description">补齐 Spark 数组插入操作。</span></span><span class="pr-number">#3320 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3644" aria-label="Apache Calcite PR 3644：保留 ARRAY 子查询排序"><span class="contribution-copy"><span class="contribution-title">保留 ARRAY 子查询排序</span><span class="contribution-description">修复有 ORDER BY、无 LIMIT 时排序丢失。</span></span><span class="pr-number">#3644 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <a class="project-footer" href="https://github.com/apache/calcite/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
+            </article>
+
+            <article class="project-card" aria-labelledby="paimon-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
+                  <span class="community-role">Contributor</span>
+                </div>
+              </div>
+              <p class="project-summary">部分更新与读取正确性</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/paimon/pull/10547" aria-label="Apache Paimon PR 10547：支持 Sequence Group 排序配置"><span class="contribution-copy"><span class="contribution-title">支持 Sequence Group 排序配置</span><span class="contribution-description">为部分更新的字段组独立配置排序方向。</span></span><span class="pr-number">#10547 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10135" aria-label="Apache Paimon PR 10135：保留投影读取的删除语义"><span class="contribution-copy"><span class="contribution-title">保留投影读取的删除语义</span><span class="contribution-description">确保列裁剪与 COUNT(*) 正确排除删除记录。</span></span><span class="pr-number">#10135 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10481" aria-label="Apache Paimon PR 10481：补齐 Spark 合并读取元数据"><span class="contribution-copy"><span class="contribution-title">补齐 Spark 合并读取元数据</span><span class="contribution-description">支持查询分区和桶信息。</span></span><span class="pr-number">#10481 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <a class="project-footer" href="https://github.com/apache/paimon/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
+            </article>
+
+          </div>
         </section>
 
         <section id="experience" class="section" aria-labelledby="experience-title">
-          <h2 id="experience-title">工作经历</h2>
+          <div class="section-heading"><h2 id="experience-title">工作经历</h2><p>实时计算与大数据研发</p></div>
           <div class="experience-list">
             <article class="experience-item">
               <div class="experience-heading">
@@ -61,78 +140,13 @@
           </div>
         </section>
 
-        <section id="community" class="section community-section" aria-labelledby="community-title">
-          <div>
-            <h2 id="community-title">社区经历</h2>
-            <p class="section-note">代表性已合并贡献</p>
-          </div>
-          <div class="community-list">
-            <article class="community-project" aria-labelledby="flink-title">
-              <div class="project-heading">
-                <img class="project-logo" src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy">
-                <h3 id="flink-title"><a href="https://flink.apache.org/">Apache Flink</a></h3>
-                <span class="community-role">Contributor</span>
-              </div>
-              <p class="project-summary">SQL 元数据语句与连接器能力。</p>
-              <ul class="contribution-list">
-                <li>增强 SHOW FUNCTIONS 与 SHOW CATALOGS，支持模式匹配过滤。<span class="pr-links"><a href="https://github.com/apache/flink/pull/22903" aria-label="Flink PR 22903：增强 SHOW FUNCTIONS">#22903</a> · <a href="https://github.com/apache/flink/pull/22179" aria-label="Flink PR 22179：增强 SHOW CATALOGS">#22179</a></span></li>
-                <li>为 DataGen 连接器补充 BINARY / VARBINARY 类型支持。<span class="pr-links"><a href="https://github.com/apache/flink/pull/19827" aria-label="Flink PR 19827：DataGen 二进制类型支持">#19827</a></span></li>
-              </ul>
-              <a class="all-contributions" href="https://github.com/apache/flink/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
-            </article>
-
-            <article class="community-project" aria-labelledby="cdc-title">
-              <div class="project-heading">
-                <img class="project-logo" src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy">
-                <h3 id="cdc-title"><a href="https://nightlies.apache.org/flink/flink-cdc-docs-stable/">Apache Flink CDC</a></h3>
-                <span class="community-role">Contributor</span>
-              </div>
-              <p class="project-summary">大规模表同步性能与分布式 Schema 演进。</p>
-              <ul class="contribution-list">
-                <li>缓存 MySQL 表过滤结果，降低多表同步中重复正则匹配的 CPU 开销。<span class="pr-links"><a href="https://github.com/apache/flink-cdc/pull/4422" aria-label="Flink CDC PR 4422：缓存 MySQL 表过滤结果">#4422</a></span></li>
-                <li>修正分布式 FlushEvent 的源分区标识，保持 Schema 变更与下游刷新链路一致。<span class="pr-links"><a href="https://github.com/apache/flink-cdc/pull/4400" aria-label="Flink CDC PR 4400：修正 FlushEvent 源分区标识">#4400</a></span></li>
-              </ul>
-              <a class="all-contributions" href="https://github.com/apache/flink-cdc/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
-            </article>
-
-            <article class="community-project" aria-labelledby="calcite-title">
-              <div class="project-heading">
-                <img class="project-logo" src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy">
-                <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
-                <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members" aria-label="查看 Calcite 官方成员页中的 Committer 身份">Committer</a>
-              </div>
-              <p class="project-summary">Spark SQL 函数兼容与复杂类型语义。</p>
-              <ul class="contribution-list">
-                <li>为 Spark 函数库增加 MAP、ARRAY_INSERT，补齐复杂类型操作。<span class="pr-links"><a href="https://github.com/apache/calcite/pull/3459" aria-label="Calcite PR 3459：MAP 函数">#3459</a> · <a href="https://github.com/apache/calcite/pull/3320" aria-label="Calcite PR 3320：ARRAY_INSERT 函数">#3320</a></span></li>
-                <li>修复 ARRAY 子查询含 ORDER BY、无 LIMIT 时排序丢失的问题。<span class="pr-links"><a href="https://github.com/apache/calcite/pull/3644" aria-label="Calcite PR 3644：保留 ARRAY 子查询排序">#3644</a></span></li>
-              </ul>
-              <a class="all-contributions" href="https://github.com/apache/calcite/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
-            </article>
-
-            <article class="community-project" aria-labelledby="paimon-title">
-              <div class="project-heading">
-                <img class="project-logo" src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy">
-                <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
-                <span class="community-role">Contributor</span>
-              </div>
-              <p class="project-summary">部分更新语义、投影读取正确性与 Spark 集成。</p>
-              <ul class="contribution-list">
-                <li>支持为 partial-update 的 sequence group 独立配置排序方向。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10547" aria-label="Paimon PR 10547：可配置 sequence group 排序方向">#10547</a></span></li>
-                <li>修复列裁剪后删除语义丢失，使投影查询和 COUNT(*) 正确排除已删除记录。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10135" aria-label="Paimon PR 10135：保留投影读取的删除语义">#10135</a></span></li>
-                <li>支持 Spark 合并读取时查询分区和桶元数据。<span class="pr-links"><a href="https://github.com/apache/paimon/pull/10481" aria-label="Paimon PR 10481：合并读取中的分区与桶元数据">#10481</a></span></li>
-              </ul>
-              <a class="all-contributions" href="https://github.com/apache/paimon/pulls?q=is%3Apr+author%3Ataoran92">全部 PR <span aria-hidden="true">↗</span></a>
-            </article>
-          </div>
-        </section>
-
-        <section id="contact" class="section contact-section" aria-labelledby="contact-title">
-          <h2 id="contact-title">联系方式</h2>
+        <section id="contact" class="contact-section" aria-labelledby="contact-title">
+          <h2 id="contact-title">联系</h2>
           <a class="email-link" href="mailto:chucheng.tr@gmail.com">chucheng.tr@gmail.com <span aria-hidden="true">↗</span></a>
         </section>
       </main>
 
-      <footer class="site-footer">© 梦回少年</footer>
+      <footer class="site-footer"><span>© 梦回少年</span><a href="https://github.com/taoran92">GitHub / taoran92</a></footer>
     </div>
   </body>
 </html>
