@@ -45,9 +45,50 @@
         <section id="community" class="section community-section" aria-labelledby="community-title">
           <div class="section-heading">
             <h2 id="community-title">社区经历</h2>
-            <p>精选已合并贡献</p>
+            <p>每个项目精选 5 项已合并贡献</p>
           </div>
           <div class="community-grid">
+            <article class="project-card" aria-labelledby="paimon-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
+                  <span class="community-role">Contributor</span>
+                </div>
+              </div>
+              <p class="project-summary">部分更新与 Java / Rust 读取语义</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/paimon/pull/10547" aria-label="Apache Paimon PR 10547：支持 Sequence Group 排序配置"><span class="contribution-copy"><span class="contribution-title">Java：支持 Sequence Group 排序配置</span><span class="contribution-description">为部分更新的字段组独立配置排序方向。</span></span><span class="pr-number">#10547 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon-rust/pull/1226" aria-label="Paimon Rust PR 1226：对齐 Sequence Group 排序语义"><span class="contribution-copy"><span class="contribution-title">Rust：对齐 Sequence Group 排序语义</span><span class="contribution-description">补齐分组升降序，覆盖读写合并、投影及列重命名。</span></span><span class="pr-number">#1226 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10135" aria-label="Apache Paimon PR 10135：保留投影读取的删除语义"><span class="contribution-copy"><span class="contribution-title">保留投影读取的删除语义</span><span class="contribution-description">确保列裁剪与 COUNT(*) 正确排除删除记录。</span></span><span class="pr-number">#10135 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10481" aria-label="Apache Paimon PR 10481：补齐 Spark 合并读取元数据"><span class="contribution-copy"><span class="contribution-title">补齐 Spark 合并读取元数据</span><span class="contribution-description">支持查询分区和桶信息。</span></span><span class="pr-number">#10481 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10725" aria-label="Apache Paimon PR 10725：修正列权限下的回退与链式查询"><span class="contribution-copy"><span class="contribution-title">修正列权限下的回退与链式查询</span><span class="contribution-description">区分查询列与内部扫描依赖，避免未引用列导致鉴权失败。</span></span><span class="pr-number">#10725 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <div class="project-footer project-repositories" aria-label="Paimon 全部贡献">
+                <a href="https://github.com/apache/paimon/pulls?q=is%3Apr+author%3Ataoran92">Paimon PR <span aria-hidden="true">↗</span></a>
+                <a href="https://github.com/apache/paimon-rust/pulls?q=is%3Apr+author%3Ataoran92">Paimon Rust PR <span aria-hidden="true">↗</span></a>
+              </div>
+            </article>
+
+            <article class="project-card" aria-labelledby="calcite-title">
+              <div class="project-heading">
+                <div class="project-icon"><img src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy"></div>
+                <div class="project-identity">
+                  <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
+                  <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members">Committer</a>
+                </div>
+              </div>
+              <p class="project-summary">类型系统、查询执行与排序正确性</p>
+              <ul class="contribution-list">
+                <li><a href="https://github.com/apache/calcite/pull/3395" aria-label="Apache Calcite PR 3395：统一 ARRAY / MAP 元素类型转换"><span class="contribution-copy"><span class="contribution-title">统一 ARRAY / MAP 元素类型转换</span><span class="contribution-description">为元素补充显式 CAST，使实际值与推导出的集合类型一致。</span></span><span class="pr-number">#3395 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3475" aria-label="Apache Calcite PR 3475：修复 MAP 子查询执行异常"><span class="contribution-copy"><span class="contribution-title">修复 MAP 子查询执行异常</span><span class="contribution-description">修正类型推导与 EnumerableCollect 执行，消除空指针异常。</span></span><span class="pr-number">#3475 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3644" aria-label="Apache Calcite PR 3644：保留 ARRAY 子查询排序"><span class="contribution-copy"><span class="contribution-title">保留 ARRAY 子查询排序</span><span class="contribution-description">修复有 ORDER BY、无 LIMIT 时排序丢失。</span></span><span class="pr-number">#3644 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3463" aria-label="Apache Calcite PR 3463：修正 MAP 空值类型推导"><span class="contribution-copy"><span class="contribution-title">修正 MAP 空值类型推导</span><span class="contribution-description">正确推导含 NULL 的键值类型，避免键和值之间的错误推断。</span></span><span class="pr-number">#3463 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/calcite/pull/3304" aria-label="Apache Calcite PR 3304：统一 InnoDB 索引条件处理"><span class="contribution-copy"><span class="contribution-title">统一 InnoDB 索引条件处理</span><span class="contribution-description">将缺省点查键归一为空列表，简化执行转换中的空值处理。</span></span><span class="pr-number">#3304 <span aria-hidden="true">↗</span></span></a></li>
+              </ul>
+              <a class="project-footer" href="https://github.com/apache/calcite/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
+            </article>
+
             <article class="project-card" aria-labelledby="flink-title">
               <div class="project-heading">
                 <div class="project-icon"><img src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy"></div>
@@ -68,44 +109,6 @@
                 <a href="https://github.com/apache/flink/pulls?q=is%3Apr+author%3Ataoran92">Flink PR <span aria-hidden="true">↗</span></a>
                 <a href="https://github.com/apache/flink-cdc/pulls?q=is%3Apr+author%3Ataoran92">Flink CDC PR <span aria-hidden="true">↗</span></a>
               </div>
-            </article>
-
-            <article class="project-card" aria-labelledby="paimon-title">
-              <div class="project-heading">
-                <div class="project-icon"><img src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy"></div>
-                <div class="project-identity">
-                  <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
-                  <span class="community-role">Contributor</span>
-                </div>
-              </div>
-              <p class="project-summary">部分更新与 Java / Rust 读取语义</p>
-              <ul class="contribution-list">
-                <li><a href="https://github.com/apache/paimon/pull/10547" aria-label="Apache Paimon PR 10547：支持 Sequence Group 排序配置"><span class="contribution-copy"><span class="contribution-title">Java：支持 Sequence Group 排序配置</span><span class="contribution-description">为部分更新的字段组独立配置排序方向。</span></span><span class="pr-number">#10547 <span aria-hidden="true">↗</span></span></a></li>
-                <li><a href="https://github.com/apache/paimon-rust/pull/1226" aria-label="Paimon Rust PR 1226：对齐 Sequence Group 排序语义"><span class="contribution-copy"><span class="contribution-title">Rust：对齐 Sequence Group 排序语义</span><span class="contribution-description">补齐分组升降序，覆盖读写合并、投影及列重命名。</span></span><span class="pr-number">#1226 <span aria-hidden="true">↗</span></span></a></li>
-                <li><a href="https://github.com/apache/paimon/pull/10135" aria-label="Apache Paimon PR 10135：保留投影读取的删除语义"><span class="contribution-copy"><span class="contribution-title">保留投影读取的删除语义</span><span class="contribution-description">确保列裁剪与 COUNT(*) 正确排除删除记录。</span></span><span class="pr-number">#10135 <span aria-hidden="true">↗</span></span></a></li>
-                <li><a href="https://github.com/apache/paimon/pull/10481" aria-label="Apache Paimon PR 10481：补齐 Spark 合并读取元数据"><span class="contribution-copy"><span class="contribution-title">补齐 Spark 合并读取元数据</span><span class="contribution-description">支持查询分区和桶信息。</span></span><span class="pr-number">#10481 <span aria-hidden="true">↗</span></span></a></li>
-              </ul>
-              <div class="project-footer project-repositories" aria-label="Paimon 全部贡献">
-                <a href="https://github.com/apache/paimon/pulls?q=is%3Apr+author%3Ataoran92">Paimon PR <span aria-hidden="true">↗</span></a>
-                <a href="https://github.com/apache/paimon-rust/pulls?q=is%3Apr+author%3Ataoran92">Paimon Rust PR <span aria-hidden="true">↗</span></a>
-              </div>
-            </article>
-
-            <article class="project-card project-card-wide" aria-labelledby="calcite-title">
-              <div class="project-heading">
-                <div class="project-icon"><img src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy"></div>
-                <div class="project-identity">
-                  <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
-                  <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members">Committer</a>
-                </div>
-              </div>
-              <p class="project-summary">类型系统、查询执行与排序正确性</p>
-              <ul class="contribution-list">
-                <li><a href="https://github.com/apache/calcite/pull/3395" aria-label="Apache Calcite PR 3395：统一 ARRAY / MAP 元素类型转换"><span class="contribution-copy"><span class="contribution-title">统一 ARRAY / MAP 元素类型转换</span><span class="contribution-description">为元素补充显式 CAST，使实际值与推导出的集合类型一致。</span></span><span class="pr-number">#3395 <span aria-hidden="true">↗</span></span></a></li>
-                <li><a href="https://github.com/apache/calcite/pull/3475" aria-label="Apache Calcite PR 3475：修复 MAP 子查询执行异常"><span class="contribution-copy"><span class="contribution-title">修复 MAP 子查询执行异常</span><span class="contribution-description">修正类型推导与 EnumerableCollect 执行，消除空指针异常。</span></span><span class="pr-number">#3475 <span aria-hidden="true">↗</span></span></a></li>
-                <li><a href="https://github.com/apache/calcite/pull/3644" aria-label="Apache Calcite PR 3644：保留 ARRAY 子查询排序"><span class="contribution-copy"><span class="contribution-title">保留 ARRAY 子查询排序</span><span class="contribution-description">修复有 ORDER BY、无 LIMIT 时排序丢失。</span></span><span class="pr-number">#3644 <span aria-hidden="true">↗</span></span></a></li>
-              </ul>
-              <a class="project-footer" href="https://github.com/apache/calcite/pulls?q=is%3Apr+author%3Ataoran92">查看全部贡献 <span aria-hidden="true">↗</span></a>
             </article>
 
           </div>
