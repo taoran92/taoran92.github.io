@@ -1,6 +1,6 @@
 # Ran Tao · 个人主页
 
-轻量静态个人主页，包含个人介绍、技术方向、工作经历、开源社区经历和联系方式。
+轻量英文静态个人主页，包含个人介绍、技术方向、工作经历、开源社区经历和联系方式。
 
 使用原生 HTML、CSS 和 SVG，无 JavaScript、第三方字体、外部依赖或构建步骤。采用宽版个人简介、Paimon / Calcite / Flink 三列等宽卡片和紧凑工作经历。每个项目精选 5 项贡献，窄屏切换为单列。支持键盘导航，无动画效果。
 
@@ -22,7 +22,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 - `assets/logos/`：Flink、Paimon、Calcite 三个社区的官方图标，本地加载。
 - `.nojekyll`：将页面作为静态文件发布，跳过 Jekyll 处理。
 
-个人信息来自原 `pages/about.md`，联系方式统一为 `chucheng.tr@gmail.com`。更新工作经历时直接编辑 `index.html`。
+个人信息基于原 `pages/about.md` 与用户更新：字节跳动（2023.06 至今，Flink 研发）、蚂蚁集团（2018.07–2023.06）、滴滴出行（2017.06–2018.07）。联系方式统一为 `chucheng.tr@gmail.com`。更新工作经历时直接编辑 `index.html`。
 
 ## 社区经历与图标来源
 
