@@ -54,8 +54,6 @@ h2 { font-size: 19px; font-weight: 600; letter-spacing: .3px; }
 .project-icon img { display: block; width: 36px; height: 36px; object-fit: contain; }
 .project-identity { min-width: 0; }
 h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
-.community-role { display: inline-block; font-family: var(--mono); font-size: 10px; line-height: 1.6; color: var(--muted); margin-top: 4px; }
-.committer-role { color: #315c84; background: #eef4fa; padding: 0 7px; border-radius: 4px; }
 .project-summary { font-size: 14px; font-weight: 500; margin-top: 23px; padding-bottom: 5px; }
 .contribution-list { list-style: none; padding: 0; margin: 0 0 20px; }
 .contribution-list li + li { border-top: 1px solid #f0f2f5; }
@@ -71,6 +69,14 @@ h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
 .project-footer span { font-size: 16px; }
 .project-repositories { flex-wrap: wrap; gap: 8px 24px; }
 .project-repositories a { display: inline-flex; align-items: center; gap: 8px; }
+.community-activities { margin-top: 32px; }
+.community-activities > h3 { font-size: 15px; margin-bottom: 16px; }
+.activity-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.activity-list li { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 20px; align-items: baseline; padding: 17px 0; border-bottom: 1px solid var(--line); }
+.activity-list time { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.activity-title { font-size: 13px; font-weight: 500; }
+.activity-description { margin-top: 4px; font-size: 12px; color: var(--muted); }
+.activity-location { margin-left: 6px; font-weight: 400; color: var(--muted); }
 .experience-list { border-top: 1px solid var(--line); }
 .experience-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 40px; padding: 23px 0; border-bottom: 1px solid var(--line); }
 .experience-heading { display: flex; flex-direction: column; grid-row: span 2; gap: 5px; }
@@ -111,6 +117,7 @@ h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
   .community-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .project-card { padding: 23px 22px 0; }
   .contribution-list a { flex-direction: row; gap: 10px; }
+  .activity-list li { grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
   .experience-item { grid-template-columns: minmax(0, 1fr); gap: 7px; padding: 20px 0; }
   .experience-heading { grid-row: auto; flex-direction: row; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
   .experience-description { font-size: 11px; }

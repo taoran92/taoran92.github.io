@@ -2,7 +2,7 @@
 
 轻量英文静态个人主页，包含个人介绍、技术方向、工作经历、开源社区经历和联系方式。
 
-使用原生 HTML、CSS 和 SVG，无 JavaScript、第三方字体、外部依赖或构建步骤。采用宽版个人简介、Paimon / Calcite / Flink 三列等宽卡片和紧凑工作经历。每个项目精选 5 项贡献，窄屏切换为单列。支持键盘导航，无动画效果。
+使用原生 HTML、CSS 和 SVG，无 JavaScript、第三方字体、外部依赖或构建步骤。采用宽版个人简介、Paimon / Calcite / Flink 三列卡片和紧凑工作经历。每个项目保留 5 项精选贡献；项目下方列出社区活动，窄屏切换为单列。支持键盘导航，无动画效果。
 
 ## 本地预览
 
@@ -28,9 +28,11 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 社区经历于 2026-10-29 根据 GitHub 公开 PR 的作者、说明和合并状态核实。页面精选 `taoran92` 已合并的贡献，不包含尚未合并的 PR；“全部 PR”链接包含该项目下所有状态的个人 PR。未将内部增强清单作为已完成的社区贡献。
 
-- Paimon（含 Paimon Rust）：Java [#10547](https://github.com/apache/paimon/pull/10547)、[#10135](https://github.com/apache/paimon/pull/10135)、[#10481](https://github.com/apache/paimon/pull/10481)、[#10725](https://github.com/apache/paimon/pull/10725)；Rust [#1226](https://github.com/apache/paimon-rust/pull/1226)（2026-10-27 合并），将 #10547 的分组排序语义迁移至 Rust 实现。
+- Paimon（含 Paimon Rust）：[#10547](https://github.com/apache/paimon/pull/10547)、[#10135](https://github.com/apache/paimon/pull/10135)、[#10481](https://github.com/apache/paimon/pull/10481)、[#10725](https://github.com/apache/paimon/pull/10725)；Rust [#1226](https://github.com/apache/paimon-rust/pull/1226)（2026-10-27 合并），将 #10547 的分组排序语义迁移至 Rust 实现。
 - Calcite：ARRAY / MAP 元素类型转换 [#3395](https://github.com/apache/calcite/pull/3395)、MAP 子查询执行 [#3475](https://github.com/apache/calcite/pull/3475)、ARRAY 子查询排序 [#3644](https://github.com/apache/calcite/pull/3644)、MAP 空值类型推导 [#3463](https://github.com/apache/calcite/pull/3463)、InnoDB 索引条件处理 [#3304](https://github.com/apache/calcite/pull/3304)。示例聚焦类型系统与查询正确性，不展示新增函数支持。Committer 身份见[官方成员页](https://calcite.apache.org/community/#project-members)中的 Ran Tao / taoran。
 - Flink（含 Flink CDC）：Flink [#22903](https://github.com/apache/flink/pull/22903)、[#22179](https://github.com/apache/flink/pull/22179)、[#19827](https://github.com/apache/flink/pull/19827)；Flink CDC [#4422](https://github.com/apache/flink-cdc/pull/4422)、[#4400](https://github.com/apache/flink-cdc/pull/4400)。
+
+社区活动由用户提供：2018 年杭州 Spark Meetup、2019 年杭州 Flink Meetup、2021 年 Flink Forward Asia（Topic: Flink Hot Updates & Autoscaling at Ant Group）。页面不补写未提供的具体日期、活动角色或资料链接。Ant Group 与 ByteDance 的职位按用户要求统一为 Senior Flink Engineer。
 
 图标原样下载自项目官网：
 

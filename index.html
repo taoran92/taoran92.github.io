@@ -45,7 +45,6 @@
         <section id="community" class="section community-section" aria-labelledby="community-title">
           <div class="section-heading">
             <h2 id="community-title">Open Source</h2>
-            <p>5 selected merged PRs per project</p>
           </div>
           <div class="community-grid">
             <article class="project-card" aria-labelledby="paimon-title">
@@ -53,12 +52,11 @@
                 <div class="project-icon"><img src="assets/logos/paimon.svg" alt="" width="36" height="36" loading="lazy"></div>
                 <div class="project-identity">
                   <h3 id="paimon-title"><a href="https://paimon.apache.org/">Apache Paimon</a></h3>
-                  <span class="community-role">Contributor</span>
                 </div>
               </div>
               <p class="project-summary">Partial updates &amp; read semantics</p>
               <ul class="contribution-list">
-                <li><a href="https://github.com/apache/paimon/pull/10547" aria-label="Apache Paimon PR 10547: Configurable sequence-group sort order"><span class="contribution-copy"><span class="contribution-title">Java: sequence-group sort order</span><span class="contribution-description">Configure sort direction per sequence group for partial updates.</span></span><span class="pr-number">#10547 <span aria-hidden="true">↗</span></span></a></li>
+                <li><a href="https://github.com/apache/paimon/pull/10547" aria-label="Apache Paimon PR 10547: Configurable sequence-group sort order"><span class="contribution-copy"><span class="contribution-title">Sequence-group sort order</span><span class="contribution-description">Configure sort direction per sequence group for partial updates.</span></span><span class="pr-number">#10547 <span aria-hidden="true">↗</span></span></a></li>
                 <li><a href="https://github.com/apache/paimon-rust/pull/1226" aria-label="Paimon Rust PR 1226: Align sequence-group sort semantics"><span class="contribution-copy"><span class="contribution-title">Rust: sequence-group sort order</span><span class="contribution-description">Apply group sort order across merges, projections, and column renames.</span></span><span class="pr-number">#1226 <span aria-hidden="true">↗</span></span></a></li>
                 <li><a href="https://github.com/apache/paimon/pull/10135" aria-label="Apache Paimon PR 10135: Preserve deletes in projected reads"><span class="contribution-copy"><span class="contribution-title">Preserve deletes in projected reads</span><span class="contribution-description">Keep deleted rows out of projected reads and COUNT(*).</span></span><span class="pr-number">#10135 <span aria-hidden="true">↗</span></span></a></li>
                 <li><a href="https://github.com/apache/paimon/pull/10481" aria-label="Apache Paimon PR 10481: Expose metadata in Spark merge reads"><span class="contribution-copy"><span class="contribution-title">Expose metadata in Spark merge reads</span><span class="contribution-description">Allow partition and bucket metadata queries during merge reads.</span></span><span class="pr-number">#10481 <span aria-hidden="true">↗</span></span></a></li>
@@ -75,7 +73,6 @@
                 <div class="project-icon"><img src="assets/logos/calcite.ico" alt="" width="36" height="36" loading="lazy"></div>
                 <div class="project-identity">
                   <h3 id="calcite-title"><a href="https://calcite.apache.org/">Apache Calcite</a></h3>
-                  <a class="community-role committer-role" href="https://calcite.apache.org/community/#project-members">Committer</a>
                 </div>
               </div>
               <p class="project-summary">Types, execution &amp; query correctness</p>
@@ -94,7 +91,6 @@
                 <div class="project-icon"><img src="assets/logos/flink.png" alt="" width="36" height="36" loading="lazy"></div>
                 <div class="project-identity">
                   <h3 id="flink-title"><a href="https://flink.apache.org/">Apache Flink</a></h3>
-                  <span class="community-role">Contributor</span>
                 </div>
               </div>
               <p class="project-summary">SQL, connectors &amp; CDC</p>
@@ -112,6 +108,31 @@
             </article>
 
           </div>
+
+          <section class="community-activities" aria-labelledby="activities-title">
+            <h3 id="activities-title">Community Activities</h3>
+            <ul class="activity-list">
+              <li>
+                <time datetime="2021">2021</time>
+                <div class="activity-details">
+                  <p class="activity-title">Flink Forward Asia</p>
+                  <p class="activity-description">Topic: Flink Hot Updates &amp; Autoscaling at Ant Group</p>
+                </div>
+              </li>
+              <li>
+                <time datetime="2019">2019</time>
+                <div class="activity-details">
+                  <p class="activity-title">Flink Meetup <span class="activity-location">· Hangzhou</span></p>
+                </div>
+              </li>
+              <li>
+                <time datetime="2018">2018</time>
+                <div class="activity-details">
+                  <p class="activity-title">Spark Meetup <span class="activity-location">· Hangzhou</span></p>
+                </div>
+              </li>
+            </ul>
+          </section>
         </section>
 
         <section id="experience" class="section" aria-labelledby="experience-title">
@@ -122,7 +143,7 @@
                 <h3>ByteDance</h3>
                 <p class="experience-date"><time datetime="2023-06">Jun 2023</time> — Present</p>
               </div>
-              <p class="experience-role">Flink Engineer</p>
+              <p class="experience-role">Senior Flink Engineer</p>
               <p class="experience-description">Working on Apache Flink.</p>
             </article>
             <article class="experience-item">
@@ -130,7 +151,7 @@
                 <h3>Ant Group</h3>
                 <p class="experience-date"><time datetime="2018-07">Jul 2018</time> — <time datetime="2023-06">Jun 2023</time></p>
               </div>
-              <p class="experience-role">Stream Processing Engineer</p>
+              <p class="experience-role">Senior Flink Engineer</p>
               <p class="experience-description">Developed Apache Flink and Alibaba Blink.</p>
             </article>
             <article class="experience-item">
