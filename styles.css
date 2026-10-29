@@ -69,6 +69,14 @@ h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
 .contribution-list a:hover .contribution-title { text-decoration: underline; text-underline-offset: 3px; }
 .project-footer { margin-top: auto; padding: 15px 0 17px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
 .project-footer span { font-size: 16px; }
+.project-repositories { flex-wrap: wrap; gap: 8px 24px; }
+.project-repositories a { display: inline-flex; align-items: center; gap: 8px; }
+.project-card-wide { grid-column: 1 / -1; }
+@media (min-width: 901px) {
+  .project-card-wide .contribution-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 8px; }
+  .project-card-wide .contribution-list li + li { border-top: 0; border-left: 1px solid var(--line); padding-left: 24px; }
+  .project-card-wide .contribution-list a { flex-direction: column; gap: 12px; }
+}
 .experience-list { border-top: 1px solid var(--line); }
 .experience-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 40px; padding: 23px 0; border-bottom: 1px solid var(--line); }
 .experience-heading { display: flex; flex-direction: column; grid-row: span 2; gap: 5px; }
