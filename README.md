@@ -1,22 +1,30 @@
-### 我的博客
+# 梦回少年 · 个人主页
 
-地址：[http://taoran92.github.io/](http://taoran92.github.io/)
+轻量静态个人主页，包含个人介绍、技术方向、工作经历和联系方式。
 
-### 安装说明
+使用原生 HTML、CSS 和 SVG，无 JavaScript、第三方字体、外部依赖或构建步骤。支持移动端、键盘导航和减少动态效果偏好。
 
-1. fork库到自己的github
-2. 修改名字为：`username.github.io`
-3. clone库到本地，参考`_posts`中的目录结构自己创建适合自己的文章目录结构
-4. 修改CNAME，或者删掉这个文件，使用默认域名
-5. 修改`_config.yml`配置项
-6. It's done!
+## 本地预览
 
-# License
+在仓库根目录运行：
 
-> Copyright 2013, Edmodo, Inc.
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
 
->Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
+访问 http://127.0.0.1:8000 。
 
->http://www.apache.org/licenses/LICENSE-2.0
+## 内容与样式
 
->Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+- `index.html`：个人信息、工作经历、邮箱和 GitHub 链接。
+- `styles.css`：配色、排版与响应式布局。
+- `favicon.svg`：网站图标。
+- `.nojekyll`：将页面作为静态文件发布，跳过 Jekyll 处理。
+
+个人信息来自原 `pages/about.md`，联系方式统一为 `chucheng.tr@gmail.com`。更新工作经历时直接编辑 `index.html`。
+
+## GitHub Pages
+
+将这些文件发布到本仓库 GitHub Pages 配置使用的分支根目录即可，无需安装依赖。目标地址：https://taoran92.github.io/ 。本地修改不会自动更新线上页面，需提交并推送后由 GitHub Pages 发布。
+
+原博客的文章、模板、生成目录和相关组件已移除，历史版本仍可通过 Git 查阅。
