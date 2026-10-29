@@ -17,12 +17,12 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ## 内容与样式
 
 - `index.html`：个人信息、工作经历、邮箱和 GitHub 链接。
-- `styles.css`：配色、排版与响应式布局。
+- `styles.css`：配色、排版与响应式布局。`index.html` 的样式链接带 CSS 内容 SHA-256 前 12 位作为版本参数；每次修改 CSS 后同步更新该参数，避免新 HTML 加载旧样式缓存。
 - `favicon.svg`：网站图标。
 - `assets/logos/`：Flink、Paimon、Calcite 三个社区的官方图标，本地加载。
 - `.nojekyll`：将页面作为静态文件发布，跳过 Jekyll 处理。
 
-个人信息基于原 `pages/about.md` 与用户更新：字节跳动（2023.06 至今，Flink 研发）、蚂蚁集团（2018.07–2023.06）、滴滴出行（2017.06–2018.07）。联系方式统一为 `chucheng.tr@gmail.com`。更新工作经历时直接编辑 `index.html`。
+个人信息基于原 `pages/about.md` 与用户更新：字节跳动（2023.06 至今，Flink 研发）、蚂蚁集团（2018.07–2023.06）、滴滴出行（2017.06–2018.07）。联系方式统一为 `chucheng.tr@gmail.com`。两个邮箱入口均打开 Gmail 网页写信页并预填收件人，未登录时需先登录 Gmail，不依赖系统默认邮件客户端。更新工作经历时直接编辑 `index.html`。
 
 ## 社区经历与图标来源
 
