@@ -88,8 +88,11 @@ h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
 .contact-section h2 { font-size: 15px; }
 .email-link { color: var(--accent); font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
 .email-link span { margin-left: 12px; }
-.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 8px 0 28px; color: var(--muted); font-size: 10px; }
+.site-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; padding: 8px 0 28px; color: var(--muted); font-size: 10px; }
 .site-footer a { padding: 5px 0; }
+.visitor-stats { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.visitor-stats > span { white-space: nowrap; }
+.visitor-count { display: inline-block; min-width: 2ch; margin-left: 4px; color: var(--ink); font-variant-numeric: tabular-nums; }
 @media (max-width: 900px) {
   .site-shell { width: calc(100% - 48px); }
   .profile { gap: 32px; }
@@ -123,6 +126,7 @@ h3 { font-size: 17px; line-height: 1.5; font-weight: 600; }
   .experience-description { font-size: 11px; }
   .contact-section { flex-wrap: wrap; gap: 10px; padding: 20px 0; }
   .email-link { font-size: 12px; }
+  .visitor-stats { order: 1; flex-basis: 100%; }
 }
 @media (max-width: 380px) {
   .site-header { flex-wrap: wrap; gap: 0; padding: 10px 0; }
