@@ -1,34 +1,64 @@
-// API and UV fields used by https://www.busuanzi.cc/doc.php (script v3.6.9).
+// API: https://github.com/soxft/busuanzi/wiki/API
+// Endpoint used by the provider's https://busuanzi.9420.ltd/js script.
 (async () => {
   // Keep local previews and forks out of the production statistics.
   if (window.location.origin !== "https://taoran92.github.io") return;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const elements = ["visitors-today", "visitors-total"].map(id => document.getElementById(id));
+  elements.forEach(element => {
+    element.textContent = "Loading…";
+    element.title = "Loading visitor statistics";
+  });
 
-  try {
-    const response = await fetch("https://cdn.busuanzi.cc/api.php", {
-      method: "POST",
-      // Only the canonical homepage is needed; omit query strings and referrers.
-      body: JSON.stringify({ url: "https://taoran92.github.io/", referrer: "" }),
-      credentials: "omit",
-      referrerPolicy: "no-referrer",
-      signal: controller.signal,
-    });
-    if (!response.ok) return;
+  // One virtual page per Shanghai calendar day gives server-deduplicated daily UV.
+  // The same request also returns cumulative UV for the canonical site hostname.
+  const dayFormatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
+  });
 
-    const data = await response.json();
-    const counts = [data?.busuanzi_today_uv, data?.busuanzi_site_uv];
-    if (!counts.every(value => Number.isSafeInteger(value) && value >= 0)) return;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) await new Promise(resolve => setTimeout(resolve, 1000));
+    // Each attempt needs its own signal: an aborted controller cannot be reused.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
-    ["visitors-today", "visitors-total"].forEach((id, index) => {
-      const element = document.getElementById(id);
-      element.textContent = counts[index].toLocaleString("en-US");
-      element.removeAttribute("title");
-    });
-  } catch {
-    // Leave the neutral placeholders in place when statistics are unavailable.
-  } finally {
-    clearTimeout(timeout);
+    try {
+      const dayParts = Object.fromEntries(dayFormatter.formatToParts(new Date()).map(part => [part.type, part.value]));
+      const day = `${dayParts.year}-${dayParts.month}-${dayParts.day}`;
+      const response = await fetch("https://bsz.iirose.cn/api", {
+        method: "POST",
+        // Only a canonical date bucket is sent; omit actual URLs and referrers.
+        headers: { "x-bsz-referer": `https://taoran92.github.io/__visitors/${day}` },
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        if (response.status >= 500) continue;
+        break;
+      }
+
+      const data = await response.json();
+      if (data?.success !== true) break;
+      const counts = [data.data?.page_uv, data.data?.site_uv];
+      if (!counts.every(value => Number.isSafeInteger(value) && value >= 0)) break;
+
+      elements.forEach((element, index) => {
+        element.textContent = counts[index].toLocaleString("en-US");
+        element.title = index === 0
+          ? "Unique visitors today (Asia/Shanghai)"
+          : "Unique visitors since November 2, 2026";
+      });
+      return;
+    } catch {
+      // Retry once after a network failure, CORS error, timeout, or invalid JSON.
+    } finally {
+      clearTimeout(timeout);
+    }
   }
+
+  elements.forEach(element => {
+    element.textContent = "Unavailable";
+    element.title = "Visitor statistics are temporarily unavailable";
+  });
 })();
